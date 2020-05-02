@@ -1,0 +1,12 @@
+
+.idea/
+
+.vscode/
+
+Backup/
+
+output/*
+**/__pycache__/
+.DS_Store
+user_environment.json
+no.interactive
