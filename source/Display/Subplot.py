@@ -65,11 +65,13 @@ class Subplot():
             projector = projector()
         if type(variable) == type:
             variable = variable()
+
+        operators = [operator() if type(operator) == type else operator for operator in operators]
         
         self.projector = projector
         self.variable = variable
         # If the list of operators is of length 1, expand to be a 1D array
-        self.operators = np.atleast_1d(operators)
+        self.operators = np.atleast_1d(np.array(operators, dtype=Operator))
 
         # Check that the data types are correct, since this can be tricky to get correct (recommend using kwargs)
         assert(isinstance(run, Run))
@@ -89,10 +91,12 @@ class Subplot():
         # Can supply slices as keyword arguments. Must match the projector slice names
 
         z = self.projector(self.variable, **kwargs)
-
+        
         for operator in self.operators:
             z = operator(z)
         
+        z = self.projector.structure_z(z)
+
         return np.squeeze(z)
 
     def __call__(self, update=False, **kwargs):

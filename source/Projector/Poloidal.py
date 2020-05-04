@@ -25,10 +25,14 @@ class Poloidal(Projector):
 
         self.annotate.run = self.run
     
-    def slice_and_structure(self, variable):
+    def slice_z(self, variable):
         # If setting time_slice, toroidal_slice, or poloidal_slice, must pass as keyword arguments
         
         z_unstructured = variable(self.time_slice, self.toroidal_slice, self.poloidal_slice)
+        
+        return z_unstructured
+    
+    def structure_z(self, z_unstructured):
         
         return self.grid.vector_to_matrix(z_unstructured)
     

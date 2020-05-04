@@ -24,4 +24,8 @@ class Projector:
             else:
                 raise NotImplementedError(f"No attribute {key} found for Projector {self.__class__.__name__}")
         
-        return self.slice_and_structure(variable)
+        return self.slice_z(variable)
+    
+    def structure_z(self, z_unstructured):
+        
+        return NotImplemented
