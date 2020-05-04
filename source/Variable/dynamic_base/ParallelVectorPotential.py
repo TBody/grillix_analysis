@@ -6,6 +6,6 @@ class ParallelVectorPotential(BaseVariable):
         super().__init__('aparx', **kwargs)
         self.title = "Vector Potential"
         
-    def set_normalisation_factor(self):
-        self.normalisation_factor =  self.normalisation.beta_0 * self.normalisation.B0 * self.normalisation.rho_s0
+    def update_normalisation_factor(self):
+        self.normalisation_factor = self.normalisation.beta_0 * self.normalisation.B0 * self.normalisation.rho_s0
         

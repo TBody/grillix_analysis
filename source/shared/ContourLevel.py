@@ -20,12 +20,24 @@ def find_contour_levels(x_values, y_values, shaped_data, levels):
 class ContourLevel():
 
     def __init__(self, x_arrays, y_arrays):
+
         self.x_arrays = x_arrays
         self.y_arrays = y_arrays
         assert(len(x_arrays)==len(y_arrays))
         self.n_arrays = len(x_arrays)
+    
+    from source.shared.properties import (update_run_values, run, convert)
+    
+    def update_normalisation_factor(self):
+        self.R0 = self.normalisation.R0
 
-    def plot(self, ax, spatial_normalisation, **kwargs):
+    def plot(self, ax, **kwargs):
 
+        if self.convert:
+            # Plot with units
+            normalisation = self.R0
+        else:
+            normalisation = 1.0
+        
         for x_array, y_array in zip(self.x_arrays, self.y_arrays):
-            ax.plot(x_array*spatial_normalisation, y_array*spatial_normalisation, **kwargs)
+                ax.plot(x_array*normalisation, y_array*normalisation, **kwargs)

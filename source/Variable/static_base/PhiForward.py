@@ -1,9 +1,9 @@
-from source.Variable.static_base import StaticVariable
+from source.Variable.static_base import PenalisationVariable
 
-class PhiForward(StaticVariable):
+class PhiForward(PenalisationVariable):
     
     def __init__(self, **kwargs):
-        self.netcdf_filename = "penalisation_file"
+        
         self.title = "Trace with field to plate"
         super().__init__('phi_forward',  **kwargs)
         

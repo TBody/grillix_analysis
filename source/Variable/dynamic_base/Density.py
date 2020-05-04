@@ -1,3 +1,4 @@
+from source import Quantity
 from source.Variable.dynamic_base import BaseVariable
 
 class Density(BaseVariable):
@@ -6,10 +7,12 @@ class Density(BaseVariable):
         super().__init__('logne', **kwargs)
         self.title = "Density"
 
-    def set_normalisation_factor(self):
-        self.normalisation_factor =  self.normalisation.n0
+    def update_normalisation_factor(self):
+        self.normalisation_factor = self.normalisation.n0
     
     def __format_value__(self, value):
         # N.b. may be overwritten by children classes
-        
-        return f"{value.to_base_units():6.4g}"
+        if isinstance(value, Quantity):
+            return f"{value.to_base_units():6.4g}"
+        else:
+            return f"{value:6.4g}"

@@ -7,7 +7,7 @@ class PadToGrid(Operator):
         self.constant_val = constant_val
         super().__init__(**kwargs)
     
-    def set_values_from_run(self):
+    def update_run_values(self):
         self.grid = self.run.grid
     
     def __call__(self, z):

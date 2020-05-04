@@ -6,6 +6,6 @@ class ElectronTemperature(BaseVariable):
         super().__init__('logte', **kwargs)
         self.title = "Electron temp."
         
-    def set_normalisation_factor(self):
-        self.normalisation_factor =  self.normalisation.Te0
+    def update_normalisation_factor(self):
+        self.normalisation_factor = self.normalisation.Te0
         

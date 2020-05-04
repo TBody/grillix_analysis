@@ -27,7 +27,7 @@ class Time(DiagnosticScalarVariable):
         
         super().__init__(run_directory,  **kwargs)
     
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = self.normalisation.tau_0
 
 class Timestep(DiagnosticScalarVariable):
@@ -37,7 +37,7 @@ class Timestep(DiagnosticScalarVariable):
         
         super().__init__(run_directory,  **kwargs)
     
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = self.normalisation.tau_0
 
 class AverageDensity(DiagnosticScalarVariable):
@@ -48,7 +48,7 @@ class AverageDensity(DiagnosticScalarVariable):
         
         super().__init__(run_directory,  **kwargs)
     
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = self.normalisation.n0
 
 class AverageElectronTemperature(DiagnosticScalarVariable):
@@ -59,7 +59,7 @@ class AverageElectronTemperature(DiagnosticScalarVariable):
 
         super().__init__(run_directory,  **kwargs)
     
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = self.normalisation.Te0
 
 class AverageIonTemperature(DiagnosticScalarVariable):
@@ -70,7 +70,7 @@ class AverageIonTemperature(DiagnosticScalarVariable):
         
         super().__init__(run_directory,  **kwargs)
     
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = self.normalisation.Ti0
 
 class AverageScalarPotential(DiagnosticScalarVariable):
@@ -81,7 +81,7 @@ class AverageScalarPotential(DiagnosticScalarVariable):
         
         super().__init__(run_directory,  **kwargs)
     
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = (self.normalisation.Te0/self.normalisation.electron_charge).to("kilovolt")
 
 class AverageVorticity(DiagnosticScalarVariable):
@@ -92,7 +92,7 @@ class AverageVorticity(DiagnosticScalarVariable):
         
         super().__init__(run_directory,  **kwargs)
     
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = (
             self.normalisation.Mi * self.normalisation.n0 * self.normalisation.Te0
             /(self.normalisation.electron_charge * self.normalisation.rho_s0**2 * self.normalisation.B0**2 )
@@ -106,7 +106,7 @@ class AverageParallelCurrent(DiagnosticScalarVariable):
         
         super().__init__(run_directory,  **kwargs)
     
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = (self.normalisation.c_s0 * self.normalisation.electron_charge * self.normalisation.n0).to(
             'kiloampere*meter**-2'
         )
@@ -119,7 +119,7 @@ class AverageParallelVelocity(DiagnosticScalarVariable):
         
         super().__init__(run_directory,  **kwargs)
     
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = self.normalisation.c_s0.to('kilometers/second')
 
 class AverageParallelVectorPotential(DiagnosticScalarVariable):
@@ -130,7 +130,7 @@ class AverageParallelVectorPotential(DiagnosticScalarVariable):
         
         super().__init__(run_directory,  **kwargs)
     
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
     
         self.normalisation_factor = self.normalisation.beta_0 * self.normalisation.B0 * self.normalisation.rho_s0
 
@@ -367,7 +367,7 @@ class NeutralsDensity(DiagnosticScalarVariable):
         
         super().__init__(run_directory,  **kwargs)
     
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = self.normalisation.n0
         
 class IonizationDensitySource(DiagnosticScalarVariable):

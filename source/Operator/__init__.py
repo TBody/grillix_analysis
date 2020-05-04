@@ -2,20 +2,12 @@ from source import np
 class Operator:
 
     def __init__(self, run=None):
-        if run != None:
-            self.set_run(run)
-    
-    def set_run(self, run):
         self.run = run
-        self.normalisation = run.normalisation
-        if hasattr(self, "set_normalisation_factor"):
-            self.set_normalisation_factor()
-        
-        if hasattr(self, "set_values_from_run"):
-            self.set_values_from_run()
-
+    
+    from source.shared.properties import (update_run_values, update_normalisation_factor, run, convert)
+    
     def __call__(self, z):
-        pass
+        return NotImplemented
     
     def find_neighbouring_plane(self, z, reverse=False):
        

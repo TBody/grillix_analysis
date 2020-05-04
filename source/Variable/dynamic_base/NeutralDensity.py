@@ -15,10 +15,10 @@ class NeutralDensity(Variable):
         # Name of the variable in the snaps netcdfs
         self.name_in_netcdf = name_in_netcdf
         # Array of NetCDFPath (see source.__init__)
-        if run_directory.use_error_snaps:
-            self.snap_netcdf = run_directory.neutral_error_snaps
+        if self.run.directory.use_error_snaps:
+            self.snap_netcdf = self.run.directory.neutral_error_snaps
         else:
-            self.snap_netcdf = run_directory.neutral_snaps
+            self.snap_netcdf = self.run.directory.neutral_snaps
         
         # Check how many planes there are, then make an array [0, 1, ..., n_planes - 1] which can be sliced by toroidal_slice
         self.n_planes = len(self.snap_netcdf)
@@ -34,8 +34,8 @@ class NeutralDensity(Variable):
         self.n_full_grid = self.n_main_grid + self.n_perp_grid
         self.grid_points = np.arange(self.n_full_grid)
     
-    def set_normalisation_factor(self):
-        self.normalisation_factor =  self.normalisation.n0
+    def update_normalisation_factor(self):
+        self.normalisation_factor = self.normalisation.n0
     
     def __call__(self, time_slice=slice(-1,None), toroidal_slice=slice(None), poloidal_slice=slice(None)):
         

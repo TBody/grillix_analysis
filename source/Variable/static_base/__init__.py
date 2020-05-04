@@ -1,5 +1,6 @@
 from source import np
 from source.Variable import Variable
+from source.Operator import PadToGrid
 
 class StaticVariable(Variable):
     # Any variable defined in terms of variables written to a metadata file ()
@@ -12,7 +13,7 @@ class StaticVariable(Variable):
         
         super().__init__(**kwargs)
     
-    def set_values_from_run(self):
+    def update_run_values(self):
         self.netcdf_file = getattr(self.run.directory, self.netcdf_filename)
     
     def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
@@ -20,6 +21,22 @@ class StaticVariable(Variable):
         values = self.netcdf_file[self.name_in_netcdf]
         
         return np.atleast_3d(values).reshape((1,1,-1))
+
+class PenalisationVariable(StaticVariable):
+    # Variables written to penalisation metadata. Automatically padded to fill full_grid
+    def __init__(self, name_in_netcdf, **kwargs):
+        self.netcdf_filename = "penalisation_file"
+        super().__init__(name_in_netcdf, **kwargs)
+    
+    def update_run_values(self):
+        self.netcdf_file = getattr(self.run.directory, self.netcdf_filename)
+        self.pad_to_grid = PadToGrid(run=self.run)
+    
+    def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+        
+        values = self.netcdf_file[self.name_in_netcdf]
+        
+        return self.pad_to_grid(np.atleast_3d(values).reshape((1,1,-1)))
 
 # From equilibrium storage
 from .District               import District

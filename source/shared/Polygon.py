@@ -16,13 +16,18 @@ class Polygon:
         return cls(x_points, y_points, invert_polygon)
     
     def __init__(self, x_points, y_points, invert_polygon=False):
-
+        
         self.x_points = np.array(x_points)
         self.y_points = np.array(y_points)
         self.invert_polygon = invert_polygon
 
         self.polygon = mpltPath.Path(np.column_stack((x_points, y_points)), closed=True)
     
+    from source.shared.properties import (update_run_values, update_normalisation_factor, run, convert)
+
+    def update_normalisation_factor(self):
+        self.R0 =self.normalisation.R0
+
     def points_inside(self, x_tests, y_tests):
 
         assert(x_tests.shape == y_tests.shape)
@@ -56,6 +61,12 @@ class Polygon:
 
         return running_sum/2
     
-    def plot(self, ax, spatial_normalisation, **kwargs):
-        
-        ax.plot(self.x_points*spatial_normalisation, self.y_points*spatial_normalisation, **kwargs)
+    def plot(self, ax, **kwargs):
+
+        if self.convert:
+            # Plot with units
+            normalisation = self.R0
+        else:
+            normalisation = 1.0
+
+        ax.plot(self.x_points*normalisation, self.y_points*normalisation, **kwargs)

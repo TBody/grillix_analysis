@@ -19,7 +19,7 @@ class ParallelGradient(Operator):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
     
-    def set_values_from_run(self):
+    def update_run_values(self):
 
         self.f2s_map_forward = CSRMatrix(self.run.directory.f2s_map_forward_file, self.grid)
         self.f2s_map_reverse = CSRMatrix(self.run.directory.f2s_map_reverse_file, self.grid)

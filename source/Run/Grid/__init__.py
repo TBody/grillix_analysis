@@ -10,9 +10,11 @@ class Grid:
                                     matrix_to_vector
                                     )
     
+    from source.shared.properties import (update_run_values, run, convert)
+    
     @classmethod
     def from_netcdf(cls, netcdf_file):
-
+        
         grid_file = netcdf_file.open()
 
         x = grid_file.xmin+(np.array(grid_file.variables['li'])-1)*grid_file.hf
@@ -20,42 +22,78 @@ class Grid:
 
         grid_spacing = grid_file.hf
 
-        return cls(x=x, y=y, grid_spacing=grid_spacing, grid_file=grid_file)
+        return cls(x=x, y=y, grid_spacing=grid_spacing)
     
     def __init__(self, x, y, grid_spacing, grid_file=None, test_size=True):
         self.vector_to_matrix_initialised = False
         
-        self.x = x
-        self.y = y
+        self._x = x
+        self._y = y
         
-        self.grid_spacing = grid_spacing
+        self._grid_spacing = grid_spacing
 
-        self.x_unique = np.unique(self.x)
-        self.y_unique = np.unique(self.y)
+        self._x_unique = np.unique(self._x)
+        self._y_unique = np.unique(self._y)
 
-        self.xmin = self.x_unique[0]
-        self.xmax = self.x_unique[-1]
-        self.ymin = self.y_unique[0]
-        self.ymax = self.y_unique[-1]
+        self._xmin = self._x_unique[0]
+        self._xmax = self._x_unique[-1]
+        self._ymin = self._y_unique[0]
+        self._ymax = self._y_unique[-1]
         
         if test_size:
-            assert(np.size(self.x) == np.size(self.y))
-        self.size = np.size(self.x)
+            assert(np.size(self._x) == np.size(self._y))
+        self.size = np.size(self._x)
+
+    def update_normalisation_factor(self):
+        self.R0 = self.normalisation.R0
+
+    # Auto-convert to normalised when accessing properties, based on self.convert flag
+    @property
+    def x(self):
+        return self._x * self.R0 if self.convert else self._x
+
+    @property
+    def y(self):
+        return self._y * self.R0 if self.convert else self._y
+    
+    @property
+    def x_unique(self):
+        return self._x_unique * self.R0 if self.convert else self._x_unique
+
+    @property
+    def y_unique(self):
+        return self._y_unique * self.R0 if self.convert else self._y_unique
+
+    @property
+    def xmin(self):
+        return self._xmin * self.R0 if self.convert else self._xmin
+
+    @property
+    def xmax(self):
+        return self._xmax * self.R0 if self.convert else self._xmax
+
+    @property
+    def ymin(self):
+        return self._ymin * self.R0 if self.convert else self._ymin
+
+    @property
+    def ymax(self):
+        return self._ymax * self.R0 if self.convert else self._ymax
     
     def __add__(self, other):
 
-        new_x = np.append(self.x, other.x)
-        new_y = np.append(self.y, other.y)
+        new_x = np.append(self._x, other._x)
+        new_y = np.append(self._y, other._y)
 
-        return Grid(x=new_x, y=new_y, grid_spacing=self.grid_spacing)
+        return Grid(x=new_x, y=new_y, grid_spacing=self._grid_spacing)
     
     def find_nearest_index(self, x, y, print_error=False):
 
         # Returns nearest element for linear distance
-        nearest_index = np.argmin(np.sqrt((self.x - x)**2 + (self.y - y)**2))
+        nearest_index = np.argmin(np.sqrt((self._x - x)**2 + (self._y - y)**2))
 
         if print_error:
-            print(self.x[nearest_index] - x, self.y[nearest_index] - y)
+            print(self._x[nearest_index] - x, self._y[nearest_index] - y)
 
         if np.size(nearest_index):
             return nearest_index

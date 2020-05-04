@@ -11,7 +11,7 @@ class BaseVariable(Variable):
 
         super().__init__(**kwargs)
     
-    def set_values_from_run(self):
+    def update_run_values(self):
         # Array of NetCDFPath (see source.__init__)
         if self.run.directory.use_error_snaps:
             self.snap_netcdf = self.run.directory.error_snaps
@@ -35,8 +35,7 @@ class BaseVariable(Variable):
         self.n_full_grid = self.n_main_grid + self.n_perp_grid
         self.grid_points = np.arange(self.n_full_grid)
     
-    def __call__(self, time_slice=slice(-1,None), toroidal_slice=slice(None), poloidal_slice=slice(None)):
-        
+    def values(self, time_slice=slice(-1,None), toroidal_slice=slice(None), poloidal_slice=slice(None)):
         planes = self.plane_indices[toroidal_slice]
         snaps = self.snap_indices[time_slice]
         points = self.grid_points[poloidal_slice]
@@ -68,15 +67,8 @@ class BaseVariable(Variable):
             ), axis=-1)
         if self.log_in_netcdf:
             values = np.exp(values)
-
+        
         return values
-    
-    def __format_value__(self, value):
-        # N.b. may be overwritten by children classes
-        if isinstance(value, Quantity):
-            return f"{value.to_compact():6.4g}"
-        else:
-            return f"{value:6.4g}"
 
 from .Density                 import Density
 from .ElectronTemperature     import ElectronTemperature

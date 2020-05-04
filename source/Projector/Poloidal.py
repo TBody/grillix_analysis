@@ -13,12 +13,17 @@ class Poloidal(Projector):
         self.toroidal_slice = toroidal_slice
         self.poloidal_slice = poloidal_slice
     
-    def set_values_from_run(self):
+    def update_run_values(self):
+        
         self.grid = self.run.grid
-        self.x = self.grid.x_unique
-        self.y = self.grid.y_unique
+        if self.grid.convert:
+            self.x = self.grid.x_unique.magnitude
+            self.y = self.grid.y_unique.magnitude
+        else:
+            self.x = self.grid.x_unique
+            self.y = self.grid.y_unique
 
-        self.annotate.set_run(self.run, self)
+        self.annotate.run = self.run
     
     def slice_and_structure(self, variable):
         # If setting time_slice, toroidal_slice, or poloidal_slice, must pass as keyword arguments

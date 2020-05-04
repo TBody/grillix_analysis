@@ -29,6 +29,8 @@ class Display:
         for row in range(self.nrows):
             for col in range(self.ncols):
                 self.axs[row][col] = Subplot(self, axs[row][col])
+        
+        self.axs1d = self.axs.flatten()
         # Rearrange the axs array such that indexing is [x, y]
         self.axs = np.transpose(np.flipud(self.axs))
         
@@ -59,9 +61,8 @@ class Display:
         return kwargs
     
     def style_subplots(self, **kwargs):
-        for x in range(self.ncols):
-            for y in range(self.nrows):
-                self.axs[x][y].style_plot(**kwargs)
+        for ax in self.axs1d:
+            ax.style_plot(**kwargs)
     
     def tight_layout(self):
         plt.tight_layout(rect=[0, 0, 1, 0.95])

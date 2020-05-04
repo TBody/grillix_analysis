@@ -5,7 +5,6 @@ class FloatingPotential(DerivedDynamicVariable):
     default_lambda_sh = 3.1
 
     def __init__(self, lambda_sh=None, **kwargs):
-        super().__init__(**kwargs)
         if lambda_sh is None:
             self.lambda_sh = self.default_lambda_sh
             print(f"lambda_sh not supplied to FloatingPotential. Using default value {self.lambda_sh}")
@@ -17,11 +16,15 @@ class FloatingPotential(DerivedDynamicVariable):
         self.scalar_potential = ScalarPotential(**kwargs)
         
         self.title = "Floating Potential"
-        self.check_base_variables([self.electron_temperature, self.scalar_potential])
-    
-    def set_normalisation_factor(self):
-        self.normalisation_factor =  self.scalar_potential.normalisation_factor
         
-    def __call__(self, time_slice=slice(-1,None), toroidal_slice=slice(None), poloidal_slice=slice(None)):
+        super().__init__(**kwargs)
+    
+    def update_normalisation_factor(self):
+        self.normalisation_factor = self.scalar_potential.normalisation_factor
+    
+    def update_run_values(self):
+        self.check_base_variables([self.electron_temperature, self.scalar_potential])
+        
+    def values(self, **kwargs):
 
-        return self.scalar_potential(time_slice, toroidal_slice, poloidal_slice) - self.lambda_sh * self.electron_temperature(time_slice, toroidal_slice, poloidal_slice)
+        return self.scalar_potential.values(**kwargs) - self.lambda_sh * self.electron_temperature.values(**kwargs)

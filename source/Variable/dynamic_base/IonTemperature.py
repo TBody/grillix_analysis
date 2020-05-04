@@ -6,6 +6,6 @@ class IonTemperature(BaseVariable):
         super().__init__('logti', **kwargs)
         self.title = "Ion temp."
         
-    def set_normalisation_factor(self):
-        self.normalisation_factor =  self.normalisation.Ti0
+    def update_normalisation_factor(self):
+        self.normalisation_factor = self.normalisation.Ti0
         

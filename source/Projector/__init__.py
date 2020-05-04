@@ -6,14 +6,12 @@ class Projector:
     annotate = Annotate()
 
     def __init__(self, run=None):
-        if run != None:
-            self.set_run(run)
-
-    def set_run(self, run):
         self.run = run
-        
-        if hasattr(self, 'set_values_from_run'):
-            self.set_values_from_run()
+    
+    from source.shared.properties import (update_run_values, update_normalisation_factor, run, convert)
+
+    def slice_and_structure(self, variable):
+        return NotImplemented
     
     def __call__(self, variable, **kwargs):
         # If setting time_slice, toroidal_slice, or poloidal_slice, must pass as keyword arguments

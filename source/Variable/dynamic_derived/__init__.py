@@ -8,14 +8,17 @@ class DerivedDynamicVariable(Variable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def check_base_variables(self, base_variables_list):
+    def check_base_variables(self, variables):
         # Should define the following from BaseVariables
         attributes_to_check = ["n_planes", "plane_indices", "n_snaps", 
             "snap_indices", "n_main_grid", "n_perp_grid", "n_full_grid", "grid_points"]
 
         # Checks each attribute
         for attribute in attributes_to_check:
-            for base_variable in base_variables_list:
+            for base_variable in variables:
+
+                base_variable.run = self.run
+
                 if hasattr(self, attribute):
                     # If it's already defined, make sure that all base variables give
                     # the same values
@@ -23,13 +26,6 @@ class DerivedDynamicVariable(Variable):
                 else:
                     # Otherwise, set the attribute from the current base_variable
                     setattr(self, attribute, getattr(base_variable, attribute))
-
-    def __format_value__(self, value):
-        # N.b. may be overwritten by children classes
-        if isinstance(value, Quantity):
-            return f"{value.to_compact():6.4g}"
-        else:
-            return f"{value:6.4g}"
 
 from .SoundSpeed import SoundSpeed
 from .SaturationCurrent import SaturationCurrent

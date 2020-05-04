@@ -4,14 +4,12 @@ from source.Variable import Variable
 class Equilibrium:
 
     def __init__(self, run):
-
-        self.normalisation = run.normalisation
-        self.params = run.parameters['equi_params']
+        self.run = run
 
         # Give unstructured (x,y) indices so that the Equilibrium variables can be poloidally sliced
-        self.x_array = run.grid.x
-        self.y_array = run.grid.y
-        self.array_size = run.grid.size
+        # self.x_array = run.grid.x
+        # self.y_array = run.grid.y
+        # self.array_size = run.grid.size
 
         # Before calling super().__init__, the equilibrium subclass should define the following
         # psiO             => O-point poloidal flux (in Weber) 
@@ -27,16 +25,20 @@ class Equilibrium:
         # By_func(x,y)   => function which returns By for a cartesian point (x,y)
         # Btor_func(x,y) => function which returns Btor for a cartesian point (x,y)
 
-        self.psi                  = Psi(self, run=run)
-        self.rho                  = Rho(self, run=run)
-        self.Bx                   = MagneticFieldX(self, run=run)
-        self.By                   = MagneticFieldY(self, run=run)
-        self.Btor                 = MagneticFieldTor(self, run=run)
+    from source.shared.properties import (update_normalisation_factor, run, convert)
 
-        self.Bpol                 = MagneticFieldPol(self, run=run)
-        self.Babs                 = MagneticFieldAbs(self, run=run)
-        self.poloidal_unit_vector = PoloidalUnitVector(self, run=run)
-        self.radial_unit_vector   = RadialUnitVector(self, run=run)
+    def update_run_values(self):
+        self.params = self.run.parameters['equi_params']
+        self.psi                  = Psi(self, run=self.run)
+        self.rho                  = Rho(self, run=self.run)
+        self.Bx                   = MagneticFieldX(self, run=self.run)
+        self.By                   = MagneticFieldY(self, run=self.run)
+        self.Btor                 = MagneticFieldTor(self, run=self.run)
+
+        self.Bpol                 = MagneticFieldPol(self, run=self.run)
+        self.Babs                 = MagneticFieldAbs(self, run=self.run)
+        self.poloidal_unit_vector = PoloidalUnitVector(self, run=self.run)
+        self.radial_unit_vector   = RadialUnitVector(self, run=self.run)
 
 from .Numerical import NumericalEquilibrium
 from .Carthy import CarthyEquilibrium
@@ -50,8 +52,8 @@ class EquilibriumVariable(Variable):
         self.equi = equi
         super().__init__(**kwargs)
 
-    def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
-        raise NotImplementedError("No __call__ implementation found for variable")
+    def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+        raise NotImplementedError("No values implementation found for variable")
 
 class Psi(EquilibriumVariable):
 
@@ -59,10 +61,10 @@ class Psi(EquilibriumVariable):
         super().__init__(equi, **kwargs)
         self.title = "Poloidal Flux"
 
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = Quantity(1, 'weber')
     
-    def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+    def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
         return self.equi.psi_grid_vector[poloidal_slice]
     
     def value(self, x, y):
@@ -74,10 +76,10 @@ class Rho(EquilibriumVariable):
         super().__init__(equi, **kwargs)
         self.title = "Norm. poloidal Flux"
 
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = Quantity(1, '')
     
-    def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+    def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
         psi = self.equi.psi(poloidal_slice)
         
         # Make values which would give rho < 0 return rho = 0
@@ -94,10 +96,10 @@ class MagneticFieldX(EquilibriumVariable):
         super().__init__(equi, **kwargs)
         self.title = "B x"
 
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = self.normalisation.B0
     
-    def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+    def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
         return self.equi.Bx_grid_vector[poloidal_slice]
     
     def value(self, x, y):
@@ -109,10 +111,10 @@ class MagneticFieldY(EquilibriumVariable):
         super().__init__(equi, **kwargs)
         self.title = "B y"
 
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = self.normalisation.B0
     
-    def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+    def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
         return self.equi.By_grid_vector[poloidal_slice]
     
     def value(self, x, y):
@@ -124,10 +126,10 @@ class MagneticFieldTor(EquilibriumVariable):
         super().__init__(equi, **kwargs)
         self.title = "B toroidal"
 
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = self.normalisation.B0
     
-    def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+    def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
         return self.equi.Btor_grid_vector[poloidal_slice]
     
     def value(self, x, y):
@@ -139,10 +141,10 @@ class MagneticFieldPol(EquilibriumVariable):
         super().__init__(equi, **kwargs)
         self.title = "B poloidal"
 
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = self.normalisation.B0
     
-    def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+    def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
         
         values = np.sqrt(self.equi.Bx_grid_vector[poloidal_slice]**2 + self.equi.By_grid_vector[poloidal_slice]**2)
         return values
@@ -156,10 +158,10 @@ class MagneticFieldAbs(EquilibriumVariable):
         super().__init__(equi, **kwargs)
         self.title = "magnitude(B)"
 
-    def set_normalisation_factor(self):
+    def update_normalisation_factor(self):
         self.normalisation_factor = self.normalisation.B0
     
-    def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+    def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
         
         values = np.sqrt(self.equi.Bx_grid_vector[poloidal_slice]**2 + self.equi.By_grid_vector[poloidal_slice]**2 + self.equi.Btor_grid_vector[poloidal_slice]**2)
         return values
@@ -183,7 +185,7 @@ class PoloidalUnitVector(EquilibriumVariable):
 
         self.title = "Poloidal unit vector"
     
-    def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+    def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
 
         Bx = self.equi.Bx_grid_vector[poloidal_slice]
         By = self.equi.By_grid_vector[poloidal_slice]
@@ -206,7 +208,7 @@ class RadialUnitVector(EquilibriumVariable):
 
         self.title = "Radial unit vector"
 
-    def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+    def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
 
         Bx = self.equi.Bx_grid_vector[poloidal_slice]
         By = self.equi.By_grid_vector[poloidal_slice]

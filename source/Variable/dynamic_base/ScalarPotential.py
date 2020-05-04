@@ -6,6 +6,6 @@ class ScalarPotential(BaseVariable):
         super().__init__('potxx', **kwargs)
         self.title = "Potential"
         
-    def set_normalisation_factor(self):
-        self.normalisation_factor =  (self.normalisation.Te0/self.normalisation.electron_charge).to("kilovolt")
+    def update_normalisation_factor(self):
+        self.normalisation_factor = (self.normalisation.Te0/self.normalisation.electron_charge).to("kilovolt")
         

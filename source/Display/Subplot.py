@@ -1,4 +1,4 @@
-from source import np, perceptually_uniform_cmap, diverging_cmap
+from source import np, perceptually_uniform_cmap, diverging_cmap, mplcolors, Quantity
 
 from source.Run import Run
 from source.Projector import Projector
@@ -19,22 +19,52 @@ class Subplot():
 
         self.cmap = None
         self.cmap_norm = None
+
+        self.used = False
         
-        self.convert = display.convert
-        self.display_logarithmic = display.display_logarithmic
-    
+    @property
+    def run(self):
+        # print(f"self {self} called run")
+        return self._run
+
+    @run.setter
+    def run(self, value):
+        # print(f"self {self} called run with arg {value}")
+        if value != None:
+            self._run = value
+
+    @property
+    def convert(self):
+        # print(f"self {self} called convert")
+        return self.display.convert
+
+    @convert.setter
+    def convert(self, value):
+        # print(f"self {self} called convert with arg {value}")
+        raise NotImplementedError(f"Should set convert directly on display")   
+        
+    @property
+    def display_logarithmic(self):
+        # print(f"self {self} called display_logarithmic")
+        return self.display.display_logarithmic
+
+    @display_logarithmic.setter
+    def display_logarithmic(self, value):
+        # print(f"self {self} called display_logarithmic with arg {value}")
+        raise NotImplementedError(f"Should set display_logarithmic directly on display")   
+
     def set_data(self, run, projector, variable, operators=[]):
         # Must pass an initialised Run object
         # Can pass uninitialised projector, variable and operators -- in this case __init__(run) is called
         
         self.run = run
-        self.run.grid.convert = self.convert
+        self.run.convert = self.convert
         
-        # If type(object) == type, call __init__(run)
+        # If type(object) == type, call __init__ (will set run values later anyway)
         if type(projector) == type:
-            projector = projector(run=run)
+            projector = projector()
         if type(variable) == type:
-            variable = variable(run=run)
+            variable = variable()
         
         self.projector = projector
         self.variable = variable
@@ -48,10 +78,12 @@ class Subplot():
         for operator in self.operators:
             assert(isinstance(operator, Operator))
         
-        self.projector.set_run(self.run)
-        self.variable.set_run(self.run)
+        self.projector.run = self.run
+        self.variable.run = self.run
         for operator in self.operators:
-            operator.set_run(self.run)
+            operator.run = self.run
+        
+        self.used = True
 
     def find_z_values(self, **kwargs):
         # Can supply slices as keyword arguments. Must match the projector slice names
@@ -71,7 +103,7 @@ class Subplot():
             # First plot
             if self.variable.numerical_variable:
 
-                if self.cmap == None or self.norm == None:
+                if self.cmap == None or self.cmap_norm == None:
                     self.find_colormap_limits_from_z(self.z)
                 
                 self.plot = self.ax.pcolormesh(self.projector.x, self.projector.y, self.z, cmap=self.cmap, norm=self.cmap_norm)
@@ -92,7 +124,7 @@ class Subplot():
             pass
     
     def format_coord(self, x, y):
-        
+
         if ((x > self.projector.x.min()) & (x <= self.projector.x.max()) &
             (y > self.projector.y.min()) & (y <= self.projector.y.max())):
             row = np.searchsorted(self.projector.x, x)-1
@@ -110,12 +142,17 @@ class Subplot():
             return 'x={:f}, y={:f}'.format(x, y)
     
     def style_plot(self, **kwargs):
-        self.ax.set_aspect('equal')
-        self.projector.annotate.style_plot(self)
-        if self.convert:
-            self.ax.set_title(f"{self.variable.title} [{self.z.units}]")
+        if self.used:
+            self.ax.set_aspect('equal')
+            self.projector.annotate.style_plot(self)
+            if self.convert:
+                self.ax.set_title(f"{self.variable.title} [{self.variable.normalisation_factor.units}]")
+            else:
+                self.ax.set_title(self.variable.title)
         else:
-            self.ax.set_title(self.variable.title)
+            self.ax.clear()
+            self.ax.set_axis_off()
+            self.ax.set_frame_on(False)
     
     def find_colormap_limits(self, quantiles=(0.001, 0.999), linear_proportion=0.20, **kwargs):
         # Useful to precompute (non-changing) colormaps
