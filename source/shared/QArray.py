@@ -21,7 +21,7 @@ def apply_over_values(function, array, **kwargs):
     print(QArray.__class__)
     assert(isinstance(array, QArray))
     return array.__class__(
-        input_array = function(array.value, **kwargs), normalisation_factor=array.normalisation_factor, SI_conversion=array.SI_conversion
+        input_array = function(array.value, **kwargs), normalisation_factor=array.normalisation_factor, convert=array.convert
     )
 
 def function_factory(numpy_function):
@@ -46,35 +46,35 @@ class QArray(np.lib.mixins.NDArrayOperatorsMixin):
         input_array = (np.atleast_3d(input_array)).reshape((1,1,-1))
         return cls(input_array, *args, **kwargs)
 
-    def __init__(self, input_array, normalisation_factor=unitless, SI_conversion=False):
+    def __init__(self, input_array, normalisation_factor=unitless, convert=False):
         self.value = np.asarray(input_array)
         self.normalisation_factor = normalisation_factor
-        self.SI_conversion = SI_conversion
+        self.convert = convert
     
-    def set_SI_conversion(self, value):
-        setattr(self, "SI_conversion", value)
+    def set_convert(self, value):
+        setattr(self, "convert", value)
     
     def dimensionless(self):
-        if self.SI_conversion or self.normalisation_factor.dimensionless:
+        if self.convert or self.normalisation_factor.dimensionless:
             return True
         else:
             return False
     
     def __repr__(self):
-        if self.SI_conversion:
+        if self.convert:
             return f"{self.__class__.__name__} [{self.normalisation_factor}] => {self.value}"
         else:
             return f"{self.__class__.__name__} [{self.normalisation_factor}] /> {self.value}"
     
     def __array__(self):
-        if self.SI_conversion:
+        if self.convert:
             return self.value*self.normalisation_factor
         else:
             return self.value
     
     def __float__(self):
         if self.normalisation_factor.dimensionless:
-            if self.SI_conversion:
+            if self.convert:
                 return float(self.value*self.normalisation_factor)
             else:
                 return float(self.value)
@@ -85,13 +85,13 @@ class QArray(np.lib.mixins.NDArrayOperatorsMixin):
         return np.size(self.value)
     
     def __getitem__(self, key):
-        return self.__class__(input_array=self.value[key], normalisation_factor=self.normalisation_factor, SI_conversion=self.SI_conversion)
+        return self.__class__(input_array=self.value[key], normalisation_factor=self.normalisation_factor, convert=self.convert)
     
     def __getattr__(self, key):
         # If an attribute is requested which isn't available in QArray, try search the ndarray attributes
         
         if (key == "units"):
-            return self.normalisation_factor.units if self.SI_conversion else ''
+            return self.normalisation_factor.units if self.convert else ''
         elif hasattr(self.value, key):
             return self.value.__getattribute__(key)
         else:
@@ -117,7 +117,7 @@ class QArray(np.lib.mixins.NDArrayOperatorsMixin):
                 elif isinstance(element, self.__class__):
                     scalars.append(element.value)
                     norm_factor.append(element.normalisation_factor)
-                    assert(self.SI_conversion == element.SI_conversion), f"{self.__class__.__name__} error: Inconsistent application of SI_conversion"
+                    assert(self.convert == element.convert), f"{self.__class__.__name__} error: Inconsistent application of convert"
 
                 elif isinstance(element, list):
                     element = np.asarray(element)
@@ -134,7 +134,7 @@ class QArray(np.lib.mixins.NDArrayOperatorsMixin):
             
             return self.__class__(ufunc(*scalars, **kwargs),
                                   normalisation_factor=ufunc(*norm_factor, **kwargs),
-                                  SI_conversion=self.SI_conversion)
+                                  convert=self.convert)
         else:
             raise NotImplementedError(f"{self.__class__.__name__} called with ufunc={ufunc}, method={method}, inputs={inputs}, kwargs={kwargs}")
 
@@ -156,14 +156,14 @@ class QArray(np.lib.mixins.NDArrayOperatorsMixin):
 
     def to_compact(self):
         assert(self.value.size == 1)
-        if self.SI_conversion:
+        if self.convert:
             return (self.value*self.normalisation_factor).to_compact()
         else:
             return self.value
     
     def to_base_units(self):
         assert(self.value.size == 1)
-        if self.SI_conversion:
+        if self.convert:
             return (self.value*self.normalisation_factor).to_base_units()
         else:
             return self.value
@@ -184,18 +184,18 @@ class VectorQArray(QArray):
 #             obj = np.atleast_3d(obj).reshape((1,1,-1))
 #         # add the new attribute to the created instance
 #         obj.normalisation_factor = normalisation_factor
-#         obj.SI_conversion = None
+#         obj.convert = None
 #         # Finally, we must return the newly created object:
 #         return obj
 
 #     def __array_finalize__(self, obj):
 #         if obj is None: return
 #         self.normalisation_factor = getattr(obj, 'normalisation_factor', None)
-#         self.SI_conversion = getattr(obj, 'SI_conversion', None)
+#         self.convert = getattr(obj, 'convert', None)
 
-#     def set_SI_conversion(self, value):
+#     def set_convert(self, value):
 #         assert(type(value) == bool)
-#         setattr(self, "SI_conversion", value)
+#         setattr(self, "convert", value)
     
 #     def __getattr__(self, key):
 #         if key == "units":
@@ -208,7 +208,7 @@ class VectorQArray(QArray):
 #             return super().__getattr__(key)
 
 #     def magnitude(self):
-#         if self.SI_conversion:
+#         if self.convert:
 #             return self*self.normalisation_factor.magnitude
 #         else:
 #             return self
@@ -229,14 +229,14 @@ class VectorQArray(QArray):
 #         obj = np.asarray(input_array, dtype=Vector).view(cls)
 #         # add the new attribute to the created instance
 #         obj.normalisation_factor = normalisation_factor
-#         obj.SI_conversion = None
+#         obj.convert = None
 #         # Finally, we must return the newly created object:
 #         return obj
 
 #     def __array_finalize__(self, obj):
 #         if obj is None: return
 #         self.normalisation_factor = getattr(obj, 'normalisation_factor', None)
-#         self.SI_conversion = getattr(obj, 'SI_conversion', None)
+#         self.convert = getattr(obj, 'convert', None)
     
 #     @classmethod
 #     def from_component_arrays(cls, R, Z, phi, **kwargs):

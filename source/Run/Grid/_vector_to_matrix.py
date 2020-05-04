@@ -2,7 +2,7 @@ from . import np
 from source import unit_registry, Quantity, pint, pd
 
 def setup_vector_to_matrix(self, with_check=False):
-    assert(not(self.x.SI_conversion) and not(self.y.SI_conversion))
+    assert(not(self.x.convert) and not(self.y.convert))
     tricolumn_data = np.column_stack((self.x.value, self.y.value, np.arange(start=0, stop=len(self.x), dtype=int)))
     pd_dataframe = pd.DataFrame(tricolumn_data, columns=['x', 'y', 'z'])
     # Makes a 2D array of indices
@@ -37,7 +37,7 @@ def check_vector_to_matrix(self):
     assert(self.x.shape == unstructured_data.shape)
 
     # Convert unstructured_data to shaped_data using Pandas method
-    assert(not(self.x.SI_conversion) and not(self.y.SI_conversion))
+    assert(not(self.x.convert) and not(self.y.convert))
     tricolumn_data = np.column_stack((self.x.value, self.y.value, unstructured_data))
     pd_dataframe = pd.DataFrame(tricolumn_data, columns=['x', 'y', 'z'])
     shaped_data_1 = pd_dataframe.pivot_table(values='z', index='y', columns='x', dropna=False)

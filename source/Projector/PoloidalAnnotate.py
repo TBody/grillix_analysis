@@ -11,7 +11,7 @@ class PoloidalAnnotate(Annotate):
     def __call__(self, subplot, linestyle='-', linewidth=0.5):
         assert(self.initialised), f"Annotate called before supplying Run values"
         
-        self.spatial_normalisation = 1 if not(subplot.SI_conversion) else self.run.normalisation.R0
+        self.spatial_normalisation = 1 if not(subplot.convert) else self.run.normalisation.R0
         
         self.run.penalisation_contours[0].plot(subplot.ax, self.spatial_normalisation, color='r', linestyle=linestyle, linewidth=linewidth)
         self.run.penalisation_contours[-1].plot(subplot.ax, self.spatial_normalisation, color='r', linestyle=linestyle, linewidth=linewidth)
@@ -29,13 +29,13 @@ class PoloidalAnnotate(Annotate):
         
     def label_axes(self, subplot):
         if not(subplot.hide_xlabel):
-            if subplot.SI_conversion:
+            if subplot.convert:
                 subplot.ax.set_xlabel(f"R [{self.spatial_normalisation.units}]")
             else:
                 subplot.ax.set_xlabel(f"R/R0")
             
         if not(subplot.hide_ylabel):
-            if subplot.SI_conversion:
+            if subplot.convert:
                 subplot.ax.set_ylabel(f"Z [{self.spatial_normalisation.units}]")
             else:
                 subplot.ax.set_ylabel(f"Z/R0")

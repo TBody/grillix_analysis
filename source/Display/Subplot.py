@@ -21,7 +21,7 @@ class Subplot():
         self.cmap = None
         self.cmap_norm = None
         
-        self.SI_conversion = display.SI_conversion
+        self.convert = display.convert
         self.display_logarithmic = display.display_logarithmic
     
     def set_data(self, run, projector, variable, operators=[]):
@@ -29,7 +29,7 @@ class Subplot():
         # Can pass uninitialised projector, variable and operators -- in this case __init__(run) is called
         
         self.run = run
-        self.run.grid.SI_conversion = self.SI_conversion
+        self.run.grid.convert = self.convert
         
         # If type(object) == type, call __init__(run)
         if type(projector) == type:
@@ -60,7 +60,7 @@ class Subplot():
         z = self.projector(self.variable, **kwargs)
         assert(isinstance(z, QArray))
 
-        z.set_SI_conversion(self.SI_conversion)
+        z.set_convert(self.convert)
         
         for operator in self.operators:
             z = operator(z)
@@ -116,7 +116,7 @@ class Subplot():
     def style_plot(self, **kwargs):
         self.ax.set_aspect('equal')
         self.projector.annotate.style_plot(self)
-        if self.SI_conversion:
+        if self.convert:
             self.ax.set_title(f"{self.variable.title} [{self.z.units}]")
         else:
             self.ax.set_title(self.variable.title)

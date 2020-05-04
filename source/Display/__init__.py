@@ -4,12 +4,12 @@ from .Subplot import Subplot
 
 class Display:
 
-    def __init__(self, nrows=1, ncols=1, sharex=True, sharey=True, maximised=True, title=None, time_in_title=True, SI_conversion=False, display_logarithmic=False, **kwargs):
+    def __init__(self, nrows=1, ncols=1, sharex=True, sharey=True, maximised=True, title=None, time_in_title=True, convert=False, display_logarithmic=False, **kwargs):
 
         self.nrows = nrows
         self.ncols = ncols
         self.title = title
-        self.SI_conversion = SI_conversion
+        self.convert = convert
         self.display_logarithmic = display_logarithmic
 
         kwargs = self.set_kwargs_from_user_environment(maximised, kwargs)

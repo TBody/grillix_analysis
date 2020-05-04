@@ -14,7 +14,7 @@ def apply_over_values(function, array, **kwargs):
     print(QArray.__class__)
     assert(isinstance(array, QArray))
     return array.__class__(
-        input_array = function(array.value, **kwargs), normalisation_factor=array.normalisation_factor, SI_conversion=array.SI_conversion
+        input_array = function(array.value, **kwargs), normalisation_factor=array.normalisation_factor, convert=array.convert
     )
 
 def function_factory(numpy_function):
@@ -44,7 +44,7 @@ def size(a, array, **kwargs):
 # def unique(self, array, **kwargs):
 #     "Implementation of np.unique for QArray objects"
 #     output_array = np.unique(self.value, array, **kwargs)
-#     return self.__class__(input_array=output_array, normalisation_factor=self.normalisation_factor, SI_conversion=self.SI_conversion)
+#     return self.__class__(input_array=output_array, normalisation_factor=self.normalisation_factor, convert=self.convert)
 
 # @implements(np.size)
 # def size(a, array, **kwargs):
@@ -55,26 +55,26 @@ def size(a, array, **kwargs):
 # def pad(array, array, **kwargs):
 #     "Implementation of np.pad for QArray objects"
 #     output_array = np.pad(array.value, array, **kwargs)
-#     return array.__class__(input_array=output_array, normalisation_factor=array.normalisation_factor, SI_conversion=array.SI_conversion)
+#     return array.__class__(input_array=output_array, normalisation_factor=array.normalisation_factor, convert=array.convert)
 
 # @implements(np.nanmax)
 # def nanmax(a, array, **kwargs):
 #     "Implementation of np.nanmax for QArray objects"
 #     output_array = np.nanmax(a.value, array, **kwargs)
-#     return a.__class__(input_array=output_array, normalisation_factor=a.normalisation_factor, SI_conversion=a.SI_conversion)
+#     return a.__class__(input_array=output_array, normalisation_factor=a.normalisation_factor, convert=a.convert)
 
 # @implements(np.apply_along_axis)
 # def apply_along_axis(func1d, axis, arr, array, **kwargs):
 #     "Implementation of np.apply_along_axis for QArray objects"
 #     # func1d should not change the dimensionality! Otherwise use a different method
 #     output_array = np.apply_along_axis(func1d, axis, arr.value, array, **kwargs)
-#     return arr.__class__(input_array=output_array, normalisation_factor=arr.normalisation_factor, SI_conversion=arr.SI_conversion)
+#     return arr.__class__(input_array=output_array, normalisation_factor=arr.normalisation_factor, convert=arr.convert)
 
 # @implements(np.squeeze)
 # def squeeze(a, array, **kwargs):
 #     "Implementation of np.squeeze for QArray objects"
 #     output_array = np.squeeze(a.value, array, **kwargs)
-#     return a.__class__(input_array=output_array, normalisation_factor=a.normalisation_factor, SI_conversion=a.SI_conversion)
+#     return a.__class__(input_array=output_array, normalisation_factor=a.normalisation_factor, convert=a.convert)
 
 
 
@@ -84,10 +84,10 @@ def size(a, array, **kwargs):
 #     assert(isinstance(arr, QArray))
 #     assert(isinstance(values, QArray))
 #     assert(arr.normalisation_factor == values.normalisation_factor), f"Cannot append QArrays with different dimensions: {arr.normalisation_factor.units} and {values.normalisation_factor.units}"
-#     assert(arr.SI_conversion == values.SI_conversion)
+#     assert(arr.convert == values.convert)
 
 #     output_array = np.append(arr=arr.value, values=values.value, array, **kwargs)
-#     return arr.__class__(input_array=output_array, normalisation_factor=arr.normalisation_factor, SI_conversion=arr.SI_conversion)
+#     return arr.__class__(input_array=output_array, normalisation_factor=arr.normalisation_factor, convert=arr.convert)
 
 # @implements(np.meshgrid)
 # def meshgrid(*xi, **kwargs):
@@ -95,11 +95,11 @@ def size(a, array, **kwargs):
 #     for vector in xi:
 #         assert(isinstance(vector, QArray))
 #         assert(vector.normalisation_factor == vector[0].normalisation_factor)
-#         assert(vector.SI_conversion == vector[0].SI_conversion)
+#         assert(vector.convert == vector[0].convert)
 #         value_vector.append(vector.value)
     
 #     output_arrays = np.meshgrid(*value_vector, **kwargs)
 #     for output_array in output_arrays:
-#         output_array = vector[0].__class__(input_array=output_array, normalisation_factor=vector[0].normalisation_factor, SI_conversion=vector[0].SI_conversion)
+#         output_array = vector[0].__class__(input_array=output_array, normalisation_factor=vector[0].normalisation_factor, convert=vector[0].convert)
     
 #     return output_arrays

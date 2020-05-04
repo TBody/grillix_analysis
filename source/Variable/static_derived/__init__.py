@@ -9,9 +9,9 @@ class DerivedStaticVariable(Variable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def __format_value__(self, value, SI_conversion, **kwargs):
+    def __format_value__(self, value, convert, **kwargs):
         # N.b. may be overwritten by children classes
-        if SI_conversion:
+        if convert:
             return f"{value.to_compact():6.4g}"
         else:
             return f"{value:6.4g}"

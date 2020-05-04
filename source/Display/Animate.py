@@ -7,13 +7,13 @@ class Animate(Display):
     def __init__(self, nrows=1, ncols=1, **kwargs):
         super().__init__(nrows=nrows, ncols=ncols, **kwargs)
     
-    def animate_values(self, time_slice=slice(None), toroidal_slice=slice(None), poloidal_slice=slice(None), save=False, calculate_cbar_on_single_plane=True, cbar_time_step=1, run_directory=None, normalisation=None, SI_conversion=None):
+    def animate_values(self, time_slice=slice(None), toroidal_slice=slice(None), poloidal_slice=slice(None), save=False, calculate_cbar_on_single_plane=True, cbar_time_step=1, run_directory=None, normalisation=None, convert=None):
         
         tau_values = np.atleast_1d(run_directory.snaps[0]['tau'])
         snaps_to_animate = np.arange(tau_values.size)[time_slice]
         print(f"Will animate the following snap range: {snaps_to_animate[0]} to {snaps_to_animate[-1]}")
 
-        self.time_in_title_args = {"normalisation": normalisation, "run_directory": run_directory, "SI_conversion": SI_conversion, "tau_values": tau_values}
+        self.time_in_title_args = {"normalisation": normalisation, "run_directory": run_directory, "convert": convert, "tau_values": tau_values}
 
         cbar_time_slice = slice(time_slice.start, time_slice.step, cbar_time_step)
         # Plot the first snap in the sequence
