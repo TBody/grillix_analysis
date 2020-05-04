@@ -2,8 +2,7 @@ from . import np
 from source import unit_registry, Quantity, pint, pd
 
 def setup_vector_to_matrix(self, with_check=False):
-    assert(not(self.x.convert) and not(self.y.convert))
-    tricolumn_data = np.column_stack((self.x.value, self.y.value, np.arange(start=0, stop=len(self.x), dtype=int)))
+    tricolumn_data = np.column_stack((self.x, self.y, np.arange(start=0, stop=len(self.x), dtype=int)))
     pd_dataframe = pd.DataFrame(tricolumn_data, columns=['x', 'y', 'z'])
     # Makes a 2D array of indices
     shaped_data = pd_dataframe.pivot_table(values='z', index='y', columns='x', dropna=False)
@@ -37,8 +36,7 @@ def check_vector_to_matrix(self):
     assert(self.x.shape == unstructured_data.shape)
 
     # Convert unstructured_data to shaped_data using Pandas method
-    assert(not(self.x.convert) and not(self.y.convert))
-    tricolumn_data = np.column_stack((self.x.value, self.y.value, unstructured_data))
+    tricolumn_data = np.column_stack((self.x, self.y, unstructured_data))
     pd_dataframe = pd.DataFrame(tricolumn_data, columns=['x', 'y', 'z'])
     shaped_data_1 = pd_dataframe.pivot_table(values='z', index='y', columns='x', dropna=False)
 
@@ -51,8 +49,8 @@ def check_matrix_to_vector(self):
     # Check whether x_mesh and y_mesh can be flattened to match self.x and self.y
     [x_mesh, y_mesh] = np.meshgrid(self.x_unique, self.y_unique)
 
-    assert(np.allclose(self.matrix_to_vector(x_mesh), self.x.value))
-    assert(np.allclose(self.matrix_to_vector(y_mesh), self.y.value))
+    assert(np.allclose(self.matrix_to_vector(x_mesh), self.x))
+    assert(np.allclose(self.matrix_to_vector(y_mesh), self.y))
 
 def vector_to_matrix_1D(self, unstructured_data):
     assert(self.vector_to_matrix_initialised)

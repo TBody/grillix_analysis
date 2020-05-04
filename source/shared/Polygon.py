@@ -1,6 +1,5 @@
 from source import plt, np, Dataset
 import matplotlib.path as mpltPath
-from source.shared import QArray
 
 class Polygon:
     

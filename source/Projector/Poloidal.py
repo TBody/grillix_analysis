@@ -1,7 +1,6 @@
 from source import np, mplcolors
 from . import Projector
 from .PoloidalAnnotate import PoloidalAnnotate
-from source.shared import QArray
 
 class Poloidal(Projector):
     
@@ -25,7 +24,6 @@ class Poloidal(Projector):
         # If setting time_slice, toroidal_slice, or poloidal_slice, must pass as keyword arguments
         
         z_unstructured = variable(self.time_slice, self.toroidal_slice, self.poloidal_slice)
-        assert(isinstance(z_unstructured, QArray))
         
         return self.grid.vector_to_matrix(z_unstructured)
     

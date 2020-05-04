@@ -4,7 +4,7 @@ run = Run('TCV_half/init_start')
 
 from source.Display import Plot
 
-figure = Plot(ncols=4, convert=True)
+figure = Plot(ncols=4, convert=False)
 
 from source.Projector.Poloidal import Poloidal
 from source.Variable import Density, ParallelVelocity, AlfvenSpeed, DynamicalPlasmaBeta

@@ -1,4 +1,4 @@
-from source import np
+from source import np, Quantity
 from source.Variable import Variable
 
 class DerivedDynamicVariable(Variable):
@@ -26,8 +26,10 @@ class DerivedDynamicVariable(Variable):
 
     def __format_value__(self, value):
         # N.b. may be overwritten by children classes
-        
-        return f"{value.to_compact():6.4g}"
+        if isinstance(value, Quantity):
+            return f"{value.to_compact():6.4g}"
+        else:
+            return f"{value:6.4g}"
 
 from .SoundSpeed import SoundSpeed
 from .SaturationCurrent import SaturationCurrent

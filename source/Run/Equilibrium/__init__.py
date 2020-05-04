@@ -1,6 +1,5 @@
 from source import Path, np, Dataset, Quantity
 from source.Variable import Variable
-from source.shared import Vector, VectorQArray, QArray
 
 class Equilibrium:
 
@@ -64,7 +63,7 @@ class Psi(EquilibriumVariable):
         self.normalisation_factor = Quantity(1, 'weber')
     
     def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
-        return QArray(self.equi.psi_grid_vector[poloidal_slice], self.normalisation_factor)
+        return self.equi.psi_grid_vector[poloidal_slice]
     
     def value(self, x, y):
         return self.equi.psi_func(x, y)
@@ -84,10 +83,10 @@ class Rho(EquilibriumVariable):
         # Make values which would give rho < 0 return rho = 0
         psi[np.where(psi > self.equi.psiO)] = self.equi.psiO
         
-        return QArray(np.sqrt((psi - self.equi.psiO)/(self.equi.psiX - self.equi.psiO)), self.normalisation_factor)
+        return np.sqrt((psi - self.equi.psiO)/(self.equi.psiX - self.equi.psiO))
     
     def value(self, x, y):
-        return self.equi.psi_func.value(x,y)
+        return self.equi.psi_func(x,y)
 
 class MagneticFieldX(EquilibriumVariable):
 
@@ -99,10 +98,10 @@ class MagneticFieldX(EquilibriumVariable):
         self.normalisation_factor = self.normalisation.B0
     
     def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
-        return QArray(self.equi.Bx_grid_vector[poloidal_slice], self.normalisation_factor)
+        return self.equi.Bx_grid_vector[poloidal_slice]
     
     def value(self, x, y):
-        return self.equi.Bx_func.value(x,y)
+        return self.equi.Bx_func(x,y)
 
 class MagneticFieldY(EquilibriumVariable):
 
@@ -114,10 +113,10 @@ class MagneticFieldY(EquilibriumVariable):
         self.normalisation_factor = self.normalisation.B0
     
     def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
-        return QArray(self.equi.By_grid_vector[poloidal_slice], self.normalisation_factor)
+        return self.equi.By_grid_vector[poloidal_slice]
     
     def value(self, x, y):
-        return self.equi.By_func.value(x,y)
+        return self.equi.By_func(x,y)
 
 class MagneticFieldTor(EquilibriumVariable):
 
@@ -129,10 +128,10 @@ class MagneticFieldTor(EquilibriumVariable):
         self.normalisation_factor = self.normalisation.B0
     
     def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
-        return QArray(self.equi.Btor_grid_vector[poloidal_slice], self.normalisation_factor)
+        return self.equi.Btor_grid_vector[poloidal_slice]
     
     def value(self, x, y):
-        return self.equi.Btor_func.value(x,y)
+        return self.equi.Btor_func(x,y)
 
 class MagneticFieldPol(EquilibriumVariable):
 
@@ -146,7 +145,7 @@ class MagneticFieldPol(EquilibriumVariable):
     def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
         
         values = np.sqrt(self.equi.Bx_grid_vector[poloidal_slice]**2 + self.equi.By_grid_vector[poloidal_slice]**2)
-        return QArray(values, self.normalisation_factor)
+        return values
     
     def value(self, x, y):
         return np.sqrt(self.equi.Bx_func(x,y)**2 + self.equi.By_func(x,y)**2)
@@ -163,7 +162,7 @@ class MagneticFieldAbs(EquilibriumVariable):
     def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
         
         values = np.sqrt(self.equi.Bx_grid_vector[poloidal_slice]**2 + self.equi.By_grid_vector[poloidal_slice]**2 + self.equi.Btor_grid_vector[poloidal_slice]**2)
-        return QArray(values, self.normalisation_factor)
+        return values
     
     def value(self, x, y):
         return np.sqrt(self.equi.Bx_func(x,y)**2 + self.equi.By_func(x,y)**2 + self.equi.Btor_func(x,y)**2)
@@ -190,7 +189,7 @@ class PoloidalUnitVector(EquilibriumVariable):
         By = self.equi.By_grid_vector[poloidal_slice]
         Bpol = np.sqrt(Bx**2 + By**2)
 
-        values = VectorQArray(R = Bx/Bpol, Z = By/Bpol, phi = 0, normalisation_factor=self.normalisation_factor)
+        values = VectorArray(R = Bx/Bpol, Z = By/Bpol, phi = 0)
         return values
     
     def value(self, x, y):
@@ -213,7 +212,7 @@ class RadialUnitVector(EquilibriumVariable):
         By = self.equi.By_grid_vector[poloidal_slice]
         Bpol = np.sqrt(Bx**2 + By**2)
 
-        values = VectorQArray(R = -By/Bpol, Z = Bx/Bpol, phi = 0, normalisation_factor=self.normalisation_factor)
+        values = VectorArray(R = -By/Bpol, Z = Bx/Bpol, phi = 0)
         return values
     
     def value(self, x, y):

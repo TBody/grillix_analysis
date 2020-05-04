@@ -1,5 +1,4 @@
 from source import Path, np, Dataset
-from source.shared import QArray
 
 class Grid:
     
@@ -12,7 +11,7 @@ class Grid:
                                     )
     
     @classmethod
-    def from_netcdf(cls, netcdf_file, major_radius):
+    def from_netcdf(cls, netcdf_file):
 
         grid_file = netcdf_file.open()
 
@@ -21,15 +20,15 @@ class Grid:
 
         grid_spacing = grid_file.hf
 
-        return cls(x=x, y=y, grid_spacing=grid_spacing, major_radius=major_radius, grid_file=grid_file)
+        return cls(x=x, y=y, grid_spacing=grid_spacing, grid_file=grid_file)
     
-    def __init__(self, x, y, grid_spacing, major_radius, grid_file=None, test_size=True):
+    def __init__(self, x, y, grid_spacing, grid_file=None, test_size=True):
         self.vector_to_matrix_initialised = False
         
-        self.x = QArray(x, major_radius)
-        self.y = QArray(y, major_radius)
+        self.x = x
+        self.y = y
         
-        self.grid_spacing = QArray(grid_spacing, major_radius)
+        self.grid_spacing = grid_spacing
 
         self.x_unique = np.unique(self.x)
         self.y_unique = np.unique(self.y)
@@ -45,12 +44,10 @@ class Grid:
     
     def __add__(self, other):
 
-        print(type(self.x))
         new_x = np.append(self.x, other.x)
         new_y = np.append(self.y, other.y)
-        print(type(new_x))
 
-        return Grid(x=new_x, y=new_y, grid_spacing=self.grid_spacing, major_radius=new_x.norm)
+        return Grid(x=new_x, y=new_y, grid_spacing=self.grid_spacing)
     
     def find_nearest_index(self, x, y, print_error=False):
 

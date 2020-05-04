@@ -5,7 +5,6 @@ from source.Projector import Projector
 from source.Variable import Variable
 from source.Operator import Operator
 
-from source.shared import QArray
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 class Subplot():
@@ -58,10 +57,7 @@ class Subplot():
         # Can supply slices as keyword arguments. Must match the projector slice names
 
         z = self.projector(self.variable, **kwargs)
-        assert(isinstance(z, QArray))
 
-        z.set_convert(self.convert)
-        
         for operator in self.operators:
             z = operator(z)
         

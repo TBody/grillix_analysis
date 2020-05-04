@@ -1,6 +1,5 @@
 from source import np
 from source.Variable import Variable
-from source.shared import QArray
 import re as regex
 
 class DiagnosticScalarVariable(Variable):
@@ -19,7 +18,7 @@ class DiagnosticScalarVariable(Variable):
         
         z = self.diagnostic_netcdf['diags'][time_slice, self.index_in_netcdf-1]
         
-        return QArray(z, self.normalisation_factor)
+        return z
 
 class Time(DiagnosticScalarVariable):
 

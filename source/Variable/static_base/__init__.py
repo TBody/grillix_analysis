@@ -1,6 +1,5 @@
 from source import np
 from source.Variable import Variable
-from source.shared import QArray
 
 class StaticVariable(Variable):
     # Any variable defined in terms of variables written to a metadata file ()
@@ -20,7 +19,7 @@ class StaticVariable(Variable):
         
         values = self.netcdf_file[self.name_in_netcdf]
         
-        return QArray.init_poloidal(values, self.normalisation_factor)
+        return np.atleast_3d(values).reshape((1,1,-1))
 
 # From equilibrium storage
 from .District               import District

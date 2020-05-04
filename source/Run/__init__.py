@@ -20,7 +20,7 @@ class Run:
         self.normalisation = Normalisation(self.directory.normalisation_file, with_print=False)
 
         # Build a combined vgrid + perpghost grid
-        self.grid = CombinedGrid(self.directory.main_grid_file, self.directory.perp_grid_file, self.normalisation.R0)
+        self.grid = CombinedGrid(self.directory.main_grid_file, self.directory.perp_grid_file)
         self.grid.setup_vector_to_matrix(with_check=True)
 
         if self.equi_type == "NUMERICAL":

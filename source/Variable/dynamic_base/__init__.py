@@ -1,6 +1,5 @@
-from source import np
+from source import np, Quantity
 from source.Variable import Variable
-from source.shared import QArray
 
 class BaseVariable(Variable):
     # Any variable defined in terms of variables written into the snaps (or
@@ -70,12 +69,14 @@ class BaseVariable(Variable):
         if self.log_in_netcdf:
             values = np.exp(values)
 
-        return QArray(values, self.normalisation_factor)
+        return values
     
     def __format_value__(self, value):
         # N.b. may be overwritten by children classes
-        
-        return f"{value.to_compact():6.4g}"
+        if isinstance(value, Quantity):
+            return f"{value.to_compact():6.4g}"
+        else:
+            return f"{value:6.4g}"
 
 from .Density                 import Density
 from .ElectronTemperature     import ElectronTemperature

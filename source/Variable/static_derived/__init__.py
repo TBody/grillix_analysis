@@ -1,4 +1,4 @@
-from source import np
+from source import np, Quantity
 from source.Variable import Variable
 
 class DerivedStaticVariable(Variable):
@@ -9,9 +9,9 @@ class DerivedStaticVariable(Variable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def __format_value__(self, value, convert, **kwargs):
+    def __format_value__(self, value):
         # N.b. may be overwritten by children classes
-        if convert:
+        if isinstance(value, Quantity):
             return f"{value.to_compact():6.4g}"
         else:
             return f"{value:6.4g}"

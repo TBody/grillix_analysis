@@ -1,5 +1,4 @@
 from source import Quantity
-from source.shared import QArray
 
 class Variable():
     # Generic variable container
@@ -31,7 +30,7 @@ class Variable():
     def __call__(self, time_slice=slice(None), toroidal_slice=slice(None), poloidal_slice=slice(None)):
         # Generic __call__ signature. Generally overwritten by subclasses, otherwise accesses a
         # attribute z which must be a 3D array z(t,phi,l)
-        return QArray(self.z[time_slice, toroidal_slice, poloidal_slice], self.normalisation_factor)
+        return self.z[time_slice, toroidal_slice, poloidal_slice]
 
 from .dynamic_base import (
     Density,
