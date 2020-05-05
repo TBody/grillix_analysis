@@ -32,11 +32,9 @@ class PenalisationVariable(StaticVariable):
         self.netcdf_file = getattr(self.run.directory, self.netcdf_filename)
         self.pad_to_grid = PadToGrid(run=self.run)
     
-    def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+    def call_finalize(self, values):
         
-        values = self.netcdf_file[self.name_in_netcdf]
-        
-        return self.pad_to_grid(np.atleast_3d(values).reshape((1,1,-1)))
+        return self.pad_to_grid(values)
 
 # From equilibrium storage
 from .District               import District

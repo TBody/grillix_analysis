@@ -62,9 +62,12 @@ def vector_to_matrix_1D(self, unstructured_data):
         nan_vector = Quantity(self.nan_vector, unstructured_data.units)
         return (unstructured_data[self.sort_indices] + nan_vector).reshape((self.y_unique.size, self.x_unique.size))
 
-def vector_to_matrix(self, unstructured_data, shift=0):
+def vector_to_matrix(self, unstructured_data):
     # Applies vector_to_matrix over the last dimension of an arbitrary dimension array
     # Use shift=1 for vector arrays
+    is_vector = getattr(unstructured_data, "is_vector", False)
+    shift = 1 if is_vector else 0
+
     return np.apply_along_axis(self.vector_to_matrix_1D, axis=(-1-shift), arr=unstructured_data)
 
 def matrix_to_vector(self, structured_data):

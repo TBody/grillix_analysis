@@ -90,30 +90,31 @@ class Subplot():
     def find_z_values(self, **kwargs):
         # Can supply slices as keyword arguments. Must match the projector slice names
 
-        z = self.projector(self.variable, **kwargs)
-        
+        result = self.projector(self.variable, **kwargs)
         for operator in self.operators:
-            z = operator(z)
+            result = operator(result)
         
-        z = self.projector.structure_z(z)
+        result = self.projector.structure_z(result)
 
-        return np.squeeze(z)
+        result = np.squeeze(result)
+
+        return result
 
     def __call__(self, update=False, **kwargs):
 
-        self.z = self.find_z_values(**kwargs)
-        
+        self.result = self.find_z_values(**kwargs)
+
         if not update:
             # First plot
             if self.variable.numerical_variable:
 
                 if self.cmap == None or self.cmap_norm == None:
-                    self.find_colormap_limits_from_z(self.z)
+                    self.find_colormap_limits_from_z(self.result)
                 
-                self.plot = self.ax.pcolormesh(self.projector.x, self.projector.y, self.z, cmap=self.cmap, norm=self.cmap_norm)
+                self.plot = self.ax.pcolormesh(self.projector.x, self.projector.y, self.result.z, cmap=self.cmap, norm=self.cmap_norm)
 
             else:
-                self.plot = self.ax.pcolormesh(self.projector.x, self.projector.y, self.z)
+                self.plot = self.ax.pcolormesh(self.projector.x, self.projector.y, self.result.z)
             
             # create an axes on the right side of ax. The width of cax will be 5%
             # of ax and the padding between cax and ax will be fixed at 0.05 inch.
@@ -133,7 +134,7 @@ class Subplot():
             (y > self.projector.y.min()) & (y <= self.projector.y.max())):
             row = np.searchsorted(self.projector.x, x)-1
             col = np.searchsorted(self.projector.y, y)-1
-            z = self.z[col, row]
+            z = self.result[col, row]
             
             # See if the field defines a custom formatter for z values. If not, just print the value
             format_value = getattr(self.variable, "__format_value__", None)

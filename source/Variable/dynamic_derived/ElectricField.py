@@ -1,5 +1,5 @@
 from source import np, unit_registry
-from source.shared import vector_like
+from source.Variable import VectorResult
 from source.Variable.dynamic_derived import DerivedDynamicVariable
 from source.Variable.dynamic_base import ScalarPotential
 
@@ -7,6 +7,7 @@ class ElectricField(DerivedDynamicVariable):
     
     def __init__(self, **kwargs):
         self.title = "Electric field"
+        self.vector_variable = True
         self.scalar_potential = ScalarPotential(**kwargs)
         
         super().__init__(**kwargs)
@@ -33,7 +34,7 @@ class ElectricField(DerivedDynamicVariable):
         electric_field_R = -np.gradient(shaped_values, grid_spacing, axis=-1) * (delta **-1)
         electric_field_Z = -np.gradient(shaped_values, grid_spacing, axis=-2) * (delta **-1)
 
-        return vector_like(scalar_potential.shape, R_array=self.run.grid.matrix_to_vector(electric_field_R), Z_array=self.run.grid.matrix_to_vector(electric_field_Z))
+        return VectorResult.poloidal_vector_from_subarrays(R_array=self.run.grid.matrix_to_vector(electric_field_R), Z_array=self.run.grid.matrix_to_vector(electric_field_Z))
 
 
 

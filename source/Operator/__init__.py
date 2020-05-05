@@ -6,8 +6,13 @@ class Operator:
     
     from source.shared.properties import (update_run_values, update_normalisation_factor, run, convert)
     
-    def __call__(self, z):
+    def values(self, z):
         return NotImplemented
+
+    def __call__(self, z):
+        assert(z.check_dimensions())
+        
+        return self.values(z)
     
     def find_neighbouring_plane(self, z, reverse=False):
        

@@ -1,5 +1,6 @@
 from source.Operator import Operator
 from source import np
+from source.Variable import VectorResult
 
 class PadToGrid(Operator):
     
@@ -10,14 +11,16 @@ class PadToGrid(Operator):
     def update_run_values(self):
         self.grid = self.run.grid
     
-    def __call__(self, z):
-        # Assumes keepdims has been used on each previous operation
-        assert(z.ndim==3)
+    def values(self, z):
         
         # Pads the last dimension (points) to be the same length as grid
-        if z.shape[-1] != self.grid.size:
-            z = np.pad(z, 
-                      ((0,0), (0,0), (0, self.grid.size-z.shape[-1])), constant_values=self.constant_val, mode='constant'
-                )
+        if z.shape[2] != self.grid.size:
+
+            if isinstance(z, VectorResult):
+                pad_width = ((0,0), (0,0), (0, self.grid.size-z.shape[-1]), (0, 0))
+            else:
+                pad_width = ((0,0), (0,0), (0, self.grid.size-z.shape[-1]))
+            
+            z = np.pad(z, pad_width=pad_width, constant_values=self.constant_val, mode='constant')
         
         return z

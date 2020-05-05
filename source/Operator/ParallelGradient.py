@@ -44,10 +44,8 @@ class ParallelGradient(Operator):
         # # Distance to k-1
         # L_full_backward = self.map_metadata['map_metadata'][4,:]
     
-    def __call__(self, z):
-        # Assumes keepdims has been used on each previous operation
+    def values(self, z):
         
-        assert(z.ndim==3)
         # Assert that all planes have been given
         assert(z.shape[1] == self.npol)
         # Assert that the number of points matches the size of the csr matrices (which must be square)

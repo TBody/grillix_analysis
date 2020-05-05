@@ -9,8 +9,6 @@ class TimeReduction(Operator):
         # reduction must have axis and keepdims as possible keyword arguments.
         # Most of the functions at https://docs.scipy.org/doc/numpy/reference/routines.statistics.html are valid
     
-    def __call__(self, z):
-        # Assumes keepdims has been used on each previous operation
-        assert(z.ndim==3)
+    def values(self, z):
         
         return self.reduction(z, axis=0, keepdims=True)
