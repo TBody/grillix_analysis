@@ -1,4 +1,5 @@
 from source import np, perceptually_uniform_cmap, diverging_cmap, mplcolors, Quantity
+from source.shared import UserEnvironment
 
 from source.Run import Run
 from source.Projector import Projector
@@ -100,6 +101,29 @@ class Subplot():
         
         return result
 
+    def make_vector_plot(self):
+        # Sub-samples the vector variable, since otherwise the vector size goes to zero
+        
+        usrenv = UserEnvironment()
+
+        max_vector_points = usrenv.max_vector_points_per_dim
+        vector_scale_factor = usrenv.vector_scale_factor
+
+        x_samples = np.unique(np.floor(np.linspace(0, 1, num=max_vector_points)*(self.projector.x.size-1))).astype(int)
+        y_samples = np.unique(np.floor(np.linspace(0, 1, num=max_vector_points)*(self.projector.y.size-1))).astype(int)
+
+        vector_magnitude = self.result.vector_magnitude[y_samples,:][:, x_samples]
+        vector_scale_factor = max_vector_points*np.nanmean(vector_magnitude.magnitude)/vector_scale_factor
+
+        self.plot = self.ax.quiver(self.projector.x[x_samples],
+                                   self.projector.y[y_samples],
+                                   self.result.R[y_samples,:][:, x_samples],
+                                   self.result.Z[y_samples,:][:, x_samples], 
+                                   vector_magnitude,
+                                   cmap=self.cmap, norm=self.cmap_norm,
+                                   pivot='mid', angles='xy', linewidth=1,
+                                   scale=vector_scale_factor, scale_units='xy')
+
     def __call__(self, update=False, **kwargs):
 
         self.result = self.find_z_values(**kwargs)
@@ -112,11 +136,7 @@ class Subplot():
                     self.find_colormap_limits_from_z(self.result)
                 
                 if self.result.is_vector:
-                    self.plot = self.ax.quiver(self.projector.x, self.projector.y,
-                                               self.result.R, self.result.Z, 
-                                               self.result.vector_magnitude,
-                                               cmap=self.cmap, norm=self.cmap_norm,
-                                               pivot='mid', angles='xy', linewidth=1)
+                    self.make_vector_plot()
                 else:
                     self.plot = self.ax.pcolormesh(self.projector.x, self.projector.y, self.result.z, cmap=self.cmap, norm=self.cmap_norm)
 

@@ -17,10 +17,13 @@ class StaticVariable(Variable):
         self.netcdf_file = getattr(self.run.directory, self.netcdf_filename)
     
     def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+        return self.netcdf_file[self.name_in_netcdf]
         
-        values = self.netcdf_file[self.name_in_netcdf]
-        
-        return np.atleast_3d(values).reshape((1,1,-1))
+    def values_finalize(self, values):
+        if self.vector_variable:
+            return np.atleast_3d(values).reshape((1,1,-1,3))
+        else:
+            return np.atleast_3d(values).reshape((1,1,-1))
 
 class PenalisationVariable(StaticVariable):
     # Variables written to penalisation metadata. Automatically padded to fill full_grid

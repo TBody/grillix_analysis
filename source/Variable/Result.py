@@ -2,6 +2,14 @@ from source import np, Quantity
 from numbers import Number
 import numpy.lib.mixins
 
+HANDLED_FUNCTIONS = {}
+def implements(np_function):
+    "Register an __array_function__ implementation for DiagonalArray objects."
+    def decorator(func):
+        HANDLED_FUNCTIONS[np_function] = func
+        return func
+    return decorator
+
 class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
 
     from source.shared.properties import (update_run_values, update_normalisation_factor, run, convert)
@@ -31,6 +39,13 @@ class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
     def check_dimensions(self):
         return (self.values.ndim == 3)
     
+    def __getitem__(self, index):
+        # Allows natural subscripting (i.e. Result[x, y])
+        return self.values[index]
+    
+    def __setitem__(self, index, value):
+        self.values[index] = value
+
     @property
     def is_vector(self):
         return getattr(self, "_vector", False)
@@ -44,10 +59,6 @@ class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
             return self.values
         else:
             raise NotImplementedError()
-    
-    def __getitem__(self, key):
-        # Allows natural subscripting (i.e. Result[x, y])
-        return self.values[key]
     
     def single_type_argument(self, args):
         # Check whether special handling is required for the __array_function__
@@ -84,7 +95,9 @@ class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
 
     def __array_ufunc__(self, ufunc, method, *args, **kwargs):
 
-        if self.single_type_argument(args):
+        if ufunc in HANDLED_FUNCTIONS:
+            return HANDLED_FUNCTIONS[ufunc](*args, **kwargs)
+        elif self.single_type_argument(args):
             args = self.downcast_args_to_values(args)
 
             output = self.values.__array_ufunc__(ufunc, method, *args, **kwargs)
@@ -93,17 +106,20 @@ class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
                 if (output is NotImplemented) and hasattr(arg, "__array_ufunc__"):
                     output = arg.__array_ufunc__(ufunc, method, *args, **kwargs)
             
+            output = self.rewrap_output(output)
             if output is NotImplemented:
                 print(f"__array_ufunc__ called with \n\tself={self}, \n\tufunc={ufunc}, \n\tmethod={method}, \n\targs={args}, \n\tkwargs={kwargs}, \n\toutput={output}\n")
                 raise NotImplementedError()
 
-            return self.rewrap_output(output)
+            return output
         else:
             raise NotImplementedError()
 
     def __array_function__(self, func, types, args, kwargs):
 
-        if self.single_type_argument(args):
+        if func in HANDLED_FUNCTIONS:
+            return HANDLED_FUNCTIONS[func](*args, **kwargs)
+        elif self.single_type_argument(args):
             args, types = self.downcast_args_to_values(args, types)
 
             output = self.values.__array_function__(func, types, args, kwargs)
@@ -112,11 +128,12 @@ class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
                 if (output is NotImplemented) and hasattr(arg, "__array_function__"):
                     output = arg.__array_function__(func, types, args, kwargs)
 
+            output = self.rewrap_output(output)
             if output is NotImplemented:
                 print(f"__array_function__ called with \n\tself={self}, \n\tfunc={func}, \n\ttypes={types}, \n\targs={args}, \n\tkwargs={kwargs}, \n\toutput={output}")
                 raise NotImplementedError()
         
-            return self.rewrap_output(output)
+            return output
         else:
             raise NotImplementedError()
     
@@ -126,8 +143,11 @@ class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
         elif (isinstance(output, np.ndarray) or isinstance(output, Quantity)):
             return self.__class__(values=output, source_variable=self.variable, run=self.run)
         else:
-            raise NotImplementedError(f"No implementation for wrapping output of type {type(output)}")
-
+            import ipdb
+            ipdb.set_trace()
+            print(f"No implementation for wrapping output of type {type(output)}")
+            return NotImplemented
+    
 class VectorResult(Result):
 
     @classmethod

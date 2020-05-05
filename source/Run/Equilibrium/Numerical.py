@@ -1,5 +1,5 @@
 from . import Equilibrium
-from source import np
+from source import np, Quantity
 from scipy.interpolate import RectBivariateSpline
 
 class NumericalEquilibrium(Equilibrium):
@@ -16,10 +16,10 @@ class NumericalEquilibrium(Equilibrium):
         super().__init__(run)
 
     # Define continuous functions
-    def psi_func(x, y):
+    def psi_func(self, x, y):
         return self.spline_psi(x=x, y=y, grid=False)
     
-    def Bx_func(x, y):
+    def Bx_func(self, x, y):
             #Evaluate the poloidal flux, taking the 0th x derivative and the 1st y derivative
             psi_dZ = self.spline_psi(x=x, y=y, dx=0, dy=1, grid=False)
             
@@ -27,7 +27,7 @@ class NumericalEquilibrium(Equilibrium):
             # and the second comes from using normalised x', y' for the axis
             return -psi_dZ / (2 * np.pi * x * self.R0 * self.R0 * self.axis_Btor)
     
-    def By_func(x, y):
+    def By_func(self, x, y):
         #Evaluate the poloidal flux, taking the 0th x derivative and the 1st y derivative
         psi_dR = self.spline_psi(x=x, y=y, dx=1, dy=0, grid=False)
         
@@ -35,17 +35,19 @@ class NumericalEquilibrium(Equilibrium):
         # and the second comes from using normalised x', y' for the axis
         return psi_dR / (2 * np.pi * x * self.R0 * self.R0 * self.axis_Btor)
     
-    def Btor_func(x, y):
-        return 1/grid.x
+    def Btor_func(self, x, y):
+        return 1/x
 
     # Precompute grid values (same implementation, but uses grid=True to speed up computation)
     def read_magnetic_geometry(self, grid):
 
+        # Keep dimensionless -- useful for returning normalised base values
         self.R0 = self.netcdf['Magnetic_geometry'].magnetic_axis_R
         self.axis_Btor = np.abs(self.netcdf['Magnetic_geometry'].axis_Btor)
 
-        self.psiO = self.netcdf['Psi_limits'].psi_axis
-        self.psiX = self.netcdf['Psi_limits'].psi_seperatrix
+        # Convert to Weber
+        self.psiO = Quantity(self.netcdf['Psi_limits'].psi_axis, 'Wb')
+        self.psiX = Quantity(self.netcdf['Psi_limits'].psi_seperatrix, 'Wb')
 
         self.spline_R = np.array(self.netcdf['Magnetic_geometry']['R'])
         self.spline_Z = np.array(self.netcdf['Magnetic_geometry']['Z'])

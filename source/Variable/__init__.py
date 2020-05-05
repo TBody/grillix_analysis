@@ -33,7 +33,8 @@ class Variable():
         # Read in the values, and apply the appropriate normalisation factor
         
         values = self.values(time_slice=time_slice, toroidal_slice=toroidal_slice, poloidal_slice=poloidal_slice)
-        
+        values = self.values_finalize(values)
+
         if self.convert:
             values *= self.normalisation_factor
         
@@ -52,6 +53,11 @@ class Variable():
         else:
             return f"{value:6.4g}"
 
+    def values_finalize(self, value):
+        # Optional function to call before the "Result" is been constructed
+        # Usually a reshape such as np.atleast_3d(values).reshape((1,1,-1))
+        return value
+    
     def call_finalize(self, value):
         # Optional function to call before returning values, after the "Result" has been constructed
         return value
@@ -98,3 +104,17 @@ from .dynamic_derived.SaturationCurrent import SaturationCurrent
 dynamic_derived_variables = [SoundSpeed, SaturationCurrent, FloatingPotential, AlfvenSpeed, DynamicalPlasmaBeta, ElectricField]
 
 electric_field_variables = [ScalarPotential, ElectricField]
+
+from .equilibrium import (
+    Psi,
+    Rho,
+    MagneticFieldX,
+    MagneticFieldY,
+    MagneticFieldTor,
+    MagneticField,
+    MagneticFieldAbs,
+    MagneticFieldPol,
+    PoloidalUnitVector,
+    RadialUnitVector
+)
+magnetic_field_variables = [Psi, Rho, MagneticFieldPol, MagneticFieldTor, MagneticFieldAbs, PoloidalUnitVector, RadialUnitVector]

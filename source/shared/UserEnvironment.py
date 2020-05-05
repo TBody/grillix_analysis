@@ -15,10 +15,18 @@ class UserEnvironment:
         self.screen_dimension_y = 1200
         self.default_figure_size_x = 1920
         self.default_figure_size_y = 1200
-        self.default_figure_resolution = 100
+
+        self.default_figure_resolution = 100 #in dpi -- affects scaling of 'px' valued objects such as text
+        
+        # Animation variables
         self.animation_framerate = 15
         self.animation_bitrate = 1800
         self.animation_format = "avi"
+
+        # Variables for quiver (vector) plots
+        self.max_vector_points_per_dim = 100
+        # How much to increase/decrease the (autoscaled) vector scale factor
+        self.vector_scale_factor = 1
 
         assert(user_environment_json.exists()), f"user_environment.json not found at {user_environment_json}"
         
