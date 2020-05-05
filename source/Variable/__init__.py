@@ -46,6 +46,7 @@ class Variable():
     
     def __format_value__(self, value):
         # N.b. may be overwritten by children classes
+        
         if isinstance(value, Quantity):
             return f"{value.to_compact():6.4g}"
         else:

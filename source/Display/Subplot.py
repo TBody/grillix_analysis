@@ -97,7 +97,7 @@ class Subplot():
         result = self.projector.structure_z(result)
 
         result = np.squeeze(result)
-
+        
         return result
 
     def __call__(self, update=False, **kwargs):
@@ -111,7 +111,14 @@ class Subplot():
                 if self.cmap == None or self.cmap_norm == None:
                     self.find_colormap_limits_from_z(self.result)
                 
-                self.plot = self.ax.pcolormesh(self.projector.x, self.projector.y, self.result.z, cmap=self.cmap, norm=self.cmap_norm)
+                if self.result.is_vector:
+                    self.plot = self.ax.quiver(self.projector.x, self.projector.y,
+                                               self.result.R, self.result.Z, 
+                                               self.result.vector_magnitude,
+                                               cmap=self.cmap, norm=self.cmap_norm,
+                                               pivot='mid', angles='xy', linewidth=1)
+                else:
+                    self.plot = self.ax.pcolormesh(self.projector.x, self.projector.y, self.result.z, cmap=self.cmap, norm=self.cmap_norm)
 
             else:
                 self.plot = self.ax.pcolormesh(self.projector.x, self.projector.y, self.result.z)
@@ -168,7 +175,9 @@ class Subplot():
         # For use with
         #   colors.SymLogNorm(linthresh=linthres, linscale=linscale, vmin=vmin, vmax=vmax, base=10) for vmin <= 0
         #   norm=colors.LogNorm(vmin=vmin, vmax=vmax) for vmin > 0
-        
+        if z.is_vector:
+            z = z.vector_magnitude
+
         assert(len(quantiles)==2)
         [self.vmin, self.vmax] = self.find_quantile_limits_from_z(z, quantiles)
         

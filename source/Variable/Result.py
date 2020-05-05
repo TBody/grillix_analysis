@@ -1,7 +1,8 @@
 from source import np, Quantity
 from numbers import Number
+import numpy.lib.mixins
 
-class Result():
+class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
 
     from source.shared.properties import (update_run_values, update_normalisation_factor, run, convert)
 
@@ -15,7 +16,10 @@ class Result():
         self.run = run
 
     def __str__(self):
-        return f"{self.__class__.__name__} {self.values}"
+        return f"{self.__class__.__name__} (shape {self.values.shape})"
+    
+    def __repr__(self):
+        return f"{self.__class__.__name__} (shape {self.values.shape}): {self.values}"
 
     def __getattr__(self, key):
         # If an attribute is requested that returns an AttributeError, try query the values instead
@@ -44,16 +48,6 @@ class Result():
     def __getitem__(self, key):
         # Allows natural subscripting (i.e. Result[x, y])
         return self.values[key]
-    
-    def __array_ufunc__(self, ufunc, method, *args, **kwargs):
-        
-        if self.single_type_argument(args):
-            args = self.downcast_args_to_values(args)
-            output = self.values.__array_ufunc__(ufunc, method, *args, **kwargs)
-            # print(f"__array_ufunc__ called with \n\tself={self}, \n\tufunc={ufunc}, \n\tmethod={method}, \n\targs={args}, \n\tkwargs={kwargs}, \n\toutput={output}\n")
-            return self.rewrap_output(output)
-        else:
-            raise NotImplementedError()
     
     def single_type_argument(self, args):
         # Check whether special handling is required for the __array_function__
@@ -88,12 +82,40 @@ class Result():
         else:
             return tuple(new_args)
 
+    def __array_ufunc__(self, ufunc, method, *args, **kwargs):
+
+        if self.single_type_argument(args):
+            args = self.downcast_args_to_values(args)
+
+            output = self.values.__array_ufunc__(ufunc, method, *args, **kwargs)
+
+            for arg in args:
+                if (output is NotImplemented) and hasattr(arg, "__array_ufunc__"):
+                    output = arg.__array_ufunc__(ufunc, method, *args, **kwargs)
+            
+            if output is NotImplemented:
+                print(f"__array_ufunc__ called with \n\tself={self}, \n\tufunc={ufunc}, \n\tmethod={method}, \n\targs={args}, \n\tkwargs={kwargs}, \n\toutput={output}\n")
+                raise NotImplementedError()
+
+            return self.rewrap_output(output)
+        else:
+            raise NotImplementedError()
+
     def __array_function__(self, func, types, args, kwargs):
 
         if self.single_type_argument(args):
             args, types = self.downcast_args_to_values(args, types)
+
             output = self.values.__array_function__(func, types, args, kwargs)
-            # print(f"__array_function__ called with \n\tself={self}, \n\tfunc={func}, \n\ttypes={types}, \n\targs={args}, \n\tkwargs={kwargs}, \n\toutput={output}")
+
+            for arg in args:
+                if (output is NotImplemented) and hasattr(arg, "__array_function__"):
+                    output = arg.__array_function__(func, types, args, kwargs)
+
+            if output is NotImplemented:
+                print(f"__array_function__ called with \n\tself={self}, \n\tfunc={func}, \n\ttypes={types}, \n\targs={args}, \n\tkwargs={kwargs}, \n\toutput={output}")
+                raise NotImplementedError()
+        
             return self.rewrap_output(output)
         else:
             raise NotImplementedError()
@@ -112,13 +134,13 @@ class VectorResult(Result):
     def poloidal_init_from_subarrays(cls, R_array, Z_array, source_variable, run=None):
         vector_array = cls.poloidal_vector_from_subarrays(R_array=R_array, Z_array=Z_array)
         
-        return cls(vector_array=vector_array, source_variable=source_variable, run=run)
+        return cls(values=vector_array, source_variable=source_variable, run=run)
     
     @classmethod
     def init_from_subarrays(cls, R_array, phi_array, Z_array, source_variable, run=None):
         vector_array = cls.vector_from_subarrays(R_array=R_array, Z_array=Z_array, phi_array=phi_array)
         
-        return cls(vector_array=vector_array, source_variable=source_variable, run=run)
+        return cls(values=vector_array, source_variable=source_variable, run=run)
 
     @classmethod
     def poloidal_vector_from_subarrays(cls, R_array, Z_array):
@@ -169,3 +191,20 @@ class VectorResult(Result):
         
         self._vector = True
         super().__init__(values=values, source_variable=source_variable, run=run, check_shape=check_shape)
+    
+    @property
+    def vector_magnitude(self):
+        return np.linalg.norm(self, axis=-1)
+    
+    @property
+    def R(self):
+        return self.values[...,0]
+    
+    @property
+    def phi(self):
+        return self.values[...,1]
+
+    @property
+    def Z(self):
+        return self.values[...,2]
+    

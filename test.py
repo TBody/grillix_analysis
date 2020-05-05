@@ -4,10 +4,10 @@ run = Run('TCV_half/init_start')
 
 from source.Display import Plot
 
-figure = Plot(ncols=4, nrows=2, convert=False)
+figure = Plot(ncols=4, nrows=2, convert=True)
 
 from source.Projector.Poloidal import Poloidal
-from source.Variable import dynamic_base_variables as variables
+from source.Variable import electric_field_variables as variables
 from source.Operator import TimeReduction, ToroidalReduction
 
 projector = Poloidal
