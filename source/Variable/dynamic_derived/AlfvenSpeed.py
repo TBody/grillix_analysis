@@ -1,4 +1,5 @@
-from source.Variable.dynamic_derived import DerivedDynamicVariable, np
+from source import np, unit_registry
+from source.Variable.dynamic_derived import DerivedDynamicVariable
 from source.Variable.dynamic_base import Density
 
 class AlfvenSpeed(DerivedDynamicVariable):
@@ -19,4 +20,9 @@ class AlfvenSpeed(DerivedDynamicVariable):
         self.magnetic_field_strength = self.run.equilibrium.Babs
 
     def values(self, **kwargs):
-        return self.magnetic_field_strength.values(**kwargs)/np.sqrt(self.density.values(**kwargs))
+        return self.calculate_values(self.magnetic_field_strength.values(**kwargs), self.density.values(**kwargs))
+    
+    @staticmethod
+    @unit_registry.wraps(None, (None, None))
+    def calculate_values(magnetic_field_strength, density):
+        return magnetic_field_strength/np.sqrt(density)

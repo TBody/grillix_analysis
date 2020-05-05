@@ -1,6 +1,7 @@
 class Annotate:
 
     def __init__(self, run=None):
+        self.initialised = False
         self.run = run
     
     from source.shared.properties import (update_normalisation_factor, run, convert)

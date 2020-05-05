@@ -80,6 +80,14 @@ class Grid:
     def ymax(self):
         return self._ymax * self.R0 if self.convert else self._ymax
     
+    @property
+    def grid_spacing(self):
+        return self._grid_spacing * self.R0 if self.convert else self._grid_spacing
+    
+    @property
+    def grid_spacing_normalised(self):
+        return self._grid_spacing
+    
     def __add__(self, other):
 
         new_x = np.append(self._x, other._x)

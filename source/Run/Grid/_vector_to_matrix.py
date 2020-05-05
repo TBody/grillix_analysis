@@ -62,13 +62,22 @@ def vector_to_matrix_1D(self, unstructured_data):
         nan_vector = Quantity(self.nan_vector, unstructured_data.units)
         return (unstructured_data[self.sort_indices] + nan_vector).reshape((self.y_unique.size, self.x_unique.size))
 
-def vector_to_matrix(self, unstructured_data):
+def vector_to_matrix(self, unstructured_data, shift=0):
     # Applies vector_to_matrix over the last dimension of an arbitrary dimension array
-    return np.apply_along_axis(self.vector_to_matrix_1D, axis=-1, arr=unstructured_data)
+    # Use shift=1 for vector arrays
+    return np.apply_along_axis(self.vector_to_matrix_1D, axis=(-1-shift), arr=unstructured_data)
 
 def matrix_to_vector(self, structured_data):
+    new_shape = tuple(list(structured_data.shape)[:-2]+[-1])
+
     assert(self.vector_to_matrix_initialised)
     # If these assertions fail, the matrix is of the wrong shape (possibly transposed, or defined for a different grid)
-    assert(structured_data.shape[1] == self.x_unique.size), f"Dimension 1 of data (shape {structured_data.shape}) did not match x dimension (length {self.x_unique.size})"
-    assert(structured_data.shape[0] == self.y_unique.size), f"Dimension 0 of data (shape {structured_data.shape}) did not match y dimension (length {self.y_unique.size})"
-    return structured_data.flatten()[np.logical_not(np.isnan(self.nan_vector))][self.reverse_sort_indices]
+    assert(structured_data.shape[-1] == self.x_unique.size), f"Dimension -1 of data (shape {structured_data.shape}) did not match x dimension (length {self.x_unique.size})"
+    assert(structured_data.shape[-2] == self.y_unique.size), f"Dimension -2 of data (shape {structured_data.shape}) did not match y dimension (length {self.y_unique.size})"
+    
+    unstructured_data = structured_data.reshape(new_shape)
+    unstructured_data = unstructured_data [..., np.logical_not(np.isnan(self.nan_vector))]
+    unstructured_data = unstructured_data [..., self.reverse_sort_indices]
+    
+    assert(unstructured_data.shape[-1] == self.size)
+    return unstructured_data

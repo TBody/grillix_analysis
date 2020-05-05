@@ -3,7 +3,7 @@ from . import Annotate
 class PoloidalAnnotate(Annotate):
 
     def __init__(self, **kwargs):
-        self.initialised = False
+        super().__init__(**kwargs)
 
     def __call__(self, subplot, linestyle='-', linewidth=0.5):
         assert(self.initialised), f"Annotate called before supplying Run values"

@@ -16,7 +16,7 @@ class StaticVariable(Variable):
     def update_run_values(self):
         self.netcdf_file = getattr(self.run.directory, self.netcdf_filename)
     
-    def __call__(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+    def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
         
         values = self.netcdf_file[self.name_in_netcdf]
         
