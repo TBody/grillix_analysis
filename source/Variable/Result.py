@@ -2,6 +2,9 @@ from source import np, Quantity
 from numbers import Number
 import numpy.lib.mixins
 
+# See https://numpy.org/doc/stable/user/basics.dispatch.html
+# and https://numpy.org/doc/stable/user/basics.subclassing.html
+
 HANDLED_FUNCTIONS = {}
 def implements(np_function):
     "Register an __array_function__ implementation for DiagonalArray objects."
@@ -14,13 +17,12 @@ class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
 
     from source.shared.properties import (update_run_values, update_normalisation_factor, run, convert)
 
-    def __init__(self, values, source_variable, run=None, check_shape=False):
+    def __init__(self, values, run=None, check_shape=False):
         # Don't convert to np.array -- since this will strip units if passed a Quantity
         self.values = values
         if check_shape:
             assert(self.check_dimensions()), f"{self.__class__.__name__} called with shape {self.values.shape}"
 
-        self.variable = source_variable
         self.run = run
 
     def __str__(self):
@@ -71,7 +73,7 @@ class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
         else:
             return False
 
-    def downcast_args_to_values(self, args, types=[]):
+    def downcast_args_to_values(self, args, types=[], types_given=False):
         # Replace Result with values
 
         new_types = []
@@ -88,7 +90,7 @@ class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
             if not(issubclass(t, Result)):
                 new_types.append(t)
 
-        if types:
+        if types_given:
             return tuple(new_args), tuple(new_types)
         else:
             return tuple(new_args)
@@ -112,7 +114,15 @@ class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
                 raise NotImplementedError()
 
             return output
+        elif method == '__call__':
+            scalars = []
+            for arg in args:
+                assert(isinstance(arg, self.__class__))
+                assert(self.run is arg.run)
+                scalars.append(arg.values)
+            return self.__class__(ufunc(*scalars, **kwargs), run=self.run)
         else:
+            print(f"__array_ufunc__ called with \n\tself={self}, \n\tufunc={ufunc}, \n\tmethod={method}, \n\targs={args}, \n\tkwargs={kwargs}\n")
             raise NotImplementedError()
 
     def __array_function__(self, func, types, args, kwargs):
@@ -120,7 +130,7 @@ class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
         if func in HANDLED_FUNCTIONS:
             return HANDLED_FUNCTIONS[func](*args, **kwargs)
         elif self.single_type_argument(args):
-            args, types = self.downcast_args_to_values(args, types)
+            args, types = self.downcast_args_to_values(args, types, types_given=True)
 
             output = self.values.__array_function__(func, types, args, kwargs)
 
@@ -141,7 +151,9 @@ class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
         if isinstance(output, Number):
             return output
         elif (isinstance(output, np.ndarray) or isinstance(output, Quantity)):
-            return self.__class__(values=output, source_variable=self.variable, run=self.run)
+            return self.__class__(values=output, run=self.run)
+        elif (isinstance(output, Result)):
+            return self
         else:
             import ipdb
             ipdb.set_trace()
@@ -151,16 +163,16 @@ class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
 class VectorResult(Result):
 
     @classmethod
-    def poloidal_init_from_subarrays(cls, R_array, Z_array, source_variable, run=None):
+    def poloidal_init_from_subarrays(cls, R_array, Z_array, run=None):
         vector_array = cls.poloidal_vector_from_subarrays(R_array=R_array, Z_array=Z_array)
         
-        return cls(values=vector_array, source_variable=source_variable, run=run)
+        return cls(values=vector_array, run=run)
     
     @classmethod
-    def init_from_subarrays(cls, R_array, phi_array, Z_array, source_variable, run=None):
+    def init_from_subarrays(cls, R_array, phi_array, Z_array, run=None):
         vector_array = cls.vector_from_subarrays(R_array=R_array, Z_array=Z_array, phi_array=phi_array)
         
-        return cls(values=vector_array, source_variable=source_variable, run=run)
+        return cls(values=vector_array, run=run)
 
     @classmethod
     def poloidal_vector_from_subarrays(cls, R_array, Z_array):
@@ -207,10 +219,10 @@ class VectorResult(Result):
     def check_dimensions(self):
         return ((self.values.ndim == 4) and (self.values.shape[-1] == 3))
 
-    def __init__(self, values, source_variable, run=None, check_shape=False):
+    def __init__(self, values, run=None, check_shape=False):
         
         self._vector = True
-        super().__init__(values=values, source_variable=source_variable, run=run, check_shape=check_shape)
+        super().__init__(values=values, run=run, check_shape=check_shape)
     
     @property
     def vector_magnitude(self):

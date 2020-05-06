@@ -73,7 +73,7 @@ class BaseVariable(Variable):
 from .Density                 import Density
 from .ElectronTemperature     import ElectronTemperature
 from .IonTemperature          import IonTemperature
-from .ParallelVelocity        import ParallelVelocity
+from .ParallelIonVelocity     import ParallelIonVelocity
 from .ParallelCurrent         import ParallelCurrent
 from .ScalarPotential         import ScalarPotential
 from .Vorticity               import Vorticity

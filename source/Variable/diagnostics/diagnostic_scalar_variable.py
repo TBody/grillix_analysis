@@ -120,7 +120,7 @@ class AverageParallelCurrent(DiagnosticScalarVariable):
             'kiloampere*meter**-2'
         )
 
-class AverageParallelVelocity(DiagnosticScalarVariable):
+class AverageParallelIonVelocity(DiagnosticScalarVariable):
 
     def __init__(self, **kwargs):
         index_in_netcdf = 17

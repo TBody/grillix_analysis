@@ -51,9 +51,15 @@ class Display:
         tau_values = self.run.tau_values[time_slice]
 
         if len(tau_values) > 1:
-            self.suptitle.set_text(f"{self.suptitle.get_text()} [t = {tau_values[0].to_compact():4.3f} to {tau_values[-1].to_compact():4.3f}]")
+            if self.convert:
+                self.suptitle.set_text(f"{self.suptitle.get_text()} [t = {tau_values[0].to_compact():4.3f} to {tau_values[-1].to_compact():4.3f}]")
+            else:
+                self.suptitle.set_text(f"{self.suptitle.get_text()} [{tau_values[0]:4.3f} to {tau_values[-1]:4.3f} tau]")
         else:
-            self.suptitle.set_text(f"{self.suptitle.get_text()} [t = {tau_values[0].to_compact():4.3f}]")
+            if self.convert:
+                self.suptitle.set_text(f"{self.suptitle.get_text()} [t = {tau_values[0].to_compact():4.3f}]")
+            else:
+                self.suptitle.set_text(f"{self.suptitle.get_text()} [{tau_values[0]:4.3f} tau]")
     
     @property
     def run(self):

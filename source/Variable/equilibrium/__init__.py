@@ -17,12 +17,6 @@ class EquilibriumVariable(Variable):
         else:
             return np.atleast_3d(values).reshape((1,1,-1))
     
-    def update_base_variables(self, variables):
-        # Should define the following from BaseVariables
-
-        for base_variable in variables:
-            base_variable.run = self.run
-
 from .Psi                import Psi
 from .Rho                import Rho
 from .MagneticFieldX     import MagneticFieldX

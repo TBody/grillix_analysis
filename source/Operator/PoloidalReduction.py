@@ -1,6 +1,6 @@
 from source.Operator import Operator
 from source import np
-class ToroidalReduction(Operator):
+class PoloidalReduction(Operator):
     
     def __init__(self, reduction=np.mean, **kwargs):
         

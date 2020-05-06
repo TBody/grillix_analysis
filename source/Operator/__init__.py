@@ -1,4 +1,5 @@
-from source import np
+from source import np, Quantity
+
 class Operator:
 
     def __init__(self, run=None):
@@ -25,5 +26,7 @@ class Operator:
 
 from .ToroidalReduction import ToroidalReduction
 from .TimeReduction     import TimeReduction
+from .PoloidalReduction import PoloidalReduction
 from .PadToGrid         import PadToGrid
-from .ParallelGradient  import ParallelGradient
+# from .ParallelGradient  import ParallelGradient
+from .PerpendicularGradient  import PerpendicularGradient

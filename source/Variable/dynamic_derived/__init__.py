@@ -1,31 +1,29 @@
-from source import np, Quantity
-from source.Variable import Variable
+from source.Variable import Variable, Result
 
 class DerivedDynamicVariable(Variable):
     # Variables which are calculated from combinations of BaseVariables and Operators
     # Does not directly access any NetCDF variable
 
     def __init__(self, **kwargs):
+        self.derived_variable = True
+        self.base_variables = getattr(self, "base_variables", [])
         super().__init__(**kwargs)
-
-    def check_base_variables(self, variables):
-        # Should define the following from BaseVariables
-        attributes_to_check = ["n_planes", "plane_indices", "n_snaps", 
-            "snap_indices", "n_main_grid", "n_perp_grid", "n_full_grid", "grid_points"]
-
-        # Checks each attribute
-        for attribute in attributes_to_check:
-            for base_variable in variables:
-
-                base_variable.run = self.run
-
-                if hasattr(self, attribute):
-                    # If it's already defined, make sure that all base variables give
-                    # the same values
-                    assert(np.allclose(getattr(self, attribute), getattr(base_variable, attribute)))
-                else:
-                    # Otherwise, set the attribute from the current base_variable
-                    setattr(self, attribute, getattr(base_variable, attribute))
+    
+    def update_run_values(self):
+        self.update_base_variables(self.base_variables)
+        self.check_base_variables(self.base_variables)
+    
+    def check_units(self, output):
+        if isinstance(output, Result):
+            # Downcast to values to prevent wrapping a Result type in itself (not defined)
+            output = output.values
+        
+        if self.convert:
+            return output.to(self.normalisation_factor.units)
+        elif hasattr(output, "units"):
+            return output.to('').magnitude
+        else:
+            return output
 
 from .SoundSpeed import SoundSpeed
 from .AlfvenSpeed import AlfvenSpeed

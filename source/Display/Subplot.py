@@ -113,7 +113,10 @@ class Subplot():
         y_samples = np.unique(np.floor(np.linspace(0, 1, num=max_vector_points)*(self.projector.y.size-1))).astype(int)
 
         vector_magnitude = self.result.vector_magnitude[y_samples,:][:, x_samples]
-        vector_scale_factor = max_vector_points*np.nanmean(vector_magnitude.magnitude)/vector_scale_factor
+        if isinstance(vector_magnitude, Quantity):
+            vector_magnitude = (vector_magnitude.to(self.variable.normalisation_factor.units)).magnitude
+        
+        vector_scale_factor = max_vector_points*np.nanmax(vector_magnitude)/vector_scale_factor
 
         self.plot = self.ax.quiver(self.projector.x[x_samples],
                                    self.projector.y[y_samples],

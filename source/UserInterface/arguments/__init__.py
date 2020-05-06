@@ -112,4 +112,5 @@ from .ToroidalSlice    import ToroidalSlice    as ToroidalSliceArg
 from .PoloidalSlice    import PoloidalSlice    as PoloidalSliceArg
 from .ConvertToSI      import ConvertToSI      as ConvertToSIArg
 from .DisplayLogarithm import DisplayLogarithm as DisplayLogarithmArg
+from .LaunchIPDB       import LaunchIPDB       as LaunchIPDBArg
 from .Reduction import *

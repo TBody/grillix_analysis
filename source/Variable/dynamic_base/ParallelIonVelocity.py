@@ -1,10 +1,10 @@
 from source.Variable.dynamic_base import BaseVariable
 
-class ParallelVelocity(BaseVariable):
+class ParallelIonVelocity(BaseVariable):
     
     def __init__(self, **kwargs):
         super().__init__('uparx', **kwargs)
-        self.title = "Velocity"
+        self.title = "Ion Velocity"
         self.display_linear = True
         
     def update_normalisation_factor(self):

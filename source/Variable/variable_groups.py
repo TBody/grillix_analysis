@@ -10,13 +10,13 @@
 
 variable_groups = {}
 
-from .dynamic_base import (Density, ElectronTemperature, IonTemperature, ParallelVelocity, ParallelCurrent, ScalarPotential, Vorticity, ParallelVectorPotential, NeutralDensity)
+from .dynamic_base import (Density, ElectronTemperature, IonTemperature, ParallelIonVelocity, ParallelCurrent, ScalarPotential, Vorticity, ParallelVectorPotential, NeutralDensity)
 from .static_base import (District, FluxSurface, Buffer, InVessel, ProjectionX, ProjectionY)
 from .static_base import (CharacteristicFunction, DirectionFunction, PhiForward, PhiBackward, PhiBetweenTargets)
 from .equilibrium import (Psi, Rho, MagneticFieldX, MagneticFieldY, MagneticFieldTor, MagneticField, MagneticFieldAbs, MagneticFieldPol, PoloidalUnitVector, RadialUnitVector)
 from .dynamic_derived import (SoundSpeed, AlfvenSpeed, DynamicalPlasmaBeta, ElectricField, FloatingPotential, SaturationCurrent)
 
-variable_groups["dynamic_base"] = [Density, ElectronTemperature, IonTemperature, ParallelVelocity, ParallelCurrent, ScalarPotential, Vorticity, ParallelVectorPotential]
+variable_groups["dynamic_base"] = [Density, ElectronTemperature, IonTemperature, ParallelIonVelocity, ParallelCurrent, ScalarPotential, Vorticity, ParallelVectorPotential]
 variable_groups["dynamic_base_w_neutrals"] = variable_groups["dynamic_base"] + [NeutralDensity]
 variable_groups["static_base"] = [District, FluxSurface, Buffer, InVessel, ProjectionX, ProjectionY]
 variable_groups["penalisation"] = [CharacteristicFunction, DirectionFunction, PhiForward, PhiBackward, PhiBetweenTargets]

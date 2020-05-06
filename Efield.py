@@ -16,7 +16,7 @@ shaped_values = run.grid.vector_to_matrix(values)
 electric_field_R = -1.0*np.gradient(shaped_values, run.grid.grid_spacing_normalised, axis=-1) * (run.normalisation.delta**-1)
 electric_field_Z = -1.0*np.gradient(shaped_values, run.grid.grid_spacing_normalised, axis=-2) * (run.normalisation.delta**-1)
 
-E = VectorResult.poloidal_init_from_subarrays(R_array=run.grid.matrix_to_vector(electric_field_R), Z_array=run.grid.matrix_to_vector(electric_field_Z), source_variable=ElectricField, run=run)
+E = VectorResult.poloidal_init_from_subarrays(R_array=run.grid.matrix_to_vector(electric_field_R), Z_array=run.grid.matrix_to_vector(electric_field_Z), run=run)
 
 E_shaped = run.grid.vector_to_matrix(E)
 
