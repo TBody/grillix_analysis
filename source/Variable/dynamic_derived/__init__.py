@@ -26,3 +26,10 @@ class DerivedDynamicVariable(Variable):
                 else:
                     # Otherwise, set the attribute from the current base_variable
                     setattr(self, attribute, getattr(base_variable, attribute))
+
+from .SoundSpeed import SoundSpeed
+from .AlfvenSpeed import AlfvenSpeed
+from .DynamicalPlasmaBeta import DynamicalPlasmaBeta
+from .ElectricField import ElectricField
+from .FloatingPotential import FloatingPotential
+from .SaturationCurrent import SaturationCurrent

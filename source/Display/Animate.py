@@ -4,8 +4,8 @@ from matplotlib import animation
 
 class Animate(Display):
     
-    def __init__(self, nrows=1, ncols=1, **kwargs):
-        super().__init__(nrows=nrows, ncols=ncols, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
     
     def animate_values(self, time_slice=slice(None), toroidal_slice=slice(None), poloidal_slice=slice(None), save=False, calculate_cbar_on_single_plane=True, cbar_time_step=1, run_directory=None, normalisation=None, convert=None):
         

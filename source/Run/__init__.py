@@ -48,6 +48,7 @@ class Run:
             raise NotImplementedError(f"No implementation available for {self.equi_type}")
         
         if calculate_metainfo:
+            self.calculate_tau_values()
             self.calculate_penalisation_contours()
             self.calculate_divertor_profile()
             self.calculate_exclusion_profile()
@@ -66,6 +67,21 @@ class Run:
         # Setter for convert
         # N.b. all objects in the analysis routines directly read this value to set their own value for convert
         self._convert = value
+
+    def calculate_tau_values(self):
+        if self.directory.use_error_snaps:
+            snap_netcdf = self.directory.error_snaps
+        else:
+            snap_netcdf = self.directory.snaps
+        
+        self._tau_values = np.array(np.atleast_1d(snap_netcdf[0]['tau']))
+    
+    @property
+    def tau_values(self):
+        if self.convert:
+            return self._tau_values * self.normalisation.tau_0
+        else:
+            return self._tau_values
 
     def calculate_penalisation_contours(self):
 
