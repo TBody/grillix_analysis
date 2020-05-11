@@ -57,6 +57,9 @@ class Subplot():
     def set_data(self, run, projector, variable, operators=[]):
         # Must pass an initialised Run object
         # Can pass uninitialised projector, variable and operators -- in this case __init__(run) is called
+        # Projector is an object which takes z(t, phi, l) and returns z(x, y) over some grid {x, y}
+        # Variable produces z(t, phi, l) when queried which a time, toroidal and poloidal slice
+        # Operator acts on z(t, phi, l) and return z'(t, phi, l)
         
         self.run = run
         self.run.convert = self.convert
@@ -90,15 +93,12 @@ class Subplot():
 
     def find_z_values(self, **kwargs):
         # Can supply slices as keyword arguments. Must match the projector slice names
-
         result = self.projector(self.variable, **kwargs)
         for operator in self.operators:
             result = operator(result)
         
         result = self.projector.structure_z(result)
 
-        result = np.squeeze(result)
-        
         return result
 
     def make_vector_plot(self):

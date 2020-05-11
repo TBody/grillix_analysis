@@ -5,7 +5,8 @@ class Projector:
 
     annotate = Annotate()
 
-    def __init__(self, run=None):
+    def __init__(self, reduction, run=None):
+        self.reduction = reduction
         self.run = run
     
     from source.shared.properties import (update_run_values, update_normalisation_factor, run, convert)

@@ -10,10 +10,10 @@ class Operator:
     def values(self, z):
         return NotImplemented
 
-    def __call__(self, z):
+    def __call__(self, z, **kwargs):
         assert(z.check_dimensions())
         
-        return self.values(z)
+        return self.values(z, **kwargs)
     
     def find_neighbouring_plane(self, z, reverse=False):
        
@@ -30,3 +30,7 @@ from .PoloidalReduction import PoloidalReduction
 from .PadToGrid         import PadToGrid
 # from .ParallelGradient  import ParallelGradient
 from .PerpendicularGradient  import PerpendicularGradient
+from .AllReduction import AllReduction
+from .VectorAbsolute import VectorAbsolute
+from .VectorRadialProjection import VectorRadialProjection
+from .VectorPoloidalProjection import VectorPoloidalProjection

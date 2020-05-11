@@ -4,7 +4,7 @@ from source.UserInterface.CLI import (
     FilepathArg, SaveFilepathArg, SnapNameArg,
     GroupArg, TitleArg,
     TimeSliceArg, ToroidalSliceArg,
-    TimeReductionArg, ToroidalReductionArg,
+    AllReductionArg,
     ConvertToSIArg, DisplayLogarithmArg
 )
 
@@ -22,8 +22,7 @@ class PoloidalPlotCLI(BaseCLI):
         self.title              = TitleArg(self)
         self.time_slice         = TimeSliceArg(self)
         self.toroidal_slice     = ToroidalSliceArg(self)
-        self.timered            = TimeReductionArg(self)
-        self.torred             = ToroidalReductionArg(self)
+        self.allred             = AllReductionArg(self)
         self.convert_to_si      = ConvertToSIArg(self)
         self.display_logarithm  = DisplayLogarithmArg(self)
 
@@ -61,12 +60,11 @@ if __name__=="__main__":
         variables = variable_groups[ctrl["group"]]
 
         # Construct the list of operators
-        operators = [ctrl["timereduce"], ctrl["torreduce"]]
+        operators = []
         
         # Request the 'Poloidal' projector. A projector takes z(t, phi, l) and maps it to a 2D array, in this case z(x, y)
-        # The treatment of the 't' and 'phi' axis is done via operators (specifically, TimeReduction and Toroidal reduction)
-        # before we apply the projector transform
-        projector = Poloidal
+        # The treatment of the 't' and 'phi' axis is via an AllReduction operator, passed as the reduction keyword
+        projector = Poloidal(reduction=ctrl["allreduce"])
 
         # Generate a figure which has enough subplots to plot all the variables, and request a figure title, conversion to
         # SI and logarithmic plot depending on ctrl arguments
