@@ -31,3 +31,4 @@ from .DynamicalPlasmaBeta import DynamicalPlasmaBeta
 from .ElectricField import ElectricField
 from .FloatingPotential import FloatingPotential
 from .SaturationCurrent import SaturationCurrent
+from .ExBVelocity import ExBVelocity

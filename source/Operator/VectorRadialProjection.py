@@ -3,7 +3,7 @@ from source import np
 class VectorRadialProjection(Operator):
 
     def __init__(self, **kwargs):
-
+        self.title = "Radial"
         super().__init__(**kwargs)
 
     def values(self, z):

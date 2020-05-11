@@ -1,4 +1,4 @@
-from source import np, unit_registry
+from source import np
 from source.Variable import VectorResult
 from source.Variable.DerivedVariable import DerivedVariable
 from source.Variable.BaseVariable import ScalarPotential
@@ -25,7 +25,7 @@ class ElectricField(DerivedVariable):
         potential_gradient = self.perpendicular_gradient(self.scalar_potential(**kwargs))
         
         if not(self.convert):
-            # 1/delta factor from differentiating on R0-normalised grid 
-            potential_gradient = potential_gradient / self.delta
+            # delta factor from differentiating on R0-normalised grid 
+            potential_gradient = potential_gradient * self.delta
 
         return self.check_units(-1 * potential_gradient)

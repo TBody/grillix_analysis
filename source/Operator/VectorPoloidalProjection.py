@@ -3,7 +3,7 @@ from source import np
 class VectorPoloidalProjection(Operator):
     
     def __init__(self, **kwargs):
-        
+        self.title = "Poloidal"
         super().__init__(**kwargs)
     
     def values(self, z):

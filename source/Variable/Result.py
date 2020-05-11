@@ -13,6 +13,13 @@ def implements(np_function):
         return func
     return decorator
 
+@implements(np.cross)
+def cross(a, b, **kwargs):
+    return a.__class__(
+        values = np.cross(a.values, b.values, **kwargs),
+        run = a.run
+    )
+
 class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
 
     from source.shared.properties import (update_run_values, update_normalisation_factor, run, convert)
@@ -35,8 +42,8 @@ class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
         # If an attribute is requested that returns an AttributeError, try query the values instead
         return getattr(self.values, key)
     
-    def __array__(self):
-        return self.values
+    # def __array__(self):
+    #     return self.values
     
     def check_dimensions(self):
         return (self.values.ndim == 3)
@@ -117,7 +124,7 @@ class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
         elif method == '__call__':
             scalars = []
             for arg in args:
-                assert(isinstance(arg, self.__class__))
+                assert(isinstance(arg, Result))
                 assert(self.run is arg.run)
                 scalars.append(arg.values)
             return self.__class__(ufunc(*scalars, **kwargs), run=self.run)
@@ -190,13 +197,14 @@ class VectorResult(Result):
         return cls.vector_from_subarrays(R_array=R_array, phi_array=phi_array, Z_array=Z_array)
 
     @classmethod
-    def vector_from_subarrays(cls, R_array, phi_array, Z_array):
+    def vector_from_subarrays(cls, R_array, phi_array, Z_array, units=None):
         
         subarrays = [R_array, phi_array, Z_array]
         array_shape = R_array.shape
 
         vector_array = np.empty(tuple(list(array_shape)+[3]))
-        units = getattr(R_array, "units", None)
+        if units is None:
+            units = getattr(R_array, "units", None)
         
         if isinstance(R_array, Quantity) or isinstance(Z_array, Quantity) or isinstance(phi_array, Quantity):
             assert(isinstance(R_array, Quantity) and isinstance(Z_array, Quantity) and isinstance(phi_array, Quantity))
