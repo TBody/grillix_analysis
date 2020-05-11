@@ -1,6 +1,6 @@
 from source import Path, np, Dataset, Quantity
 from source.Variable import Variable
-from source.Variable.equilibrium import (
+from source.Variable.EquilibriumVariable import (
     Psi,
     Rho,
     MagneticFieldX,

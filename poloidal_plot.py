@@ -18,7 +18,7 @@ class PoloidalPlotCLI(BaseCLI):
         self.filepath           = FilepathArg(self)
         self.save               = SaveFilepathArg(self)
         self.snap_name          = SnapNameArg(self)
-        self.group              = GroupArg(self, variable_groups.keys(), default="dynamic_base")
+        self.group              = GroupArg(self, variable_groups.keys(), default="BaseVariable")
         self.title              = TitleArg(self)
         self.time_slice         = TimeSliceArg(self)
         self.toroidal_slice     = ToroidalSliceArg(self)

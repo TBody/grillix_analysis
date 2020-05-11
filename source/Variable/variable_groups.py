@@ -10,15 +10,17 @@
 
 variable_groups = {}
 
-from .dynamic_base import (Density, ElectronTemperature, IonTemperature, ParallelIonVelocity, ParallelCurrent, ScalarPotential, Vorticity, ParallelVectorPotential, NeutralDensity)
-from .static_base import (District, FluxSurface, Buffer, InVessel, ProjectionX, ProjectionY)
-from .static_base import (CharacteristicFunction, DirectionFunction, PhiForward, PhiBackward, PhiBetweenTargets)
-from .equilibrium import (Psi, Rho, MagneticFieldX, MagneticFieldY, MagneticFieldTor, MagneticField, MagneticFieldAbs, MagneticFieldPol, PoloidalUnitVector, RadialUnitVector)
-from .dynamic_derived import (SoundSpeed, AlfvenSpeed, DynamicalPlasmaBeta, ElectricField, FloatingPotential, SaturationCurrent)
+from .BaseVariable import (Density, ElectronTemperature, IonTemperature, ParallelIonVelocity, ParallelCurrent, ScalarPotential, Vorticity, ParallelVectorPotential, NeutralDensity)
+from .StaticVariable import (District, FluxSurface, Buffer, InVessel, ProjectionX, ProjectionY)
+from .StaticVariable import (CharacteristicFunction, DirectionFunction, PhiForward, PhiBackward, PhiBetweenTargets)
+from .EquilibriumVariable import (Psi, Rho, MagneticFieldX, MagneticFieldY, MagneticFieldTor, MagneticField, MagneticFieldAbs, MagneticFieldPol, PoloidalUnitVector, RadialUnitVector)
+from .DerivedVariable import (SoundSpeed, AlfvenSpeed, DynamicalPlasmaBeta, ElectricField, FloatingPotential, SaturationCurrent)
 
-variable_groups["dynamic_base"] = [Density, ElectronTemperature, IonTemperature, ParallelIonVelocity, ParallelCurrent, ScalarPotential, Vorticity, ParallelVectorPotential]
-variable_groups["dynamic_base_w_neutrals"] = variable_groups["dynamic_base"] + [NeutralDensity]
-variable_groups["static_base"] = [District, FluxSurface, Buffer, InVessel, ProjectionX, ProjectionY]
+from source.Operator import (VectorAbsolute, VectorPoloidalProjection, VectorRadialProjection)
+
+variable_groups["BaseVariable"] = [Density, ElectronTemperature, IonTemperature, ParallelIonVelocity, ParallelCurrent, ScalarPotential, Vorticity, ParallelVectorPotential]
+variable_groups["BaseVariable_w_neutrals"] = variable_groups["BaseVariable"] + [NeutralDensity]
+variable_groups["StaticVariable"] = [District, FluxSurface, Buffer, InVessel, ProjectionX, ProjectionY]
 variable_groups["penalisation"] = [CharacteristicFunction, DirectionFunction, PhiForward, PhiBackward, PhiBetweenTargets]
 variable_groups["dynamic_derived"] = [SoundSpeed, SaturationCurrent, FloatingPotential, AlfvenSpeed, DynamicalPlasmaBeta, ElectricField]
 variable_groups["magnetic_field"] = [Psi, Rho, MagneticFieldPol, MagneticFieldTor, MagneticFieldAbs, PoloidalUnitVector, RadialUnitVector]

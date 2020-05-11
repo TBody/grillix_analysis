@@ -28,3 +28,4 @@ class Reduction(CLIArgument):
 from .TimeReduction import TimeReductionArg
 from .ToroidalReduction import ToroidalReductionArg
 from .PoloidalReduction import PoloidalReductionArg
+from .AllReduction import AllReductionArg

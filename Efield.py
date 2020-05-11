@@ -2,7 +2,7 @@ from source import Quantity, np, plt
 from source.Run import Run
 
 from source.Variable import ScalarPotential, VectorResult
-from source.Variable.dynamic_derived.ElectricField import ElectricField
+from source.Variable.DerivedVariable.ElectricField import ElectricField
 
 run = Run('TCV_half/init_start')
 
