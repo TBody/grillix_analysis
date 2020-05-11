@@ -24,4 +24,4 @@ variable_groups["StaticVariable"] = [District, FluxSurface, Buffer, InVessel, Pr
 variable_groups["penalisation"] = [CharacteristicFunction, DirectionFunction, PhiForward, PhiBackward, PhiBetweenTargets]
 variable_groups["dynamic_derived"] = [SoundSpeed, SaturationCurrent, FloatingPotential, AlfvenSpeed, DynamicalPlasmaBeta, ElectricField]
 variable_groups["magnetic_field"] = [Psi, Rho, MagneticFieldPol, MagneticFieldTor, MagneticFieldAbs, PoloidalUnitVector, RadialUnitVector]
-variable_groups["electric_field"] = [ScalarPotential, ElectricField]
+variable_groups["electric_field"] = [ScalarPotential, ElectricField, ([VectorAbsolute], ElectricField)]

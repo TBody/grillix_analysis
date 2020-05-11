@@ -2,11 +2,14 @@ from source.Operator import Operator
 from source import np
 class VectorPoloidalProjection(Operator):
     
-    def __init__(self, reduction=np.mean, **kwargs):
+    def __init__(self, **kwargs):
         
         super().__init__(**kwargs)
     
     def values(self, z):
-        
-        assert(z.isvector)
-        return NotImplemented
+
+        poloidal_unit_vector = self.run.equilibrium.poloidal_unit_vector()
+        assert(z.is_vector)
+        assert(poloidal_unit_vector.shape[-2:] == z.shape[-2:])
+
+        return z.dot_product(poloidal_unit_vector)

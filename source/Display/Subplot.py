@@ -63,10 +63,24 @@ class Subplot():
         
         self.run = run
         self.run.convert = self.convert
-        
         # If type(object) == type, call __init__ (will set run values later anyway)
         if type(projector) == type:
             projector = projector()
+
+        if type(variable) == tuple:
+            # Can pass a tuple with ([operators], variable)
+            variable_tuple = variable
+            assert((len(variable_tuple) == 2) and (type(variable_tuple[0]) == list)
+            ), f"If using the operator-variable tuple notation, must use the form ([operators], variable). variable tuple was {variable_tuple}"
+            
+            variable = variable[1]
+            # Shallow copy the list of operators
+            operators = operators.copy()
+            for operator in variable_tuple[0]:
+                # Prepend the operators to the operator list
+                # N.b. operators are applied in list order (i.e. 0th first) so the last element of variable_tuple[0] will be applied first
+                operators.insert(0, operator)
+            
         if type(variable) == type:
             variable = variable()
 
@@ -94,6 +108,7 @@ class Subplot():
     def find_z_values(self, **kwargs):
         # Can supply slices as keyword arguments. Must match the projector slice names
         result = self.projector(self.variable, **kwargs)
+
         for operator in self.operators:
             result = operator(result)
         
@@ -180,10 +195,15 @@ class Subplot():
         if self.used:
             self.ax.set_aspect('equal')
             self.projector.annotate.style_plot(self)
-            if self.convert:
-                self.ax.set_title(f"{self.variable.title} [{self.variable.normalisation_factor.units}]")
+            title_string = self.variable.title
+            for operator in self.operators:
+                if hasattr(operator, "title"):
+                    title_string = f"{operator.title}({title_string})"
+            
+            if self.convert:    
+                self.ax.set_title(f"{title_string} [{self.result.units}]")
             else:
-                self.ax.set_title(self.variable.title)
+                self.ax.set_title(title_string)
         else:
             self.ax.clear()
             self.ax.set_axis_off()

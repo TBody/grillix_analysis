@@ -224,19 +224,33 @@ class VectorResult(Result):
         self._vector = True
         super().__init__(values=values, run=run, check_shape=check_shape)
     
+    def return_Result(self, values):
+        if isinstance(values, VectorResult):
+            values = values.values
+        result = Result(values=values, run=self.run)
+        result._vector = False
+        return result
+
     @property
     def vector_magnitude(self):
-        return np.linalg.norm(self, axis=-1)
+        values = np.linalg.norm(self, axis=-1)
+        return self.return_Result(values)
     
     @property
     def R(self):
-        return self.values[...,0]
+        values = self.values[...,0]
+        return self.return_Result(values)
     
     @property
     def phi(self):
-        return self.values[...,1]
+        values = self.values[...,1]
+        return self.return_Result(values)
 
     @property
     def Z(self):
-        return self.values[...,2]
+        values = self.values[...,2]
+        return self.return_Result(values)
     
+    def dot_product(self, other):
+        values = np.sum(np.multiply(self, other), axis=-1)
+        return self.return_Result(values)
