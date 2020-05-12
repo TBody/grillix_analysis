@@ -78,7 +78,7 @@ if __name__=="__main__":
         figure.set_data_array(run=run, projector=projector, variables=variables, operators=operators)
 
         # For each Subplot in the Plot, fill the axes with values
-        figure.fill_values()
+        figure.fill_values(time_slice=ctrl["time_slice"], toroidal_slice=ctrl["toroidal_slice"])
 
         # Display the figure
         figure.show()
