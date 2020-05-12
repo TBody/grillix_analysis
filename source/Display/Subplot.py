@@ -149,9 +149,9 @@ class Subplot():
         if not update:
             # First plot
             if self.variable.numerical_variable:
-
-                if self.cmap == None or self.cmap_norm == None:
-                    self.find_colormap_limits_from_z(self.result)
+                
+                if self.cmap is None or self.cmap_norm is None:
+                    self.find_colormap(z=self.result)
 
                 if self.result.is_vector:
                     self.make_vector_plot()
@@ -254,7 +254,7 @@ class Subplot():
             return np.nanquantile(np.abs(z.magnitude.ravel()), quantiles)
 
     def find_colormap(self, z=None, quantiles=(0.001, 0.999), linear_proportion=0.20, **kwargs):
-        if z == None:
+        if z is None:
             z = self.find_z_values(**kwargs)
 
         self.find_colormap_limits_from_z(z, quantiles=quantiles, linear_proportion=linear_proportion)

@@ -71,13 +71,13 @@ class Display:
     
     def determine_layout(self, nrows, ncols, naxs):
 
-        if not(nrows == None) and not(ncols == None):
+        if not(nrows is None) and not(ncols is None):
             self.nrows = nrows
             self.ncols = ncols
-            assert(naxs == None), (f"{self.__class__.__name__} error: incompatible arguments. "
+            assert(naxs is None), (f"{self.__class__.__name__} error: incompatible arguments. "
                 "Should supply either nrows(={nrows}) and ncols(={ncols}), or naxs(={naxs}), but not both")
         else:
-            assert((not(naxs) == None) and (nrows == None) and (ncols == None)), (f"{self.__class__.__name__} error: incompatible arguments. "
+            assert((not(naxs) is None) and (nrows is None) and (ncols is None)), (f"{self.__class__.__name__} error: incompatible arguments. "
                 "Should supply either nrows(={nrows}) and ncols(={ncols}), or naxs(={naxs}), but not both or neither")
 
             if naxs <= 0:

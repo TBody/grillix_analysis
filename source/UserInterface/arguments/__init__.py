@@ -59,7 +59,7 @@ class CLIArgument:
             if len(slice_argument) == 1:
                 # Take a single value
                 value = self.process_value(slice_argument[0])
-                if value == None:
+                if value is None:
                     # Take all the values
                     result = slice(None)
                 elif value < 0:
