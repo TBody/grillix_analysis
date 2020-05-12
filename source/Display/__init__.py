@@ -67,8 +67,7 @@ class Display:
 
     @run.setter
     def run(self, value):
-        if value != None:
-            self._run = value
+        self._run = value
     
     def determine_layout(self, nrows, ncols, naxs):
 

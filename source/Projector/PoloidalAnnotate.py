@@ -10,6 +10,9 @@ class PoloidalAnnotate(Annotate):
         
         self.run.penalisation_contours[0].plot(subplot.ax, color='r', linestyle=linestyle, linewidth=linewidth)
         self.run.penalisation_contours[-1].plot(subplot.ax, color='r', linestyle=linestyle, linewidth=linewidth)
+
+        self.run.parallel_limit_contours[0].plot(subplot.ax, color='b', linestyle=linestyle, linewidth=linewidth)
+        self.run.parallel_limit_contours[1].plot(subplot.ax, color='b', linestyle=linestyle, linewidth=linewidth)
         
         self.run.divertor_polygon.plot(subplot.ax, color='b', linestyle=linestyle, linewidth=linewidth)
         self.run.exclusion_polygon.plot(subplot.ax, color='g', linestyle=linestyle, linewidth=linewidth)

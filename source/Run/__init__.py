@@ -5,7 +5,7 @@ from .Grid import Grid, CombinedGrid
 from .Equilibrium import Equilibrium
 
 from source import np
-from source.Variable import CharacteristicFunction, FluxSurface
+from source.Variable import CharacteristicFunction, FluxSurface, PhiForward, PhiBackward
 from source.shared import find_contour_levels, Polygon
 from source.Operator import PadToGrid
 
@@ -19,7 +19,7 @@ class Run:
 
         # Resolve the filepaths for the run directory, and read the params.in file
         [self.directory, self.parameters, self.equi_type] = Directory.initialise_and_read_parameters(filepath)
-
+        
         # Read the physical_parameters.nml file and calculate normalisations
         self.normalisation = Normalisation(self.directory.normalisation_file, with_print=False)
 
@@ -50,6 +50,7 @@ class Run:
         if calculate_metainfo:
             self.calculate_tau_values()
             self.calculate_penalisation_contours()
+            self.calculate_parallel_limits()
             self.calculate_divertor_profile()
             self.calculate_exclusion_profile()
             self.calculate_seperatrix()
@@ -97,6 +98,33 @@ class Run:
         
         for penalisation_contour in self.penalisation_contours:
             penalisation_contour.run = self
+    
+    def calculate_parallel_limits(self):
+        from source.shared.common_functions import smoothstep
+
+        pad_to_grid = PadToGrid(run=self)
+        phi_forward = pad_to_grid(PhiForward(run=self)())
+        phi_backward = pad_to_grid(PhiBackward(run=self)())
+        
+        # Find the step width from the parameters
+        chi_width = self.parameters["params_penalisation"]["chi_width"]
+        if not(chi_width): chi_width = 5.0
+        step_order = self.parameters["params_penalisation"]["chi_width"]
+        if not(step_order): step_order = 3
+        npol = self.parameters["params_grid"]["npol"]
+
+        step_width = chi_width * 2.0 * np.pi / npol
+
+        backward_trace = np.squeeze(self.grid.vector_to_matrix(smoothstep(2*step_width, phi_backward, step_width, step_order)))
+        forward_trace = np.squeeze(self.grid.vector_to_matrix(smoothstep(-2*step_width, phi_forward, step_width, step_order)))
+
+        backward_contour = find_contour_levels(self.grid.x_unique, self.grid.y_unique, backward_trace, [0.5])
+        forward_contour  = find_contour_levels(self.grid.x_unique, self.grid.y_unique, forward_trace, [0.5])
+
+        self.parallel_limit_contours = [backward_contour[0], forward_contour[0]]
+        
+        for parallel_limit_contour in self.parallel_limit_contours:
+            parallel_limit_contour.run = self
     
     def calculate_divertor_profile(self):
         self.divertor_polygon = Polygon.read_polygon_from_trunk(self.directory.divertor_points_file)
