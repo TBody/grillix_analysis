@@ -32,3 +32,4 @@ from .ElectricField import ElectricField
 from .FloatingPotential import FloatingPotential
 from .SaturationCurrent import SaturationCurrent
 from .ExBVelocity import ExBVelocity
+from .ParallelElectronVelocity import ParallelElectronVelocity

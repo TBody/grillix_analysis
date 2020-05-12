@@ -14,7 +14,7 @@ from .BaseVariable import (Density, ElectronTemperature, IonTemperature, Paralle
 from .StaticVariable import (District, FluxSurface, Buffer, InVessel, ProjectionX, ProjectionY)
 from .StaticVariable import (CharacteristicFunction, DirectionFunction, PhiForward, PhiBackward, PhiBetweenTargets)
 from .EquilibriumVariable import (Psi, Rho, MagneticFieldX, MagneticFieldY, MagneticFieldTor, MagneticField, MagneticFieldAbs, MagneticFieldPol, PoloidalUnitVector, RadialUnitVector)
-from .DerivedVariable import (SoundSpeed, AlfvenSpeed, DynamicalPlasmaBeta, ElectricField, FloatingPotential, SaturationCurrent, ExBVelocity)
+from .DerivedVariable import (SoundSpeed, AlfvenSpeed, DynamicalPlasmaBeta, ElectricField, FloatingPotential, SaturationCurrent, ExBVelocity, ParallelElectronVelocity)
 
 from source.Operator import (VectorAbsolute, VectorPoloidalProjection, VectorRadialProjection)
 
@@ -25,3 +25,4 @@ variable_groups["Penalisation"] = [CharacteristicFunction, DirectionFunction, Ph
 variable_groups["Derived"] = [SoundSpeed, SaturationCurrent, FloatingPotential, AlfvenSpeed, DynamicalPlasmaBeta, ElectricField]
 variable_groups["Magnetic"] = [Psi, Rho, MagneticFieldPol, MagneticFieldTor, MagneticFieldAbs, PoloidalUnitVector, RadialUnitVector]
 variable_groups["Electric"] = [ScalarPotential, ([VectorAbsolute], ElectricField), ([VectorRadialProjection], ExBVelocity), ([VectorPoloidalProjection], ExBVelocity)]
+variable_groups["Velocity"] = [ParallelIonVelocity, ParallelElectronVelocity, AlfvenSpeed, ([VectorRadialProjection], ExBVelocity), ([VectorPoloidalProjection], ExBVelocity), SoundSpeed]
