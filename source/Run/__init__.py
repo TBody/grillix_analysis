@@ -106,17 +106,21 @@ class Run:
         phi_forward = pad_to_grid(PhiForward(run=self)())
         phi_backward = pad_to_grid(PhiBackward(run=self)())
         
-        # Find the step width from the parameters
+        # Find the phi-spacing between planes
         chi_width = self.parameters["params_penalisation"]["chi_width"]
         if not(chi_width): chi_width = 5.0
-        step_order = self.parameters["params_penalisation"]["chi_width"]
+        step_order = self.parameters["params_penalisation"]["step_order"]
         if not(step_order): step_order = 3
         npol = self.parameters["params_grid"]["npol"]
 
         step_width = chi_width * 2.0 * np.pi / npol
 
-        backward_trace = np.squeeze(self.grid.vector_to_matrix(smoothstep(2*step_width, phi_backward, step_width, step_order)))
-        forward_trace = np.squeeze(self.grid.vector_to_matrix(smoothstep(-2*step_width, phi_forward, step_width, step_order)))
+        # Find the point which is 1 parallel spacing away from the chi = 1 line
+        # N.b. smoothstep(xc=0, x = phi_forward + step_width/2) would return the chi = 1 line
+        #      using xc=-2*np.pi/npol returns a line which is one dphi away from this line
+        # step_width and step order have no effect
+        backward_trace = np.squeeze(self.grid.vector_to_matrix(smoothstep(2*np.pi/npol, phi_backward-step_width/2, step_width, step_order)))
+        forward_trace = np.squeeze(self.grid.vector_to_matrix(smoothstep(-2*np.pi/npol, phi_forward+step_width/2, step_width, step_order)))
 
         backward_contour = find_contour_levels(self.grid.x_unique, self.grid.y_unique, backward_trace, [0.5])
         forward_contour  = find_contour_levels(self.grid.x_unique, self.grid.y_unique, forward_trace, [0.5])

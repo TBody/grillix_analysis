@@ -6,7 +6,7 @@ from source.shared.common_functions import smoothstep
 with launch_ipdb_on_exception():
     from source.Run import Run
 
-    run = Run('TCV_half/init_start')
+    run = Run('TCV_half/hot_core_restart')
 
     from source.Display import Plot
 
@@ -30,7 +30,7 @@ with launch_ipdb_on_exception():
 
     chi_width = 5
     npol = 16
-    step_order = 3
+    step_order = 1
     step_width = chi_width*2*np.pi/npol
 
     phi_forward = projector(PhiForward(run=run))
@@ -38,8 +38,8 @@ with launch_ipdb_on_exception():
 
     pen_chi = 1.0 + smoothstep(0.0, phi_backward, step_width, step_order) - smoothstep(0.0, phi_forward, step_width, step_order)
 
-    backtrace = projector.structure_z(smoothstep(2*step_width, phi_backward, step_width, step_order))
-    forwtrace = projector.structure_z(smoothstep(-2*step_width, phi_forward, step_width, step_order))
+    backtrace = projector.structure_z(smoothstep(2*np.pi/npol, phi_backward-step_width/2, step_width, step_order))
+    forwtrace = projector.structure_z(smoothstep(-2*np.pi/npol, phi_forward+step_width/2, step_width, step_order))
 
     structured_chi = projector.structure_z(pen_chi)
     from source.shared.ContourLevel import find_contour_levels
