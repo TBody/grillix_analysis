@@ -48,13 +48,20 @@ class Run:
             raise NotImplementedError(f"No implementation available for {self.equi_type}")
         
         if calculate_metainfo:
-            self.calculate_tau_values()
-            self.calculate_penalisation_contours()
-            self.calculate_parallel_limits()
-            self.calculate_divertor_profile()
-            self.calculate_exclusion_profile()
-            self.calculate_seperatrix()
-            self.calculate_in_vessel_mask()
+            
+            for function in [
+                self.calculate_tau_values,
+                self.calculate_penalisation_contours,
+                self.calculate_parallel_limits,
+                self.calculate_divertor_profile,
+                self.calculate_exclusion_profile,
+                self.calculate_seperatrix,
+                self.calculate_in_vessel_mask
+                ]:
+                try:
+                    function()
+                except (IndexError, FileNotFoundError):
+                    print(f"Unable to calculate run metadata in {function}: missing information")
     
     def add_to_children(self, child_object):
         self.children.append(child_object)

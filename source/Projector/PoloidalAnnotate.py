@@ -8,16 +8,31 @@ class PoloidalAnnotate(Annotate):
     def __call__(self, subplot, linestyle='-', linewidth=0.5):
         assert(self.initialised), f"Annotate called before supplying Run values"
         
-        self.run.penalisation_contours[0].plot(subplot.ax, color='r', linestyle=linestyle, linewidth=linewidth)
-        self.run.penalisation_contours[-1].plot(subplot.ax, color='r', linestyle=linestyle, linewidth=linewidth)
+        try:
+            self.run.penalisation_contours[0].plot(subplot.ax, color='r', linestyle=linestyle, linewidth=linewidth)
+            self.run.penalisation_contours[-1].plot(subplot.ax, color='r', linestyle=linestyle, linewidth=linewidth)
+        except AttributeError:
+            print("Run has no penalisation_contours")
 
-        self.run.parallel_limit_contours[0].plot(subplot.ax, color='b', linestyle=linestyle, linewidth=linewidth)
-        self.run.parallel_limit_contours[1].plot(subplot.ax, color='b', linestyle=linestyle, linewidth=linewidth)
+        try:
+            self.run.parallel_limit_contours[0].plot(subplot.ax, color='b', linestyle=linestyle, linewidth=linewidth)
+            self.run.parallel_limit_contours[1].plot(subplot.ax, color='b', linestyle=linestyle, linewidth=linewidth)
+        except AttributeError:
+            print("Run has no parallel_limit_contours")
+
+        try:
+            self.run.divertor_polygon.plot(subplot.ax, color='b', linestyle=linestyle, linewidth=linewidth)
+        except AttributeError:
+            print("Run has no divertor_polygon")
+        try:
+            self.run.exclusion_polygon.plot(subplot.ax, color='g', linestyle=linestyle, linewidth=linewidth)
+        except AttributeError:
+            print("Run has no exclusion_polygon")
         
-        self.run.divertor_polygon.plot(subplot.ax, color='b', linestyle=linestyle, linewidth=linewidth)
-        self.run.exclusion_polygon.plot(subplot.ax, color='g', linestyle=linestyle, linewidth=linewidth)
-        
-        self.run.seperatrix[0].plot(subplot.ax, color='g', linestyle=linestyle, linewidth=linewidth)
+        try:
+            self.run.seperatrix[0].plot(subplot.ax, color='g', linestyle=linestyle, linewidth=linewidth)
+        except AttributeError:
+            print("Run has no seperatrix")
 
         subplot.ax.set_xlim(left=self.run.grid.xmin, right=self.run.grid.xmax)
         subplot.ax.set_ylim(bottom=self.run.grid.ymin, top=self.run.grid.ymax)

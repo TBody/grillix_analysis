@@ -11,7 +11,7 @@
 variable_groups = {}
 
 from .BaseVariable import (Density, ElectronTemperature, IonTemperature, ParallelIonVelocity, ParallelCurrent, ScalarPotential, Vorticity, ParallelVectorPotential, NeutralDensity)
-from .StaticVariable import (District, FluxSurface, Buffer, InVessel, ProjectionX, ProjectionY)
+from .StaticVariable import (Grid, District, FluxSurface, Buffer, InVessel, ProjectionX, ProjectionY)
 from .StaticVariable import (CharacteristicFunction, DirectionFunction, PhiForward, PhiBackward, PhiBetweenTargets)
 from .EquilibriumVariable import (Psi, Rho, MagneticFieldX, MagneticFieldY, MagneticFieldTor, MagneticField, MagneticFieldAbs, MagneticFieldPol, PoloidalUnitVector, RadialUnitVector)
 from .DerivedVariable import (SoundSpeed, AlfvenSpeed, DynamicalPlasmaBeta, ElectricField, FloatingPotential, SaturationCurrent, ExBVelocity, ParallelElectronVelocity)
@@ -20,6 +20,7 @@ from source.Operator import (VectorAbsolute, VectorPoloidalProjection, VectorRad
 
 variable_groups["BaseVariable"] = [Density, ElectronTemperature, IonTemperature, ParallelIonVelocity, ParallelCurrent, ScalarPotential, Vorticity, ParallelVectorPotential]
 variable_groups["BaseVariable_w_neutrals"] = variable_groups["BaseVariable"] + [NeutralDensity]
+variable_groups["Grid"] = [Grid]
 variable_groups["StaticVariable"] = [District, FluxSurface, Buffer, InVessel, ProjectionX, ProjectionY]
 variable_groups["Penalisation"] = [CharacteristicFunction, DirectionFunction, PhiForward, PhiBackward, PhiBetweenTargets]
 variable_groups["Alfven"] = [SoundSpeed, AlfvenSpeed, DynamicalPlasmaBeta]
