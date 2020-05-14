@@ -45,21 +45,38 @@ class Display:
             self.suptitle = plt.suptitle(self.title)
         else:
             self.suptitle = plt.suptitle("")
+        
+        self.suptitle_text = self.suptitle.get_text()
+        
+    def set_data_array(self, run, projector, variables, operators=[]):
+        assert(len(variables) <= len(self.axs1d)), f"Requested to plot {len(variables)} variables in {len(self.axs1d)} subplots"
+
+        for variable, ax in zip(variables, self.axs1d):
+            ax.set_data(run=run, projector=projector, variable=variable, operators=operators)
+    
+    def fill_values(self, time_slice=slice(-1,None), toroidal_slice=slice(None), poloidal_slice=slice(None), add_time_to_title=True):
+        
+        for ax in self.axs1d:
+            if not ax.assume_frozen and ax.used:
+                ax(time_slice=time_slice, toroidal_slice=toroidal_slice, poloidal_slice=poloidal_slice)
+
+        if add_time_to_title:
+            self.add_time_to_title(time_slice)
     
     def add_time_to_title(self, time_slice):
         
-        tau_values = self.run.tau_values[time_slice]
+        tau_values = np.atleast_1d(self.run.tau_values[time_slice])
 
         if len(tau_values) > 1:
             if self.convert:
-                self.suptitle.set_text(f"{self.suptitle.get_text()} [t = {tau_values[0].to_compact():4.3f} to {tau_values[-1].to_compact():4.3f}]")
+                self.suptitle.set_text(f"{self.suptitle_text} [t = {tau_values[0].to_compact():4.3f} to {tau_values[-1].to_compact():4.3f}]")
             else:
-                self.suptitle.set_text(f"{self.suptitle.get_text()} [{tau_values[0]:4.3f} to {tau_values[-1]:4.3f} tau]")
+                self.suptitle.set_text(f"{self.suptitle_text} [{tau_values[0]:4.3f} to {tau_values[-1]:4.3f} tau]")
         else:
             if self.convert:
-                self.suptitle.set_text(f"{self.suptitle.get_text()} [t = {tau_values[0].to_compact():4.3f}]")
+                self.suptitle.set_text(f"{self.suptitle_text} [t = {tau_values[0].to_compact():4.3f}]")
             else:
-                self.suptitle.set_text(f"{self.suptitle.get_text()} [{tau_values[0]:4.3f} tau]")
+                self.suptitle.set_text(f"{self.suptitle_text} [{tau_values[0]:4.3f} tau]")
     
     @property
     def run(self):

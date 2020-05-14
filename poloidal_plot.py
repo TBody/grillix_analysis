@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Import CLI user interface
 from source.UserInterface.CLI import (
     BaseCLI,
@@ -80,5 +81,8 @@ if __name__=="__main__":
         # For each Subplot in the Plot, fill the axes with values
         figure.fill_values(time_slice=ctrl["time_slice"], toroidal_slice=ctrl["toroidal_slice"])
 
-        # Display the figure
-        figure.show()
+        # Save or display the figure
+        if ctrl["save"]:
+            figure.save_as_png(ctrl["save"])
+        else:
+            figure.show()

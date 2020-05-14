@@ -1,8 +1,12 @@
 from . import CLIArgument
 
 class TimeSlice(CLIArgument):
-    def __init__(self, CLI):
+    def __init__(self, CLI, default_all=False, allow_range=True, allow_step=True):
         super().__init__(CLI, "time_slice")
+        self.default_all = default_all
+        self.allow_range = allow_range
+        self.allow_step = allow_step
+
         self.parser.add_argument("-t", "--time_slice",
             default=None,
             type=int,
@@ -11,4 +15,4 @@ class TimeSlice(CLIArgument):
         )
     
     def __call__(self):
-        return self.process_slice(self.value, default_all=False, allow_range=True)
+        return self.process_slice(self.value, default_all=self.default_all, allow_range=self.allow_range, allow_step=self.allow_step)

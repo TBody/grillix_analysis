@@ -5,3 +5,4 @@ from .Polygon import Polygon
 from .Timer import Timer
 from .UserEnvironment import UserEnvironment
 from .ContourLevel import ContourLevel, find_contour_levels
+from .check_ffmpeg import check_ffmpeg

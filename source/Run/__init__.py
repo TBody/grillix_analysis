@@ -76,6 +76,7 @@ class Run:
             snap_netcdf = self.directory.snaps
         
         self._tau_values = np.array(np.atleast_1d(snap_netcdf[0]['tau']))
+        self.snap_indices = np.arange(np.size(self._tau_values))
     
     @property
     def tau_values(self):
@@ -86,8 +87,7 @@ class Run:
 
     def calculate_penalisation_contours(self):
 
-        pad_to_grid = PadToGrid(run=self)
-        chi = pad_to_grid(CharacteristicFunction(run=self)())
+        chi = CharacteristicFunction(run=self)()
     
         max_characteristic = np.nanmax(chi) - np.finfo('float').eps
         levels = np.array([0, 0.5, max_characteristic])
@@ -102,9 +102,8 @@ class Run:
     def calculate_parallel_limits(self):
         from source.shared.common_functions import smoothstep
 
-        pad_to_grid = PadToGrid(run=self)
-        phi_forward = pad_to_grid(PhiForward(run=self)())
-        phi_backward = pad_to_grid(PhiBackward(run=self)())
+        phi_forward = PhiForward(run=self)()
+        phi_backward = PhiBackward(run=self)()
         
         # Find the phi-spacing between planes
         chi_width = self.parameters["params_penalisation"]["chi_width"]

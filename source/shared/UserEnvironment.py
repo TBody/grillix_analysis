@@ -22,6 +22,8 @@ class UserEnvironment:
         self.animation_framerate = 15
         self.animation_bitrate = 1800
         self.animation_format = "avi"
+        self.animation_dpi = 150
+        self.animation_codec = "h264"
 
         # Variables for quiver (vector) plots
         self.max_vector_points_per_dim = 100

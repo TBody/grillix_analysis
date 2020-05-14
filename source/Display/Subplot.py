@@ -112,8 +112,6 @@ class Subplot():
         for operator in self.operators:
             result = operator(result)
 
-        result = self.projector.structure_z(result)
-
         return result
 
     def make_vector_plot(self):
@@ -145,6 +143,7 @@ class Subplot():
     def __call__(self, update=False, **kwargs):
 
         self.result = self.find_z_values(**kwargs)
+        self.result = self.projector.structure_z(self.result)
 
         if not update:
             # First plot
@@ -171,7 +170,16 @@ class Subplot():
 
             self.projector.annotate(self)
         else:
-            pass
+            if self.variable.numerical_variable:
+                
+                if self.result.is_vector:
+                    raise NotImplementedError()
+                    # self.make_vector_plot()
+                else:
+                    self.plot.set_array(self.result.z[:-1, :-1].ravel())
+
+            else:
+                self.plot.set_array(self.result.z[:-1, :-1].ravel())
 
     def format_coord(self, x, y):
 
