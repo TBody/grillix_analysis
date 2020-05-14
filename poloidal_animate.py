@@ -69,18 +69,18 @@ if __name__=="__main__":
         # The treatment of the 't' and 'phi' axis is via an AllReduction operator, passed as the reduction keyword
         projector = Poloidal(reduction=ctrl["allreduce"])
 
-        # Generate a figure which has enough subAnimates to Animate all the variables, and request a figure title, conversion to
-        # SI and logarithmic Animate depending on ctrl arguments
+        # Generate a figure which has enough subplots to animate all the variables, and request a figure title, conversion to
+        # SI and logarithmic plt depending on ctrl arguments
         figure = Animate(run                 = run,
                          naxs                = len(variables),
                          title               = ctrl["title"],
                          convert             = ctrl["convert_to_SI"],
                          display_logarithmic = ctrl["display_log"])
 
-        # For each Subplot in Animate, set values for the run, projector, variable, and operators
+        # For each Subplot in figure, set values for the run, projector, variable, and operators
         figure.set_data_array(run=run, projector=projector, variables=variables, operators=operators)
 
-        # For each Subplot in Animate, animate the values
+        # For each Subplot in figure, animate the values
         figure.setup_animation(time_slice=ctrl["time_slice"], toroidal_slice=ctrl["toroidal_slice"])
 
         # Save the animation, or animate it on repeat

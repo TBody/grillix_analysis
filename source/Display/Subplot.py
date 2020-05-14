@@ -25,33 +25,27 @@ class Subplot():
 
     @property
     def run(self):
-        # print(f"self {self} called run")
         return self._run
 
     @run.setter
     def run(self, value):
-        # print(f"self {self} called run with arg {value}")
         if value != None:
             self._run = value
 
     @property
     def convert(self):
-        # print(f"self {self} called convert")
         return self.display.convert
 
     @convert.setter
     def convert(self, value):
-        # print(f"self {self} called convert with arg {value}")
         raise NotImplementedError(f"Should set convert directly on display")
 
     @property
     def display_logarithmic(self):
-        # print(f"self {self} called display_logarithmic")
         return self.display.display_logarithmic
 
     @display_logarithmic.setter
     def display_logarithmic(self, value):
-        # print(f"self {self} called display_logarithmic with arg {value}")
         raise NotImplementedError(f"Should set display_logarithmic directly on display")
 
     def set_data(self, run, projector, variable, operators=[]):
