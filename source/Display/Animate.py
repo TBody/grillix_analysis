@@ -40,7 +40,6 @@ class Animate(Display):
 
             return axes, self.suptitle
 
-        # Make two animation objects. The one to display with animate on repeat until closed, while the one to save will animate once
         self.animation = animation.FuncAnimation(self.fig, animate, frames=snap_indices, blit=False, init_func=init_animation, repeat = True, interval = 1, cache_frame_data=False)
 
     def animate_on_repeat(self):
