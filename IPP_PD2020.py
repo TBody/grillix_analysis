@@ -25,11 +25,12 @@ class PD2020_CLI(BaseCLI):
 
 # import the necessary components from source
 from source.Run import Run
-from source.Display import Animate
 from source.Projector.Poloidal import Poloidal
 from ipdb import launch_ipdb_on_exception
 from source.shared import check_ffmpeg
-from source import plt, np, perceptually_uniform_cmap
+from source import plt, np, perceptually_uniform_cmap, mplcolors
+from matplotlib import animation
+from source.shared import UserEnvironment
 
 def find_omp(grid, rho, plot=False):
     # Find the axis position for the OMP profile
@@ -72,16 +73,27 @@ def add_time_to_title(suptitle, title_text, convert, run, time_slice):
         else:
             suptitle.set_text(f"{title_text} [{tau_values[0]:4.3f} tau]")
 
-def find_electric_field_profile(projector, radial, electric_field, omp_slice, time_slice=slice(-1,None), toroidal_slice=slice(None)):
+def find_electric_field_profile(grid, radial, electric_field, omp_slice, time_slice=slice(-1,None), toroidal_slice=slice(None)):
+    radial_electric_field = radial(electric_field(time_slice=time_slice, toroidal_slice=toroidal_slice))
+    electric_field_omp = grid.vector_to_matrix(radial_electric_field)[:, :, omp_slice[0], omp_slice[1]]
+    return electric_field_omp
+
+def find_reduced_electric_field_profile(projector, radial, electric_field, omp_slice, time_slice=slice(-1,None), toroidal_slice=slice(None)):
     return projector.structure_z(radial(electric_field(time_slice=time_slice, toroidal_slice=toroidal_slice)))[omp_slice]
 
 def axis_layout_rectangle(left, bottom, width, height):
     return [left, bottom, width, height]
 
-def annotate_figure(run, ax, x_omp, y_omp, linestyle='-', linewidth=0.5):
+def annotate_figure(run, ax, x_omp, y_omp, linestyle='-', linewidth=1):
     run.divertor_polygon.plot(ax, color='b', linestyle=linestyle, linewidth=linewidth)
     run.seperatrix[0].plot(ax, color='g', linestyle=linestyle, linewidth=linewidth)
     plt.plot(x_omp, y_omp, color='r', linestyle='--', linewidth=0.5)
+
+def find_cmap_limits(result):
+    result_min = np.nanmin(result.magnitude.ravel())
+    result_max = np.nanmax(result.magnitude.ravel())
+    
+    return result_min, result_max
 
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset, inset_axes
 
@@ -137,14 +149,21 @@ if __name__=="__main__":
 
         [rho_omp, omp_slice, x_omp, y_omp] = find_omp(run.grid, rho, plot=False)
 
-        def electric_field_profile_at_t(time_slice=slice(-1, None)):
-            return find_electric_field_profile(projector, radial, electric_field, omp_slice, time_slice)
+        def electric_field_profile_at_t(time_slice=slice(-1, None), reduction=True):
+            if reduction:
+                return find_reduced_electric_field_profile(projector, radial, electric_field, omp_slice, time_slice)
+            else:
+                return find_electric_field_profile(grid, radial, electric_field, omp_slice, time_slice)
         
         def density_at_t(time_slice=slice(-1, None)):
             return mask*projector.structure_z(density(time_slice=time_slice))
 
+        [density_min, density_max] = find_cmap_limits(density_at_t(time_slice=ctrl['time_slice']).values)
+        density_norm = mplcolors.Normalize(vmin=density_min, vmax=density_max)
+        [Efield_min, Efield_max] = find_cmap_limits(electric_field_profile_at_t(time_slice=ctrl['time_slice'], reduction=False))
+
         # Arrange the figure layout
-        fig = plt.figure(figsize=(10, 20))
+        fig = plt.figure(figsize=(12, 12))
 
         main_axis_bottom = 0.25
         main_axis_height = 0.65
@@ -155,17 +174,17 @@ if __name__=="__main__":
 
         main_title = main_density_axis.set_title("", pad=20)
 
-        main_density_plot = main_density_axis.pcolormesh(projector.x, projector.y, density_at_t(), cmap=perceptually_uniform_cmap)
+        main_density_plot = main_density_axis.pcolormesh(projector.x, projector.y, density_at_t(), cmap=perceptually_uniform_cmap, norm=density_norm)
         annotate_figure(run, main_density_axis, x_omp, y_omp)
         main_density_axis.set_aspect("equal", adjustable='box', anchor='C')
         main_density_axis.set_xlim(left=grid.xmin, right=grid.xmax)
         main_density_axis.set_ylim(bottom=grid.ymin, top=grid.ymax)
 
         omp_density_inset = inset_axes(main_density_axis, width='80%', height='80%', loc="center",
-            bbox_to_anchor=(1.2, 0.1, 1, 1), bbox_transform=main_density_axis.transAxes
+            bbox_to_anchor=(1.05, 0.1, 1, 1), bbox_transform=main_density_axis.transAxes
         )
 
-        density_detail_plot = omp_density_inset.pcolormesh(projector.x, projector.y, density_at_t(), cmap=perceptually_uniform_cmap)
+        density_detail_plot = omp_density_inset.pcolormesh(projector.x, projector.y, density_at_t(), cmap=perceptually_uniform_cmap, norm=density_norm)
         omp_density_inset.set_aspect("equal")
         annotate_figure(run, omp_density_inset, x_omp, y_omp)
 
@@ -184,16 +203,54 @@ if __name__=="__main__":
 
         electric_field_axis = plt.axes(axis_layout_rectangle(left=main_axis_left, bottom=0.07, width=main_axis_width, height=0.1))
 
-        electric_field_axis.plot(rho_omp, electric_field_profile_at_t())
+        electric_field_plot = electric_field_axis.plot(rho_omp, electric_field_profile_at_t())[0]
+        electric_field_axis.set_ylim(bottom=Efield_min, top=Efield_max)
         electric_field_axis.set_xlabel("Normalised pol. flux")
         electric_field_axis.set_title("OMP Radial electric field")
         electric_field_axis.axhline(y=0, color='k', linestyle='--', linewidth=0.5)
-        electric_field_axis.axvline(x=1, color='g', linestyle='--', linewidth=0.5)
+        electric_field_axis.axvline(x=1, color='g', linestyle='--', linewidth=1)
 
         def title_at_time(time_slice=slice(-1, None)):
             add_time_to_title(main_title, ctrl["title"], run.convert, run, time_slice)
 
         title_at_time()
 
+        # Read the tau values to determine how many snaps to plot
+        snap_indices = run.snap_indices[ctrl["time_slice"]]
 
-        plt.show()
+        def animate(t):
+            print(f"\tMaking frame {t} of [{snap_indices[0]}-{snap_indices[-1]}]")
+            
+            density_frame = density_at_t(t).values.magnitude
+            electric_frame = electric_field_profile_at_t(t).magnitude
+
+            main_density_plot.set_array(density_frame[:-1, :-1].ravel())
+            density_detail_plot.set_array(density_frame[:-1, :-1].ravel())
+            electric_field_plot.set_ydata(electric_frame)
+
+            title_at_time(t)
+
+            return main_density_plot, density_detail_plot, electric_field_plot, main_title,
+
+
+        animator = animation.FuncAnimation(fig, animate, frames=snap_indices, blit=False, repeat = True, interval = 1, cache_frame_data=False)
+
+        # The animation layout may be different to the interactive plot layout. Use a test figure to fine-tune layout if the animation does not look as expected
+        # plt.savefig("Test.png")
+
+        if ctrl["save"]:
+            usrenv = UserEnvironment()
+
+            writer = animation.FFMpegWriter(fps=usrenv.animation_framerate,
+                                            metadata=dict(artist=usrenv.author_name),
+                                            bitrate=usrenv.animation_bitrate,
+                                            codec=usrenv.animation_codec)
+            
+            animation_filename = ctrl["save"].with_suffix('.'+usrenv.animation_format)
+
+            print(f"Saving video as {animation_filename}")
+            animator.save(animation_filename, writer=writer, dpi=usrenv.animation_dpi)
+            # animator.save(animation_filename, writer=writer, dpi=fig.dpi)
+            print("Done")
+        else:
+            plt.show()

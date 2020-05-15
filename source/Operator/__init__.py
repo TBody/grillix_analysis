@@ -11,7 +11,10 @@ class Operator:
         return NotImplemented
 
     def __call__(self, z, **kwargs):
-        assert(z.check_dimensions())
+        try:
+            assert(z.check_dimensions())
+        except AttributeError:
+            print(f"Warning: operator applied on non-result object")
         
         return self.values(z, **kwargs)
     
