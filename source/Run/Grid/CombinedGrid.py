@@ -1,10 +1,5 @@
 from . import Grid
-# from source import np, defaultdict
-
-# grid_dict = defaultdict(list, {
-#     0: "MAIN_GRID",
-#     1: "PERP_GRID"
-# })
+from source import np
 
 class CombinedGrid(Grid):
     
@@ -17,16 +12,13 @@ class CombinedGrid(Grid):
         
         super().__init__(x=full_grid.x, y=full_grid.y, grid_spacing=full_grid._grid_spacing)
     
-    # # Interface allows CombinedGrid to be plotted by PlotPoloidal
-    # def compute_values(self):
-    #     # Use 0 to indicate main grid
-    #     zeros_main_grid = np.zeros(self.main_grid.size)
-    #     # Use 1 to indicate perp grid
-    #     ones_perp_grid = np.ones(self.perp_grid.size)
+    def invert_z(self):
+        # Invert the sub-grids
+        self.main_grid.invert_z()
+        self.perp_grid.invert_z()
         
-    #     self.title = 'grid'
-    #     self.values = np.concatenate((zeros_main_grid, ones_perp_grid))
-    
-    # def __format_value__(self, value):
-    #     # Formats a z_value
-    #     return grid_dict[value]
+        # Invert the combined grid
+        self._y = -self._y
+        self._y_unique = np.unique(self._y)
+        self._ymin = self._y_unique[0]
+        self._ymax = self._y_unique[-1]

@@ -44,6 +44,12 @@ class Grid:
             assert(np.size(self._x) == np.size(self._y))
         self.size = np.size(self._x)
 
+    def invert_z(self):
+        self._y = -self._y
+        self._y_unique = np.unique(self._y)
+        self._ymin = self._y_unique[0]
+        self._ymax = self._y_unique[-1]
+
     def update_normalisation_factor(self):
         self.R0 = self.normalisation.R0
 
