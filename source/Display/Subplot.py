@@ -169,6 +169,7 @@ class Subplot():
                 if self.result.is_vector:
                     raise NotImplementedError()
                     # self.make_vector_plot()
+                    # See https://stackoverflow.com/questions/19329039/plotting-animated-quivers-in-python
                 else:
                     self.plot.set_array(self.result.z[:-1, :-1].ravel())
 
