@@ -168,7 +168,7 @@ if __name__=="__main__":
                 return find_electric_field_profile(grid, radial, electric_field, omp_slice, time_slice)
         
         def density_at_t(time_slice=slice(-1, None)):
-            return mask*projector.structure_z(density(time_slice=time_slice))
+            return mask*projector.structure_z(density(time_slice=time_slice, toroidal_slice=[0]))
 
         [density_min, density_max] = find_cmap_limits(density_at_t(time_slice=ctrl['time_slice']).values)
         density_norm = mplcolors.Normalize(vmin=density_min, vmax=density_max)
