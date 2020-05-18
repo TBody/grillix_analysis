@@ -28,7 +28,7 @@ from source.Run import Run
 from source.Projector.Poloidal import Poloidal
 from ipdb import launch_ipdb_on_exception
 from source.shared import check_ffmpeg
-from source import plt, np, perceptually_uniform_cmap, mplcolors
+from source import plt, np, perceptually_uniform_cmap, mplcolors, matplotlib
 from matplotlib import animation
 from source.shared import UserEnvironment
 
@@ -130,6 +130,10 @@ if __name__=="__main__":
         xmax_omp = 1.15
         ymin_omp = -0.1
         ymax_omp = 0.1
+
+        # Increase font size for all text
+        font = {'size'   : 22}
+        matplotlib.rc('font', **font)
 
         grid = run.grid
         density = Density(run=run)
@@ -236,7 +240,8 @@ if __name__=="__main__":
         animator = animation.FuncAnimation(fig, animate, frames=snap_indices, blit=False, repeat = True, interval = 1, cache_frame_data=False)
 
         # The animation layout may be different to the interactive plot layout. Use a test figure to fine-tune layout if the animation does not look as expected
-        # plt.savefig("Test.png")
+        plt.savefig("Test.png")
+        quit()
 
         if ctrl["save"]:
             usrenv = UserEnvironment()
