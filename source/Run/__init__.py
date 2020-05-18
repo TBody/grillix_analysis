@@ -28,24 +28,27 @@ class Run:
         self.grid.setup_vector_to_matrix(with_check=True)
         self.grid.run = self
 
-        if self.equi_type == "NUMERICAL":
-            from .Equilibrium.Numerical import NumericalEquilibrium
-            self.equilibrium = NumericalEquilibrium(self.directory.equilibrium_netcdf, run=self)
+        try:
+            if self.equi_type == "NUMERICAL":
+                from .Equilibrium.Numerical import NumericalEquilibrium
+                self.equilibrium = NumericalEquilibrium(self.directory.equilibrium_netcdf, run=self)
 
-        elif self.equi_type == "CARTHY":
-            from .Equilibrium.Carthy import CarthyEquilibrium
-            self.equilibrium = CarthyEquilibrium(self)
+            elif self.equi_type == "CARTHY":
+                from .Equilibrium.Carthy import CarthyEquilibrium
+                self.equilibrium = CarthyEquilibrium(self)
 
-        elif self.equi_type == "CERFONS":
-            from .Equilibrium.Cerfons import CerfonsEquilibrium
-            self.equilibrium = CerfonsEquilibrium(self)
+            elif self.equi_type == "CERFONS":
+                from .Equilibrium.Cerfons import CerfonsEquilibrium
+                self.equilibrium = CerfonsEquilibrium(self)
 
-        elif self.equi_type == "CIRCULAR":
-            from .Equilibrium.Circular import CircularEquilibrium
-            self.equilibrium = CircularEquilibrium(self)
+            elif self.equi_type == "CIRCULAR":
+                from .Equilibrium.Circular import CircularEquilibrium
+                self.equilibrium = CircularEquilibrium(self)
 
-        else:
-            raise NotImplementedError(f"No implementation available for {self.equi_type}")
+            else:
+                raise NotImplementedError(f"No implementation available for {self.equi_type}")
+        except Exception as error:
+            print(f"Equilibrium read failed with error: {error}. Equilibrium will be unusable.")
         
         if calculate_metainfo:
             
@@ -60,7 +63,7 @@ class Run:
                 ]:
                 try:
                     function()
-                except (IndexError, FileNotFoundError):
+                except (IndexError, FileNotFoundError, AttributeError):
                     print(f"Unable to calculate run metadata in {function}: missing information")
     
     def add_to_children(self, child_object):

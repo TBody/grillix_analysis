@@ -10,7 +10,7 @@ import f90nml
 class NamelistReader:
     
     def __init__(self, namelist_dict):
-        assert(type(namelist_dict) is dict)
+        assert(isinstance(namelist_dict, (dict, defaultdict)))
         self.namelist_dict = namelist_dict
     
     @staticmethod
