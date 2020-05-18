@@ -25,33 +25,27 @@ class Subplot():
 
     @property
     def run(self):
-        # print(f"self {self} called run")
         return self._run
 
     @run.setter
     def run(self, value):
-        # print(f"self {self} called run with arg {value}")
         if value != None:
             self._run = value
 
     @property
     def convert(self):
-        # print(f"self {self} called convert")
         return self.display.convert
 
     @convert.setter
     def convert(self, value):
-        # print(f"self {self} called convert with arg {value}")
         raise NotImplementedError(f"Should set convert directly on display")
 
     @property
     def display_logarithmic(self):
-        # print(f"self {self} called display_logarithmic")
         return self.display.display_logarithmic
 
     @display_logarithmic.setter
     def display_logarithmic(self, value):
-        # print(f"self {self} called display_logarithmic with arg {value}")
         raise NotImplementedError(f"Should set display_logarithmic directly on display")
 
     def set_data(self, run, projector, variable, operators=[]):
@@ -112,8 +106,6 @@ class Subplot():
         for operator in self.operators:
             result = operator(result)
 
-        result = self.projector.structure_z(result)
-
         return result
 
     def make_vector_plot(self):
@@ -145,6 +137,7 @@ class Subplot():
     def __call__(self, update=False, **kwargs):
 
         self.result = self.find_z_values(**kwargs)
+        self.result = self.projector.structure_z(self.result)
 
         if not update:
             # First plot
@@ -171,7 +164,16 @@ class Subplot():
 
             self.projector.annotate(self)
         else:
-            pass
+            if self.variable.numerical_variable:
+                
+                if self.result.is_vector:
+                    raise NotImplementedError()
+                    # self.make_vector_plot()
+                else:
+                    self.plot.set_array(self.result.z[:-1, :-1].ravel())
+
+            else:
+                self.plot.set_array(self.result.z[:-1, :-1].ravel())
 
     def format_coord(self, x, y):
 

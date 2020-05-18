@@ -45,6 +45,23 @@ class Display:
             self.suptitle = plt.suptitle(self.title)
         else:
             self.suptitle = plt.suptitle("")
+        
+        self.suptitle_text = self.suptitle.get_text()
+        
+    def set_data_array(self, run, projector, variables, operators=[]):
+        assert(len(variables) <= len(self.axs1d)), f"Requested to plot {len(variables)} variables in {len(self.axs1d)} subplots"
+
+        for variable, ax in zip(variables, self.axs1d):
+            ax.set_data(run=run, projector=projector, variable=variable, operators=operators)
+    
+    def fill_values(self, time_slice=slice(-1,None), toroidal_slice=slice(None), poloidal_slice=slice(None), add_time_to_title=True):
+        
+        for ax in self.axs1d:
+            if not ax.assume_frozen and ax.used:
+                ax(time_slice=time_slice, toroidal_slice=toroidal_slice, poloidal_slice=poloidal_slice)
+
+        if add_time_to_title:
+            self.add_time_to_title(time_slice)
     
     def add_time_to_title(self, time_slice):
         

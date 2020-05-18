@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Import CLI user interface
 from source.UserInterface.CLI import (
     BaseCLI,
