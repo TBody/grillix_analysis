@@ -27,3 +27,4 @@ from .MagneticFieldAbs   import MagneticFieldAbs
 from .MagneticFieldPol   import MagneticFieldPol
 from .PoloidalUnitVector import PoloidalUnitVector
 from .RadialUnitVector   import RadialUnitVector
+from .MagneticFieldPitch import MagneticFieldPitch

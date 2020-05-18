@@ -38,6 +38,14 @@ class NumericalEquilibrium(Equilibrium):
     def Btor_func(self, x, y):
         return 1/x
 
+    @property
+    def psiO(self):
+        return self._psiO if self.convert else self._psiO.magnitude
+    
+    @property
+    def psiX(self):
+        return self._psiX if self.convert else self._psiX.magnitude
+
     # Precompute grid values (same implementation, but uses grid=True to speed up computation)
     def read_magnetic_geometry(self, grid):
 
@@ -46,8 +54,8 @@ class NumericalEquilibrium(Equilibrium):
         self.axis_Btor = np.abs(self.netcdf['Magnetic_geometry'].axis_Btor)
 
         # Convert to Weber
-        self.psiO = Quantity(self.netcdf['Psi_limits'].psi_axis, 'Wb')
-        self.psiX = Quantity(self.netcdf['Psi_limits'].psi_seperatrix, 'Wb')
+        self._psiO = Quantity(self.netcdf['Psi_limits'].psi_axis, 'Wb')
+        self._psiX = Quantity(self.netcdf['Psi_limits'].psi_seperatrix, 'Wb')
 
         self.spline_R = np.array(self.netcdf['Magnetic_geometry']['R'])
         self.spline_Z = np.array(self.netcdf['Magnetic_geometry']['Z'])
