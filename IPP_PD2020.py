@@ -28,7 +28,7 @@ from source.Run import Run
 from source.Projector.Poloidal import Poloidal
 from ipdb import launch_ipdb_on_exception
 from source.shared import check_ffmpeg
-from source import plt, np, perceptually_uniform_cmap, mplcolors, matplotlib
+from source import plt, np, perceptually_uniform_cmap, mplcolors, Quantity, matplotlib
 from matplotlib import animation
 from source.shared import UserEnvironment
 
@@ -38,9 +38,11 @@ def find_omp(grid, rho, plot=False):
     [x_mesh, y_mesh] = np.meshgrid(grid.x_unique, grid.y_unique)
 
     rho_values = rho().values.flatten()
-    axis_index = np.nanargmin(rho_values)
-    x_axis = grid.x[axis_index]
-    y_axis = grid.y[axis_index]
+    # axis_index = np.nanargmin(rho_values)
+    # x_axis = grid.x[axis_index]
+    # y_axis = grid.y[axis_index]
+    x_axis = Quantity(2.02, 'm')
+    y_axis = Quantity(0.08, 'm')
 
     x_axis_index = np.nanargmin(np.abs(x_axis-grid.x_unique))
     y_axis_index = np.nanargmin(np.abs(y_axis-grid.y_unique))
@@ -84,10 +86,10 @@ def find_reduced_electric_field_profile(projector, radial, electric_field, omp_s
 def axis_layout_rectangle(left, bottom, width, height):
     return [left, bottom, width, height]
 
-def annotate_figure(run, ax, x_omp, y_omp, linestyle='-', linewidth=1):
+def annotate_figure(run, ax, x_omp, y_omp, linestyle='-', linewidth=2):
     run.divertor_polygon.plot(ax, color='b', linestyle=linestyle, linewidth=linewidth)
     run.seperatrix[0].plot(ax, color='g', linestyle=linestyle, linewidth=linewidth)
-    plt.plot(x_omp, y_omp, color='r', linestyle='--', linewidth=0.5)
+    plt.plot(x_omp, y_omp, color='r', linestyle='--', linewidth=1)
 
 def find_cmap_limits(result):
     result_min = np.nanmin(result.magnitude.ravel())
@@ -102,6 +104,8 @@ if __name__=="__main__":
     # so you can find out what went wrong
     with launch_ipdb_on_exception():
         check_ffmpeg()
+        font = {'size'   : 18}
+        matplotlib.rc('font', **font)
         # CLI behaves exactly like a dictionary. If you want, you can modify it with standard dictionary methods, or replace it altogether
         CLI = PD2020_CLI(parse=True, display=True)
 
@@ -126,15 +130,19 @@ if __name__=="__main__":
         # For this analysis, we just want the density and the radially-projected electric fieldu
 
         # Need to specify the limits of the OMP by hand
-        xmin_omp = 1.05
-        xmax_omp = 1.15
-        ymin_omp = -0.1
-        ymax_omp = 0.1
-
-        # Increase font size for all text
-        font = {'size'   : 22}
-        matplotlib.rc('font', **font)
-
+        omp = {
+            'xmin': 2.0,
+            'xmax': 2.18,
+            'ymin': -0.1,
+            'ymax': 0.25
+        }
+        xpt = {
+            'xmin': 1.33,
+            'xmax': 1.5,
+            'ymin': -1.0,
+            'ymax': -0.8
+        }
+        
         grid = run.grid
         density = Density(run=run)
         electric_field = ElectricField(run=run)
@@ -160,7 +168,7 @@ if __name__=="__main__":
                 return find_electric_field_profile(grid, radial, electric_field, omp_slice, time_slice)
         
         def density_at_t(time_slice=slice(-1, None)):
-            return mask*projector.structure_z(density(time_slice=time_slice))
+            return mask*projector.structure_z(density(time_slice=time_slice, toroidal_slice=[0]))
 
         [density_min, density_max] = find_cmap_limits(density_at_t(time_slice=ctrl['time_slice']).values)
         density_norm = mplcolors.Normalize(vmin=density_min, vmax=density_max)
@@ -173,6 +181,8 @@ if __name__=="__main__":
         main_axis_height = 0.65
         main_axis_left   = 0.25
         main_axis_width  = 0.4
+        divertor_limits = {'xmin': np.min(run.divertor_polygon.x_points), 'xmax': np.max(run.divertor_polygon.x_points),
+                           'ymin': np.min(run.divertor_polygon.y_points), 'ymax': np.max(run.divertor_polygon.y_points)}
 
         main_density_axis = plt.axes(axis_layout_rectangle(left=main_axis_left, bottom=main_axis_bottom, width=main_axis_width, height=main_axis_height))
 
@@ -181,23 +191,36 @@ if __name__=="__main__":
         main_density_plot = main_density_axis.pcolormesh(projector.x, projector.y, density_at_t(), cmap=perceptually_uniform_cmap, norm=density_norm)
         annotate_figure(run, main_density_axis, x_omp, y_omp)
         main_density_axis.set_aspect("equal", adjustable='box', anchor='C')
-        main_density_axis.set_xlim(left=grid.xmin, right=grid.xmax)
-        main_density_axis.set_ylim(bottom=grid.ymin, top=grid.ymax)
+        main_density_axis.set_xlim(left=divertor_limits['xmin'], right=divertor_limits['xmax'])
+        main_density_axis.set_ylim(bottom=divertor_limits['ymin'], top=divertor_limits['ymax'])
 
         omp_density_inset = inset_axes(main_density_axis, width='80%', height='80%', loc="center",
-            bbox_to_anchor=(1.05, 0.1, 1, 1), bbox_transform=main_density_axis.transAxes
+            bbox_to_anchor=(1.05, 0.12, 1, 1), bbox_transform=main_density_axis.transAxes
         )
 
-        density_detail_plot = omp_density_inset.pcolormesh(projector.x, projector.y, density_at_t(), cmap=perceptually_uniform_cmap, norm=density_norm)
+        density_omp_plot = omp_density_inset.pcolormesh(projector.x, projector.y, density_at_t(), cmap=perceptually_uniform_cmap, norm=density_norm)
         omp_density_inset.set_aspect("equal")
         annotate_figure(run, omp_density_inset, x_omp, y_omp)
 
-        omp_density_inset.set_xlim(xmin_omp, xmax_omp)
-        omp_density_inset.set_ylim(ymin_omp, ymax_omp)
+        omp_density_inset.set_xlim(omp['xmin'], omp['xmax'])
+        omp_density_inset.set_ylim(omp['ymin'], omp['ymax'])
         omp_density_inset.xaxis.set_visible(False)
         omp_density_inset.yaxis.set_visible(False)
-
         mark_inset(main_density_axis, omp_density_inset, loc1=2, loc2=3, fc="none", ec="0.5")
+
+        xpt_density_inset = inset_axes(main_density_axis, width='80%', height='80%', loc="center",
+            bbox_to_anchor=(1.05, -0.57, 1, 1), bbox_transform=main_density_axis.transAxes
+        )
+
+        density_xpt_plot = xpt_density_inset.pcolormesh(projector.x, projector.y, density_at_t(), cmap=perceptually_uniform_cmap, norm=density_norm)
+        xpt_density_inset.set_aspect("equal")
+        annotate_figure(run, xpt_density_inset, x_omp, y_omp)
+
+        xpt_density_inset.set_xlim(xpt['xmin'], xpt['xmax'])
+        xpt_density_inset.set_ylim(xpt['ymin'], xpt['ymax'])
+        xpt_density_inset.xaxis.set_visible(False)
+        xpt_density_inset.yaxis.set_visible(False)
+        mark_inset(main_density_axis, xpt_density_inset, loc1=2, loc2=3, fc="none", ec="0.5")
 
         colorbar_axis = plt.axes(axis_layout_rectangle(left=0.1, bottom=main_axis_bottom, width=0.05, height=main_axis_height))
 
@@ -205,7 +228,7 @@ if __name__=="__main__":
         colorbar_axis.yaxis.set_label_position('left')
         cbar.set_label('Density [per cubic metre]', rotation=90)
 
-        electric_field_axis = plt.axes(axis_layout_rectangle(left=main_axis_left, bottom=0.07, width=main_axis_width, height=0.1))
+        electric_field_axis = plt.axes(axis_layout_rectangle(left=main_axis_left-0.1, bottom=0.06, width=main_axis_width+0.05, height=0.1))
 
         electric_field_plot = electric_field_axis.plot(rho_omp, electric_field_profile_at_t())[0]
         electric_field_axis.set_ylim(bottom=Efield_min, top=Efield_max)
@@ -229,12 +252,13 @@ if __name__=="__main__":
             electric_frame = electric_field_profile_at_t(t).magnitude
 
             main_density_plot.set_array(density_frame[:-1, :-1].ravel())
-            density_detail_plot.set_array(density_frame[:-1, :-1].ravel())
+            density_omp_plot.set_array(density_frame[:-1, :-1].ravel())
+            density_xpt_plot.set_array(density_frame[:-1, :-1].ravel())
             electric_field_plot.set_ydata(electric_frame)
 
             title_at_time(t)
 
-            return main_density_plot, density_detail_plot, electric_field_plot, main_title,
+            return main_density_plot, density_omp_plot, density_xpt_plot, electric_field_plot, main_title,
 
 
         animator = animation.FuncAnimation(fig, animate, frames=snap_indices, blit=False, repeat = True, interval = 1, cache_frame_data=False)

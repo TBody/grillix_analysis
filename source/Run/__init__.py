@@ -19,12 +19,15 @@ class Run:
 
         # Resolve the filepaths for the run directory, and read the params.in file
         [self.directory, self.parameters, self.equi_type] = Directory.initialise_and_read_parameters(filepath)
+        self.z_inverted = self.parameters['equi_params']['flip_z']
         
         # Read the physical_parameters.nml file and calculate normalisations
         self.normalisation = Normalisation(self.directory.normalisation_file, with_print=False)
 
         # Build a combined vgrid + perpghost grid
         self.grid = CombinedGrid(self.directory.main_grid_file, self.directory.perp_grid_file)
+        if self.z_inverted:
+            self.grid.invert_z()
         self.grid.setup_vector_to_matrix(with_check=True)
         self.grid.run = self
 
@@ -130,11 +133,11 @@ class Run:
             parallel_limit_contour.run = self
     
     def calculate_divertor_profile(self):
-        self.divertor_polygon = Polygon.read_polygon_from_trunk(self.directory.divertor_points_file)
+        self.divertor_polygon = Polygon.read_polygon_from_trunk(self.directory.divertor_points_file, self.z_inverted)
         self.divertor_polygon.run = self
     
     def calculate_exclusion_profile(self):
-        self.exclusion_polygon = Polygon.read_polygon_from_trunk(self.directory.exclusion_points_file)
+        self.exclusion_polygon = Polygon.read_polygon_from_trunk(self.directory.exclusion_points_file, self.z_inverted)
         self.exclusion_polygon.run = self
     
     def calculate_seperatrix(self):
