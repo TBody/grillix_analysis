@@ -12,13 +12,13 @@ from source.Operator import PadToGrid
 class Run:
     # Data container for constant run attributes
 
-    def __init__(self, filepath, calculate_metainfo=True):
+    def __init__(self, filepath, calculate_metainfo=True, use_error_snaps=False):
         # Add a flag whether to convert to SI units or not -- default false since it is easier to calculate in non-normalised units
         self._convert = False
         self.children = []
 
         # Resolve the filepaths for the run directory, and read the params.in file
-        [self.directory, self.parameters, self.equi_type] = Directory.initialise_and_read_parameters(filepath)
+        [self.directory, self.parameters, self.equi_type] = Directory.initialise_and_read_parameters(filepath, use_error_snaps=use_error_snaps)
         self.z_inverted = self.parameters['equi_params']['flip_z']
         
         # Read the physical_parameters.nml file and calculate normalisations

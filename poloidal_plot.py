@@ -2,11 +2,11 @@
 # Import CLI user interface
 from source.UserInterface.CLI import (
     BaseCLI,
-    FilepathArg, SaveFilepathArg, SnapNameArg,
+    FilepathArg, SaveFilepathArg,
     GroupArg, TitleArg,
     TimeSliceArg, ToroidalSliceArg,
     AllReductionArg,
-    ConvertToSIArg, DisplayLogarithmArg
+    ConvertToSIArg, DisplayLogarithmArg, ErrorSnapsArg
 )
 
 # Set up command-line interface
@@ -18,7 +18,6 @@ class PoloidalPlotCLI(BaseCLI):
         
         self.filepath           = FilepathArg(self)
         self.save               = SaveFilepathArg(self)
-        self.snap_name          = SnapNameArg(self)
         self.group              = GroupArg(self, variable_groups.keys(), default="BaseVariable")
         self.title              = TitleArg(self)
         self.time_slice         = TimeSliceArg(self)
@@ -26,6 +25,7 @@ class PoloidalPlotCLI(BaseCLI):
         self.allred             = AllReductionArg(self)
         self.convert_to_si      = ConvertToSIArg(self)
         self.display_logarithm  = DisplayLogarithmArg(self)
+        self.error_snaps        = ErrorSnapsArg(self)
 
         if parse: self.parse()
         if display: print(self)
@@ -55,7 +55,7 @@ if __name__=="__main__":
         # normalisation = dimensional quantities which give conversion to SI
         # grid          = vgrid + perpghost, including vector_to_matrix routines
         # 
-        run = Run(ctrl['filepath'])
+        run = Run(ctrl['filepath'], use_error_snaps=ctrl['error_snaps'])
 
         # Select a list of Variable types to plot
         variables = variable_groups[ctrl["group"]]

@@ -22,17 +22,17 @@ class Directory:
         "s2f_map_reverse_file": "trunk/map_Imap2.nc"
     }
     
-    def __init__(self, filepath):
+    def __init__(self, filepath, use_error_snaps=False):
         self.filepath = self.__check_directory_exists(filepath)
-        self.use_error_snaps = False
+        self.use_error_snaps = use_error_snaps
         self.filepath_given = filepath
     
     @classmethod
-    def initialise_and_read_parameters(cls, filepath):
+    def initialise_and_read_parameters(cls, filepath, use_error_snaps):
         print("Initialising RunDirectory object")
         start_time = time.time()
 
-        self = cls(filepath)
+        self = cls(filepath, use_error_snaps=use_error_snaps)
         
         self.check_snaps()
         [parameters, equi_type] = self.check_directory()

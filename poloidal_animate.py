@@ -2,7 +2,7 @@
 # Import CLI user interface
 from source.UserInterface.CLI import (
     BaseCLI,
-    FilepathArg, SaveFilepathArg, SnapNameArg,
+    FilepathArg, SaveFilepathArg,
     GroupArg, TitleArg,
     TimeSliceArg, ToroidalSliceArg,
     AllReductionArg,
@@ -18,7 +18,6 @@ class PoloidalAnimateCLI(BaseCLI):
         
         self.filepath           = FilepathArg(self)
         self.save               = SaveFilepathArg(self)
-        self.snap_name          = SnapNameArg(self)
         self.group              = GroupArg(self, variable_groups.keys(), default="BaseVariable")
         self.title              = TitleArg(self)
         self.time_slice         = TimeSliceArg(self, default_all=True, allow_range=True, allow_step=True)

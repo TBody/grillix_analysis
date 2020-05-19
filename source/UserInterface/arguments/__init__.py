@@ -104,7 +104,6 @@ class BooleanCLIArgument(CLIArgument):
 # Add Arg to the name, to prevent Namespace muddling
 from .Filepath         import Filepath         as FilepathArg
 from .SaveFilepath     import SaveFilepath     as SaveFilepathArg
-from .SnapName         import SnapName         as SnapNameArg
 from .Group            import Group            as GroupArg
 from .Title            import Title            as TitleArg
 from .TimeSlice        import TimeSlice        as TimeSliceArg
@@ -113,4 +112,5 @@ from .PoloidalSlice    import PoloidalSlice    as PoloidalSliceArg
 from .ConvertToSI      import ConvertToSI      as ConvertToSIArg
 from .DisplayLogarithm import DisplayLogarithm as DisplayLogarithmArg
 from .LaunchIPDB       import LaunchIPDB       as LaunchIPDBArg
+from .ErrorSnaps       import ErrorSnaps       as ErrorSnapsArg
 from .Reduction import *
