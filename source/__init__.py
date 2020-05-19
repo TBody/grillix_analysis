@@ -13,6 +13,7 @@ from netCDF4 import Dataset
 
 # Numerical analysis
 import numpy as np
+import numpy.ma as ma
 # Datasets
 import pandas as pd
 

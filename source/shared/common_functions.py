@@ -1,12 +1,16 @@
+from source import np
 def smoothstep(x0, x, wx, order=3):
     # x0 = centre
     # x = position where to evaluate
     # wx = width
-
+    
     xn  = (x - x0) / wx + 0.5
 
-    xn[xn<=0] = 0
-    xn[xn>=1] = 1
+    # Ignore the runtime warning that comes from comparing NaN
+    # NaN will return False in any comparison
+    with np.errstate(invalid='ignore'):    
+        xn[xn<=0] = 0
+        xn[xn>=1] = 1
     
     if order == 1:
         return xn
