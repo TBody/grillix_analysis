@@ -228,9 +228,15 @@ class Subplot():
             z = z.vector_magnitude
 
         assert(len(quantiles)==2)
-        [self.vmin, self.vmax] = self.find_quantile_limits_from_z(z, quantiles)
+        
+        if hasattr(z, "units"):
+            self.vmin = np.nanmin(z.magnitude)
+            self.vmax = np.nanmax(z.magnitude)
+        else:
+            self.vmin = np.nanmin(z)
+            self.vmax = np.nanmax(z)
 
-        if self.vmin > 0:
+        if self.vmin > 0 or not(self.display_logarithmic):
             self.linthres = 0
             self.linscale = 0
         else:
