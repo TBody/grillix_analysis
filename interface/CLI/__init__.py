@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 
 class BaseCLI():
-    output_path = Path(__file__).absolute().parents[3]/'output'
+    output_path = Path(__file__).absolute().parents[2]/'output'
     valid_extensions = [".png", ".svg", ".avi", ".mp4"]
 
     def __init__(self, description):

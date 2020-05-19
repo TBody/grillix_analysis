@@ -50,13 +50,27 @@ class Animate(Display):
     def save_animation(self, filename):
         usrenv = UserEnvironment()
 
-        writer = animation.FFMpegWriter(fps=usrenv.animation_framerate,
-                                        metadata=dict(artist=usrenv.author_name),
-                                        bitrate=usrenv.animation_bitrate,
-                                        codec=usrenv.animation_codec)
+        animation_kwargs = {
+        "fps": usrenv.animation_framerate,
+        "metadata": dict(artist=usrenv.author_name),
+        "bitrate": usrenv.animation_bitrate,
+        "codec": usrenv.animation_codec
+        }
+
+        if usrenv.animation_writer == "FFMpegFileWriter":
+            # Saves temporary figures to disk, then stiches them together
+            # Slower, but better memory handling
+            writer = animation.FFMpegFileWriter(**animation_kwargs)
+        elif usrenv.animation_writer == "FFMpegWriter":
+            # Stores images in memory, then stiches together.
+            # May be faster, but could result in out-of-memory issues for large animations
+            writer = animation.FFMpegWriter(**animation_kwargs)
+        else:
+            print(f"Warning: writer {usrenv.animation_writer} not implemented. Falling back to FFMpegFileWriter")
+            writer = animation.FFMpegFileWriter(**animation_kwargs)
         
         animation_filename = filename.with_suffix('.'+usrenv.animation_format)
 
         print(f"Saving video as {animation_filename}")
-        self.animation.save(animation_filename, writer=writer, dpi=usrenv.animation_dpi)
+        self.animation.save(animation_filename, writer=writer, dpi=self.fig.dpi)
         print("Done")

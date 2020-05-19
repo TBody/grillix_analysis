@@ -13,19 +13,22 @@ class UserEnvironment:
 
         # Set the plotting backend
         self.plot_backend = "Qt5Agg"
+        self.matplotlib_style = "default"
 
         self.screen_dimension_x = 1920
         self.screen_dimension_y = 1200
         self.default_figure_size_x = 1920
         self.default_figure_size_y = 1200
 
-        self.default_figure_resolution = 100 #in dpi -- affects scaling of 'px' valued objects such as text
+        self.default_figure_resolution = 200 #in dpi -- affects scaling of 'px' valued objects such as text
+        # Will need to change text size if changing figure dpi
+        self.font_size = 4
         
         # Animation variables
+        self.animation_writer = "FFMpegFileWriter"
         self.animation_framerate = 15
-        self.animation_bitrate = 1800
-        self.animation_format = "avi"
-        self.animation_dpi = 150
+        self.animation_bitrate = 7500
+        self.animation_format = "mp4"
         self.animation_codec = "h264"
 
         # Variables for quiver (vector) plots
@@ -40,3 +43,4 @@ class UserEnvironment:
     
         for key, value in user_environment.items():
             setattr(self, key, value)
+        
