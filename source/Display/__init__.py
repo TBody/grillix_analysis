@@ -65,18 +65,21 @@ class Display:
     
     def add_time_to_title(self, time_slice):
         
-        tau_values = np.atleast_1d(self.run.tau_values[time_slice])
+        try:
+            tau_values = np.atleast_1d(self.run.tau_values[time_slice])
 
-        if len(tau_values) > 1:
-            if self.convert:
-                self.suptitle.set_text(f"{self.suptitle_text} [t = {tau_values[0].to_compact():4.3f} to {tau_values[-1].to_compact():4.3f}]")
+            if len(tau_values) > 1:
+                if self.convert:
+                    self.suptitle.set_text(f"{self.suptitle_text} [t = {tau_values[0].to_compact():4.3f} to {tau_values[-1].to_compact():4.3f}]")
+                else:
+                    self.suptitle.set_text(f"{self.suptitle_text} [{tau_values[0]:4.3f} to {tau_values[-1]:4.3f} tau]")
             else:
-                self.suptitle.set_text(f"{self.suptitle_text} [{tau_values[0]:4.3f} to {tau_values[-1]:4.3f} tau]")
-        else:
-            if self.convert:
-                self.suptitle.set_text(f"{self.suptitle_text} [t = {tau_values[0].to_compact():4.3f}]")
-            else:
-                self.suptitle.set_text(f"{self.suptitle_text} [{tau_values[0]:4.3f} tau]")
+                if self.convert:
+                    self.suptitle.set_text(f"{self.suptitle_text} [t = {tau_values[0].to_compact():4.3f}]")
+                else:
+                    self.suptitle.set_text(f"{self.suptitle_text} [{tau_values[0]:4.3f} tau]")
+        except AttributeError:
+            print("Cannot add time to title")
     
     @property
     def run(self):

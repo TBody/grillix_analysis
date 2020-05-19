@@ -11,3 +11,4 @@ output/*
 user_environment.json
 no.interactive
 core.*
+*.png

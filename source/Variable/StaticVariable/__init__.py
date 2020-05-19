@@ -39,6 +39,9 @@ class PenalisationVariable(StaticVariable):
         
         return self.pad_to_grid(values)
 
+# From Grid
+from .Grid import Grid
+
 # From equilibrium storage
 from .District               import District
 from .FluxSurface            import FluxSurface
