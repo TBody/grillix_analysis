@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Import CLI user interface
-from source.UserInterface.CLI import (
+from interface.CLI import (
     BaseCLI,
     FilepathArg, SaveFilepathArg,
     GroupArg, TitleArg,
@@ -32,7 +32,7 @@ class PoloidalPlotCLI(BaseCLI):
 
 # import the necessary components from source
 from source.Run import Run
-from source.Display import Plot
+from show import Plot
 from source.Projector.Poloidal import Poloidal
 from ipdb import launch_ipdb_on_exception
 

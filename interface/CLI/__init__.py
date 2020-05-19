@@ -32,4 +32,4 @@ class BaseCLI():
     def __setitem__(self, key, value):
         self.dict[key] = value
 
-from source.UserInterface.arguments import *
+from interface.arguments import *

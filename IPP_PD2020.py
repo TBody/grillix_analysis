@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Import CLI user interface
-from source.UserInterface.CLI import (
+from interface.CLI import (
     BaseCLI,
     FilepathArg, SaveFilepathArg,
     TitleArg,

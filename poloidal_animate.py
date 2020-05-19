@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Import CLI user interface
-from source.UserInterface.CLI import (
+from interface.CLI import (
     BaseCLI,
     FilepathArg, SaveFilepathArg,
     GroupArg, TitleArg,
@@ -31,7 +31,7 @@ class PoloidalAnimateCLI(BaseCLI):
 
 # import the necessary components from source
 from source.Run import Run
-from source.Display import Animate
+from show import Animate
 from source.Projector.Poloidal import Poloidal
 from ipdb import launch_ipdb_on_exception
 from source.shared import check_ffmpeg

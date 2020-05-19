@@ -8,7 +8,7 @@ with launch_ipdb_on_exception():
 
     run = Run('TCV_half/hot_core_restart')
 
-    from source.Display import Plot
+    from show import Plot
 
     # figure = Plot(run=run, ncols=4, nrows=1, convert=True)
 
