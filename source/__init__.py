@@ -1,4 +1,6 @@
 # Import modules which are globally required
+from interface import UserEnvironment
+usrenv = UserEnvironment()
 
 # Base system requirements
 import os
@@ -20,7 +22,7 @@ import pandas as pd
 # Plotting
 import matplotlib
 # Interactive figures
-matplotlib.use('Qt5Agg')
+matplotlib.use(usrenv.plot_backend)
 import matplotlib.pyplot as plt
 import matplotlib.colors as mplcolors
 # Pretty plotting

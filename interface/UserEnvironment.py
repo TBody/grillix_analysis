@@ -10,7 +10,10 @@ class UserEnvironment:
         self.user_name = None
         self.default_run_directory = None
         self.author_name = None
-        
+
+        # Set the plotting backend
+        self.plot_backend = "Qt5Agg"
+
         self.screen_dimension_x = 1920
         self.screen_dimension_y = 1200
         self.default_figure_size_x = 1920
