@@ -83,6 +83,14 @@ def find_electric_field_profile(grid, radial, electric_field, omp_slice, time_sl
 def find_reduced_electric_field_profile(projector, radial, electric_field, omp_slice, time_slice=slice(-1,None), toroidal_slice=slice(None)):
     return projector.structure_z(radial(electric_field(time_slice=time_slice, toroidal_slice=toroidal_slice)))[omp_slice]
 
+def find_pressure_profile(grid, pressure, omp_slice, time_slice=slice(-1,None), toroidal_slice=slice(None)):
+    total_pressure = pressure(time_slice=time_slice, toroidal_slice=toroidal_slice)
+    pressure_omp = grid.vector_to_matrix(total_pressure)[:, :, omp_slice[0], omp_slice[1]]
+    return pressure_omp
+
+def find_reduced_pressure_profile(projector, pressure, omp_slice, time_slice=slice(-1,None), toroidal_slice=slice(None)):
+    return projector.structure_z(pressure(time_slice=time_slice, toroidal_slice=toroidal_slice))[omp_slice]
+
 def axis_layout_rectangle(left, bottom, width, height):
     return [left, bottom, width, height]
 
@@ -125,7 +133,7 @@ if __name__=="__main__":
         run.convert = True
 
         # Select a list of Variable types to animate
-        from source.Variable import Density, ElectricField, FluxSurface
+        from source.Variable import Density, ElectricField, FluxSurface, TotalPressure
         from source.Operator import AllReduction, VectorRadialProjection
         # For this analysis, we just want the density and the radially-projected electric fieldu
 
@@ -138,14 +146,15 @@ if __name__=="__main__":
         }
         xpt = {
             'xmin': 1.33,
-            'xmax': 1.5,
-            'ymin': -1.0,
+            'xmax': 1.6,
+            'ymin': -1.1,
             'ymax': -0.8
         }
         
         grid = run.grid
         density = Density(run=run)
         electric_field = ElectricField(run=run)
+        pressure = TotalPressure(run=run)
         radial = VectorRadialProjection(run=run)
         rho = FluxSurface(run=run)
         allreduce = AllReduction()
@@ -167,15 +176,26 @@ if __name__=="__main__":
             else:
                 return find_electric_field_profile(grid, radial, electric_field, omp_slice, time_slice)
         
+        def pressure_profile_at_t(time_slice=slice(-1, None), reduction=True):
+            if reduction:
+                return find_reduced_pressure_profile(projector, pressure, omp_slice, time_slice)
+            else:
+                return find_pressure_profile(grid, pressure, omp_slice, time_slice)
+        
         def density_at_t(time_slice=slice(-1, None)):
             return mask*projector.structure_z(density(time_slice=time_slice, toroidal_slice=[0]))
 
-        [density_min, density_max] = find_cmap_limits(density_at_t(time_slice=ctrl['time_slice']).values)
+        time_slice = ctrl['time_slice']
+        # Take every 10th value
+        time_slice_stepped = slice(time_slice.start, time_slice.stop, 20)
+
+        [density_min, density_max] = find_cmap_limits(density_at_t(time_slice=time_slice_stepped).values)
         density_norm = mplcolors.Normalize(vmin=density_min, vmax=density_max)
-        [Efield_min, Efield_max] = find_cmap_limits(electric_field_profile_at_t(time_slice=ctrl['time_slice'], reduction=False))
+        [Efield_min, Efield_max] = find_cmap_limits(electric_field_profile_at_t(time_slice=time_slice_stepped, reduction=False))
+        [Pressure_min, Pressure_max] = find_cmap_limits(pressure_profile_at_t(time_slice=time_slice_stepped, reduction=False))
 
         # Arrange the figure layout
-        fig = plt.figure(figsize=(12, 12))
+        fig = plt.figure(figsize=(12, 13))
 
         main_axis_bottom = 0.25
         main_axis_height = 0.65
@@ -208,7 +228,7 @@ if __name__=="__main__":
         omp_density_inset.yaxis.set_visible(False)
         mark_inset(main_density_axis, omp_density_inset, loc1=2, loc2=3, fc="none", ec="0.5")
 
-        xpt_density_inset = inset_axes(main_density_axis, width='80%', height='80%', loc="center",
+        xpt_density_inset = inset_axes(main_density_axis, width='80%', height='100%', loc="center",
             bbox_to_anchor=(1.05, -0.57, 1, 1), bbox_transform=main_density_axis.transAxes
         )
 
@@ -226,14 +246,28 @@ if __name__=="__main__":
 
         cbar = plt.colorbar(main_density_plot, cax=colorbar_axis)
         colorbar_axis.yaxis.set_label_position('left')
-        cbar.set_label('Density [per cubic metre]', rotation=90)
+        cbar.set_label('Density [per cubic meter]', rotation=90)
 
-        electric_field_axis = plt.axes(axis_layout_rectangle(left=main_axis_left-0.1, bottom=0.06, width=main_axis_width+0.05, height=0.1))
+        electric_field_axis = plt.axes(axis_layout_rectangle(left=main_axis_left-0.15, bottom=0.06, width=main_axis_width+0.05, height=0.1))
+        pressure_axis = electric_field_axis.twinx()
 
-        electric_field_plot = electric_field_axis.plot(rho_omp, electric_field_profile_at_t())[0]
+        electric_field_plot = electric_field_axis.plot(rho_omp, electric_field_profile_at_t(), 'r')[0]
         electric_field_axis.set_ylim(bottom=Efield_min, top=Efield_max)
+        electric_field_axis.set_ylabel("E radial [kV/m]", color='r')
+        electric_field_axis.tick_params(axis='y', labelcolor='r')
+        
+        pressure_plot = pressure_axis.semilogy(rho_omp, pressure_profile_at_t(), 'b')[0]
+        pressure_axis.set_yticks([1E-3, 1E-0])
+        pressure_axis.set_ylim(bottom=Pressure_min, top=Pressure_max)
+        pressure_axis.set_ylabel("Pressure [kPa]", color='b', rotation=270, labelpad=20)
+        pressure_axis.tick_params(axis='y', labelcolor='b')
+        
+        from matplotlib.ticker import FormatStrFormatter
+        electric_field_axis.xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+
+        electric_field_axis.xaxis.set_major_locator(plt.MaxNLocator(3))
         electric_field_axis.set_xlabel("Normalised pol. flux")
-        electric_field_axis.set_title("OMP Radial electric field")
+        electric_field_axis.set_title("OMP Profile")
         electric_field_axis.axhline(y=0, color='k', linestyle='--', linewidth=0.5)
         electric_field_axis.axvline(x=1, color='g', linestyle='--', linewidth=1)
 
@@ -250,27 +284,34 @@ if __name__=="__main__":
             
             density_frame = density_at_t(t).values.magnitude
             electric_frame = electric_field_profile_at_t(t).magnitude
+            pressure_frame = pressure_profile_at_t(t).magnitude
 
             main_density_plot.set_array(density_frame[:-1, :-1].ravel())
             density_omp_plot.set_array(density_frame[:-1, :-1].ravel())
             density_xpt_plot.set_array(density_frame[:-1, :-1].ravel())
             electric_field_plot.set_ydata(electric_frame)
+            pressure_plot.set_ydata(pressure_frame)
 
             title_at_time(t)
 
-            return main_density_plot, density_omp_plot, density_xpt_plot, electric_field_plot, main_title,
+            return main_density_plot, density_omp_plot, density_xpt_plot, electric_field_plot, pressure_plot, main_title,
 
 
         animator = animation.FuncAnimation(fig, animate, frames=snap_indices, blit=False, repeat = True, interval = 1, cache_frame_data=False)
 
         # The animation layout may be different to the interactive plot layout. Use a test figure to fine-tune layout if the animation does not look as expected
-        plt.savefig("Test.png")
-        quit()
+        # plt.savefig("Test.png")
+        # quit()
 
         if ctrl["save"]:
             usrenv = UserEnvironment()
 
-            writer = animation.FFMpegWriter(fps=usrenv.animation_framerate,
+            # writer = animation.FFMpegWriter(fps=usrenv.animation_framerate,
+            #                                 metadata=dict(artist=usrenv.author_name),
+            #                                 bitrate=usrenv.animation_bitrate,
+            #                                 codec=usrenv.animation_codec)
+
+            writer = animation.FFMpegFileWriter(fps=usrenv.animation_framerate,
                                             metadata=dict(artist=usrenv.author_name),
                                             bitrate=usrenv.animation_bitrate,
                                             codec=usrenv.animation_codec)
