@@ -85,7 +85,7 @@ working values. These are stored in `user_environment.json`. An example is given
 }
 ```
 The only line which must be included is `default_run_directory`, which helps to resolve filepaths
-which are given relative to the default run directory rather than the script location. See `source/shared/UserEnvironment.py` for
+which are given relative to the default run directory rather than the script location. See `interface/UserEnvironment.py` for
 information on the variables (including default values).
 
 ## Extras

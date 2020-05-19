@@ -30,7 +30,7 @@ from ipdb import launch_ipdb_on_exception
 from source.shared import check_ffmpeg
 from source import plt, np, perceptually_uniform_cmap, mplcolors, Quantity, matplotlib
 from matplotlib import animation
-from source.shared import UserEnvironment
+from interface import UserEnvironment
 
 def find_omp(grid, rho, plot=False):
     # Find the axis position for the OMP profile

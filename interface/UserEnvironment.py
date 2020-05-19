@@ -1,10 +1,10 @@
-from source import Path
+from pathlib import Path
 import json
 
 class UserEnvironment:
 
     def __init__(self):
-        user_environment_json = Path(__file__).absolute().parents[2] / "user_environment.json"
+        user_environment_json = Path(__file__).absolute().parents[1] / "user_environment.json"
 
         # Defaults
         self.user_name = None

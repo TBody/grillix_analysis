@@ -1,5 +1,5 @@
 from source import np, perceptually_uniform_cmap, diverging_cmap, mplcolors, Quantity
-from source.shared import UserEnvironment
+from interface import UserEnvironment
 
 from source.Run import Run
 from source.Projector import Projector

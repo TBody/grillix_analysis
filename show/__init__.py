@@ -1,5 +1,5 @@
 from source import plt, np
-from source.shared import UserEnvironment
+from interface import UserEnvironment
 from .Subplot import Subplot
 
 class Display:

@@ -1,7 +1,7 @@
 from source import np, plt
 from . import Display
 from matplotlib import animation
-from source.shared import UserEnvironment
+from interface import UserEnvironment
 
 class Animate(Display):
     

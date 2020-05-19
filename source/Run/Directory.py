@@ -1,5 +1,6 @@
 from source import Path, np, time, os
-from source.shared import NetCDFPath, UserEnvironment
+from source.shared import NetCDFPath
+from interface import UserEnvironment
 from .Parameters import Parameters
 
 class Directory:
