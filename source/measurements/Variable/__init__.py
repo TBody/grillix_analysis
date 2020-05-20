@@ -26,7 +26,7 @@ class Variable():
         # Call run at the end, since this triggers a 'set' routine which may depend on the default values
         self.run = run
 
-    from source.shared.properties import (update_run_values, update_normalisation_factor, run, convert)
+    from source.shared.properties import (update_run_values, update_normalisation_factor, run, SI_units)
 
     def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
         return NotImplemented
@@ -37,9 +37,9 @@ class Variable():
         values = self.values(time_slice=time_slice, toroidal_slice=toroidal_slice, poloidal_slice=poloidal_slice)
         values = self.values_finalize(values)
 
-        if self.convert and not(self.derived_variable):
+        if self.SI_units and not(self.derived_variable):
             values *= self.normalisation_factor
-        elif not(self.convert) and hasattr(values, "units"):
+        elif not(self.SI_units) and hasattr(values, "units"):
             values = values.to('').magnitude
         
         assert(not(isinstance(values, Result))), f"{self.__class__.__name__} error: Wrapping a Result object in a Result is undefined"

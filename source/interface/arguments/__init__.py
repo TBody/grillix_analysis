@@ -109,8 +109,8 @@ from .Title            import Title            as TitleArg
 from .TimeSlice        import TimeSlice        as TimeSliceArg
 from .ToroidalSlice    import ToroidalSlice    as ToroidalSliceArg
 from .PoloidalSlice    import PoloidalSlice    as PoloidalSliceArg
-from .ConvertToSI      import ConvertToSI      as ConvertToSIArg
-from .DisplayLogarithm import DisplayLogarithm as DisplayLogarithmArg
+from .SI_units         import SI_units         as SI_unitsArg
+from .LogScale         import LogScale         as LogScaleArg
 from .LaunchIPDB       import LaunchIPDB       as LaunchIPDBArg
 from .ErrorSnaps       import ErrorSnaps       as ErrorSnapsArg
 from .Reduction import *

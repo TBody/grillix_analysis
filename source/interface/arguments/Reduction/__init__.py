@@ -1,4 +1,4 @@
-from interface.arguments import CLIArgument
+from .. import CLIArgument
 from source import np
 
 # HANDLED_FUNCTIONS must take arguments axis and keepdims

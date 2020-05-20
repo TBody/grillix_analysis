@@ -18,7 +18,7 @@ class DerivedVariable(Variable):
             # Downcast to values to prevent wrapping a Result type in itself (not defined)
             output = output.values
         
-        if self.convert:
+        if self.SI_units:
             return output.to(self.normalisation_factor.units)
         elif hasattr(output, "units"):
             return output.to('').magnitude

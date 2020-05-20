@@ -5,7 +5,7 @@ class Operator:
     def __init__(self, run=None):
         self.run = run
     
-    from source.shared.properties import (update_run_values, update_normalisation_factor, run, convert)
+    from source.shared.properties import (update_run_values, update_normalisation_factor, run, SI_units)
     
     def values(self, z):
         return NotImplemented

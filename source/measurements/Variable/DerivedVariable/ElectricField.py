@@ -24,7 +24,7 @@ class ElectricField(DerivedVariable):
 
         potential_gradient = self.perpendicular_gradient(self.scalar_potential(**kwargs))
         
-        if not(self.convert):
+        if not(self.SI_units):
             # delta factor from differentiating on R0-normalised grid 
             potential_gradient = potential_gradient * self.delta
 

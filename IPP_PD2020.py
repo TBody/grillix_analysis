@@ -18,7 +18,7 @@ class PD2020_CLI(BaseCLI):
         self.save               = SaveFilepathArg(self)
         self.title              = TitleArg(self)
         self.time_slice         = TimeSliceArg(self, default_all=True, allow_range=True, allow_step=True)
-        self.display_logarithm  = DisplayLogarithmArg(self)
+        self.log_scalearithm  = DisplayLogarithmArg(self)
 
         if parse: self.parse()
         if display: print(self)

@@ -39,13 +39,13 @@ class PoloidalAnnotate(Annotate):
         
     def label_axes(self, subplot):
         if not(subplot.hide_xlabel):
-            if subplot.convert:
+            if subplot.SI_units:
                 subplot.ax.set_xlabel(f"R [{self.run.normalisation.R0.units}]")
             else:
                 subplot.ax.set_xlabel(f"R/R0")
             
         if not(subplot.hide_ylabel):
-            if subplot.convert:
+            if subplot.SI_units:
                 subplot.ax.set_ylabel(f"Z [{self.run.normalisation.R0.units}]")
             else:
                 subplot.ax.set_ylabel(f"Z/R0")

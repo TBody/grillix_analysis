@@ -14,7 +14,7 @@ class Run:
 
     def __init__(self, filepath, calculate_metainfo=True, use_error_snaps=False):
         # Add a flag whether to convert to SI units or not -- default false since it is easier to calculate in non-normalised units
-        self._convert = False
+        self._SI_units = False
         self.children = []
 
         # Resolve the filepaths for the run directory, and read the params.in file
@@ -73,14 +73,14 @@ class Run:
         self.children.append(child_object)
 
     @property
-    def convert(self):
-        return self._convert
+    def SI_units(self):
+        return self._SI_units
     
-    @convert.setter
-    def convert(self, value):
-        # Setter for convert
+    @SI_units.setter
+    def SI_units(self, value):
+        # Setter for SI_units
         # N.b. all objects in the analysis routines directly read this value to set their own value for convert
-        self._convert = value
+        self._SI_units = value
 
     def calculate_tau_values(self):
         if self.directory.use_error_snaps:
@@ -93,7 +93,7 @@ class Run:
     
     @property
     def tau_values(self):
-        if self.convert:
+        if self.SI_units:
             return self._tau_values * self.normalisation.tau_0
         else:
             return self._tau_values

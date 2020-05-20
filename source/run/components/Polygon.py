@@ -27,16 +27,16 @@ class Polygon:
 
         self.polygon = mpltPath.Path(np.column_stack((x_points, y_points)), closed=True)
     
-    from source.shared.properties import (update_run_values, update_normalisation_factor, run, convert)
+    from source.shared.properties import (update_run_values, update_normalisation_factor, run, SI_units)
 
-    # Auto-convert to normalised when accessing properties, based on self.convert flag
+    # Auto-convert to normalised when accessing properties, based on self.SI_units flag
     @property
     def x_points(self):
-        return self._x_points * self.R0 if self.convert else self._x_points
+        return self._x_points * self.R0 if self.SI_units else self._x_points
 
     @property
     def y_points(self):
-        return self._y_points * self.R0 if self.convert else self._y_points
+        return self._y_points * self.R0 if self.SI_units else self._y_points
 
     def update_normalisation_factor(self):
         self.R0 =self.normalisation.R0

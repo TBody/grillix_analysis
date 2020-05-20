@@ -22,7 +22,7 @@ def cross(a, b, **kwargs):
 
 class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
 
-    from source.shared.properties import (update_run_values, update_normalisation_factor, run, convert)
+    from source.shared.properties import (update_run_values, update_normalisation_factor, run, SI_units)
 
     def __init__(self, values, run=None, check_shape=False):
         # Don't convert to np.array -- since this will strip units if passed a Quantity

@@ -10,7 +10,7 @@ class Grid:
                                     matrix_to_vector
                                     )
     
-    from source.shared.properties import (update_run_values, run, convert)
+    from source.shared.properties import (update_run_values, run, SI_units)
     
     @classmethod
     def from_netcdf(cls, netcdf_file):
@@ -53,42 +53,42 @@ class Grid:
     def update_normalisation_factor(self):
         self.R0 = self.normalisation.R0
 
-    # Auto-convert to normalised when accessing properties, based on self.convert flag
+    # Auto-convert to normalised when accessing properties, based on self.SI_units flag
     @property
     def x(self):
-        return self._x * self.R0 if self.convert else self._x
+        return self._x * self.R0 if self.SI_units else self._x
 
     @property
     def y(self):
-        return self._y * self.R0 if self.convert else self._y
+        return self._y * self.R0 if self.SI_units else self._y
     
     @property
     def x_unique(self):
-        return self._x_unique * self.R0 if self.convert else self._x_unique
+        return self._x_unique * self.R0 if self.SI_units else self._x_unique
 
     @property
     def y_unique(self):
-        return self._y_unique * self.R0 if self.convert else self._y_unique
+        return self._y_unique * self.R0 if self.SI_units else self._y_unique
 
     @property
     def xmin(self):
-        return self._xmin * self.R0 if self.convert else self._xmin
+        return self._xmin * self.R0 if self.SI_units else self._xmin
 
     @property
     def xmax(self):
-        return self._xmax * self.R0 if self.convert else self._xmax
+        return self._xmax * self.R0 if self.SI_units else self._xmax
 
     @property
     def ymin(self):
-        return self._ymin * self.R0 if self.convert else self._ymin
+        return self._ymin * self.R0 if self.SI_units else self._ymin
 
     @property
     def ymax(self):
-        return self._ymax * self.R0 if self.convert else self._ymax
+        return self._ymax * self.R0 if self.SI_units else self._ymax
     
     @property
     def grid_spacing(self):
-        return self._grid_spacing * self.R0 if self.convert else self._grid_spacing
+        return self._grid_spacing * self.R0 if self.SI_units else self._grid_spacing
     
     def __add__(self, other):
 

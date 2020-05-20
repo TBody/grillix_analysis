@@ -22,7 +22,7 @@ class ParallelElectronVelocity(DerivedVariable):
     
     @property
     def ion_charge(self):
-        if self.convert:
+        if self.SI_units:
             return self._ion_charge
         else:
             return self._ion_charge.magnitude

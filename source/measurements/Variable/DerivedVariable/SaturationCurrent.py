@@ -18,7 +18,7 @@ class SaturationCurrent(DerivedVariable):
     
     @property
     def e(self):
-        if self.convert:
+        if self.SI_units:
             return self.normalisation.electron_charge
         else:
             return 1.0

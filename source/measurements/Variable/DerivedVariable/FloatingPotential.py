@@ -27,7 +27,7 @@ class FloatingPotential(DerivedVariable):
     
     def values(self, **kwargs):
         
-        if self.convert:
+        if self.SI_units:
             output = self.calculate_wrapped(self.scalar_potential(**kwargs).values, self.lambda_sh, self.electron_temperature(**kwargs).values)
         else:
             output = self.scalar_potential(**kwargs) - self.lambda_sh.magnitude * self.electron_temperature(**kwargs)

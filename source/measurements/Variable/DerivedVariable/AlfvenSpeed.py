@@ -28,7 +28,7 @@ class AlfvenSpeed(DerivedVariable):
     
     @property
     def vA0_to_cs0(self):
-        if self.convert:
+        if self.SI_units:
             # Converts from units of T/sqrt(m**3) to m/s
             return self.vA0_to_cs0_SI
         else:

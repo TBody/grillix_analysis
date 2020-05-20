@@ -9,7 +9,7 @@ class Projector:
         self.reduction = reduction
         self.run = run
     
-    from source.shared.properties import (update_run_values, update_normalisation_factor, run, convert)
+    from source.shared.properties import (update_run_values, update_normalisation_factor, run, SI_units)
 
     def slice_and_structure(self, variable):
         return NotImplemented
@@ -30,3 +30,5 @@ class Projector:
     def structure_z(self, z_unstructured):
         
         return NotImplemented
+
+from .Poloidal import Poloidal

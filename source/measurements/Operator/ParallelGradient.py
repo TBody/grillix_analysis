@@ -56,7 +56,7 @@ class ParallelGradient(Operator):
         L_half_backward = self.map_metadata['map_metadata'][1,:]
         #TODO: should be np.abs(1.0/equilibrium.Btor(x,y)) * ...
         fieldline_length = np.abs(1.0/self.grid.x) * (L_half_forward + L_half_backward)
-        if self.convert:
+        if self.SI_units:
             # Multiply by parallel scale length
             # N.b. must be left-multiplied to call "multiply" method from pint
             fieldline_length = self.normalisation.R0 * fieldline_length

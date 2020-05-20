@@ -24,7 +24,7 @@ class PoloidalAnimateCLI(BaseCLI):
         self.toroidal_slice     = ToroidalSliceArg(self)
         self.allred             = AllReductionArg(self)
         self.convert_to_si      = ConvertToSIArg(self)
-        self.display_logarithm  = DisplayLogarithmArg(self)
+        self.log_scalearithm  = DisplayLogarithmArg(self)
 
         if parse: self.parse()
         if display: print(self)
@@ -74,7 +74,7 @@ if __name__=="__main__":
                          naxs                = len(variables),
                          title               = ctrl["title"],
                          convert             = ctrl["convert_to_SI"],
-                         display_logarithmic = ctrl["display_log"])
+                         log_scale = ctrl["log_scale"])
 
         # For each Subplot in figure, set values for the run, projector, variable, and operators
         figure.set_data_array(run=run, projector=projector, variables=variables, operators=operators)

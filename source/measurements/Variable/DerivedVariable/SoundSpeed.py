@@ -18,7 +18,7 @@ class SoundSpeed(DerivedVariable):
     
     @property
     def Mi(self):
-        if self.convert:
+        if self.SI_units:
             return self._Mi
         else:
             return 1.0

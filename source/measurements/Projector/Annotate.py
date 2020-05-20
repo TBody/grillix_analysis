@@ -4,7 +4,7 @@ class Annotate:
         self.initialised = False
         self.run = run
     
-    from source.shared.properties import (update_normalisation_factor, run, convert)
+    from source.shared.properties import (update_normalisation_factor, run, SI_units)
 
     def update_run_values(self):
         self.initialised = True

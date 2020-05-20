@@ -41,12 +41,12 @@ class Subplot():
         raise NotImplementedError(f"Should set convert directly on display")
 
     @property
-    def display_logarithmic(self):
-        return self.display.display_logarithmic
+    def log_scale(self):
+        return self.display.log_scale
 
-    @display_logarithmic.setter
-    def display_logarithmic(self, value):
-        raise NotImplementedError(f"Should set display_logarithmic directly on display")
+    @log_scale.setter
+    def log_scale(self, value):
+        raise NotImplementedError(f"Should set log_scale directly on display")
 
     def set_data(self, run, projector, variable, operators=[]):
         # Must pass an initialised Run object
@@ -56,7 +56,7 @@ class Subplot():
         # Operator acts on z(t, phi, l) and return z'(t, phi, l)
 
         self.run = run
-        self.run.convert = self.convert
+        self.run.convert = self.SI_units
         # If type(object) == type, call __init__ (will set run values later anyway)
         if type(projector) == type:
             projector = projector()
@@ -203,7 +203,7 @@ class Subplot():
                 if hasattr(operator, "title"):
                     title_string = f"{operator.title}({title_string})"
 
-            if self.convert:
+            if self.SI_units:
                 if hasattr(self.result, "units"):
                     self.ax.set_title(f"{title_string} [{self.result.units}]")
                 else:
@@ -236,7 +236,7 @@ class Subplot():
             self.vmin = np.nanmin(z)
             self.vmax = np.nanmax(z)
 
-        if self.vmin > 0 or not(self.display_logarithmic):
+        if self.vmin > 0 or not(self.log_scale):
             self.linthres = 0
             self.linscale = 0
         else:
@@ -268,7 +268,7 @@ class Subplot():
 
         self.find_colormap_limits_from_z(z, quantiles=quantiles, linear_proportion=linear_proportion)
 
-        if not self.display_logarithmic:
+        if not self.log_scale:
             self.cmap_norm = mplcolors.Normalize(vmin=self.vmin, vmax=self.vmax)
             if self.vmin > 0:
                 self.cmap = perceptually_uniform_cmap

@@ -4,14 +4,14 @@ from .Subplot import Subplot
 
 class Display:
 
-    def __init__(self, nrows=None, ncols=None, naxs=None, run=None, sharex=True, sharey=True, maximised=True, title=None, convert=False, display_logarithmic=False, **kwargs):
+    def __init__(self, nrows=None, ncols=None, naxs=None, run=None, sharex=True, sharey=True, maximised=True, title=None, convert=False, log_scale=False, **kwargs):
         
         self.determine_layout(nrows, ncols, naxs)
 
         self.run = run
         self.title = title
-        self.convert = convert
-        self.display_logarithmic = display_logarithmic
+        self.SI_units = convert
+        self.log_scale = log_scale
 
         kwargs = self.set_kwargs_from_user_environment(maximised, kwargs)
 
@@ -69,12 +69,12 @@ class Display:
             tau_values = np.atleast_1d(self.run.tau_values[time_slice])
 
             if len(tau_values) > 1:
-                if self.convert:
+                if self.SI_units:
                     self.suptitle.set_text(f"{self.suptitle_text} [t = {tau_values[0].to_compact():4.3f} to {tau_values[-1].to_compact():4.3f}]")
                 else:
                     self.suptitle.set_text(f"{self.suptitle_text} [{tau_values[0]:4.3f} to {tau_values[-1]:4.3f} tau]")
             else:
-                if self.convert:
+                if self.SI_units:
                     self.suptitle.set_text(f"{self.suptitle_text} [t = {tau_values[0].to_compact():4.3f}]")
                 else:
                     self.suptitle.set_text(f"{self.suptitle_text} [{tau_values[0]:4.3f} tau]")

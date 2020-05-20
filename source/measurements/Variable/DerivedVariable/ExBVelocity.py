@@ -23,7 +23,7 @@ class ExBVelocity(DerivedVariable):
         electric_field = self.electric_field(**kwargs)
         Btor = self.toroidal_magentic_field(**kwargs)
 
-        if self.convert:
+        if self.SI_units:
             zero_array = Quantity(np.zeros_like(Btor), Btor.units)
         else:
             zero_array = np.zeros_like(Btor)

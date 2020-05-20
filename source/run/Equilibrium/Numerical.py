@@ -40,11 +40,11 @@ class NumericalEquilibrium(Equilibrium):
 
     @property
     def psiO(self):
-        return self._psiO if self.convert else self._psiO.magnitude
+        return self._psiO if self.SI_units else self._psiO.magnitude
     
     @property
     def psiX(self):
-        return self._psiX if self.convert else self._psiX.magnitude
+        return self._psiX if self.SI_units else self._psiX.magnitude
 
     # Precompute grid values (same implementation, but uses grid=True to speed up computation)
     def read_magnetic_geometry(self, grid):

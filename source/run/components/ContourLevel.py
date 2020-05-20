@@ -26,14 +26,14 @@ class ContourLevel():
         assert(len(x_arrays)==len(y_arrays))
         self.n_arrays = len(x_arrays)
     
-    from source.shared.properties import (update_run_values, run, convert)
+    from source.shared.properties import (update_run_values, run, SI_units)
     
     def update_normalisation_factor(self):
         self.R0 = self.normalisation.R0
 
     def plot(self, ax, **kwargs):
 
-        if self.convert:
+        if self.SI_units:
             # Plot with units
             normalisation = self.R0
         else:

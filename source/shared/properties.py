@@ -26,15 +26,15 @@ def run(self, value):
         self.update_normalisation_factor()
 
 @property
-def convert(self):
-    # print(f"self {self} called convert")
+def SI_units(self):
+    # print(f"self {self} called SI_units")
     try:
-        return self._run.convert
+        return self._run.SI_units
     except AttributeError:
         # If run isn't defined yet, assume call is before initialisation. Return default
         return False
 
-@convert.setter
-def convert(self, value):
-    assert(self.run.convert == value)
-    raise NotImplementedError(f"Should set convert directly on run")
+@SI_units.setter
+def SI_units(self, value):
+    assert(self.run.SI_units == value)
+    raise NotImplementedError(f"Should set SI_units directly on run")

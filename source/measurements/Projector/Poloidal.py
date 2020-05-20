@@ -17,7 +17,7 @@ class Poloidal(Projector):
     def update_run_values(self):
         
         self.grid = self.run.grid
-        if self.grid.convert:
+        if self.grid.SI_units:
             self.x = self.grid.x_unique.magnitude
             self.y = self.grid.y_unique.magnitude
         else:
