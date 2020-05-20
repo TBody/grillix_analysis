@@ -4,16 +4,16 @@ from ..BaseVariable import ElectronTemperature
 
 class SoundSpeed(DerivedVariable):
     
-    def __init__(self, **kwargs):
-        self.title = "Local sound speed"
-        self.electron_temperature = ElectronTemperature(**kwargs)
-        self.display_linear = True
+    def __init__(self, run=None):
+        title = "Local sound speed"
+        self.electron_temperature = ElectronTemperature(run=run)
         self.base_variables = [self.electron_temperature]
 
-        super().__init__(**kwargs)
+        super().__init__(title, run=None)
 
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.c_s0.to('kilometers/second')
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.c_s0.to('kilometers/second')
         self._Mi = self.normalisation.Mi
     
     @property

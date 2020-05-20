@@ -5,19 +5,19 @@ from ..EquilibriumVariable import MagneticFieldAbs
 
 class ParallelElectronVelocity(DerivedVariable):
     
-    def __init__(self, **kwargs):
-        self.title = "Electron Velocity"
-        self.density = Density(**kwargs)
-        self.ion_velocity = ParallelIonVelocity(**kwargs)
-        self.current = ParallelCurrent(**kwargs)
+    def __init__(self, run=None):
+        title = "Electron Velocity"
+        self.density = Density(run=run)
+        self.ion_velocity = ParallelIonVelocity(run=run)
+        self.current = ParallelCurrent(run=run)
 
         self.base_variables = [self.density, self.ion_velocity, self.current]
-        self.display_linear = True
         
-        super().__init__(**kwargs)
+        super().__init__(title, run=None)
 
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.c_s0.to('kilometers/second')
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.c_s0.to('kilometers/second')
         self._ion_charge = self.normalisation.Z
     
     @property

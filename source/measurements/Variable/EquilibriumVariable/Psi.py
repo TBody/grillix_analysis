@@ -3,9 +3,9 @@ from . import EquilibriumVariable
 
 class Psi(EquilibriumVariable):
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.title = "Poloidal Flux"
+    def __init__(self, run=None):
+        super().__init__(run=run)
+        title = "Poloidal Flux"
 
     def update_normalisation_factor(self):
         self.normalisation_factor = Quantity(1, 'weber')

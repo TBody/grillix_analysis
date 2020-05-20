@@ -1,6 +1,7 @@
 from source import Path, np, Dataset
+from ..components import RunComponent
 
-class Grid:
+class Grid(RunComponent):
     
     from ._vector_to_matrix import (setup_vector_to_matrix, 
                                     check_vector_to_matrix,
@@ -10,10 +11,8 @@ class Grid:
                                     matrix_to_vector
                                     )
     
-    from source.shared.properties import (update_run_values, run, SI_units)
-    
     @classmethod
-    def from_netcdf(cls, netcdf_file):
+    def from_netcdf(cls, netcdf_file, run):
         
         grid_file = netcdf_file.open()
 
@@ -22,9 +21,9 @@ class Grid:
 
         grid_spacing = grid_file.hf
 
-        return cls(x=x, y=y, grid_spacing=grid_spacing)
+        return cls(x=x, y=y, grid_spacing=grid_spacing, run=run)
     
-    def __init__(self, x, y, grid_spacing, grid_file=None, test_size=True):
+    def __init__(self, x, y, grid_spacing, run, test_size=True):
         self.vector_to_matrix_initialised = False
         
         self._x = x
@@ -43,6 +42,8 @@ class Grid:
         if test_size:
             assert(np.size(self._x) == np.size(self._y))
         self.size = np.size(self._x)
+
+        super().__init__(run=run)
 
     def invert_z(self):
         self._y = -self._y
@@ -95,7 +96,7 @@ class Grid:
         new_x = np.append(self._x, other._x)
         new_y = np.append(self._y, other._y)
 
-        return Grid(x=new_x, y=new_y, grid_spacing=self._grid_spacing)
+        return Grid(x=new_x, y=new_y, grid_spacing=self._grid_spacing, run=self.run)
     
     def find_nearest_index(self, x, y, print_error=False):
 

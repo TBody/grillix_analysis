@@ -5,18 +5,18 @@ from source.measurements.Operator import PadToGrid
 class StaticVariable(Variable):
     # Any variable defined in terms of variables written to a metadata file ()
     
-    def __init__(self, name_in_netcdf, **kwargs):
+    def __init__(self, name_in_netcdf, netcdf_filename, title, run=None):
         
-        # Name of the variable in the snaps netcdfs
+        self.title = title
         self.name_in_netcdf = name_in_netcdf
-        # Array of NetCDFPath (see source.__init__)
+        self.netcdf_filename = netcdf_filename
         
-        super().__init__(**kwargs)
+        super().__init__(run=run)
     
-    def update_run_values(self):
+    def set_run(self):
         self.netcdf_file = getattr(self.run.directory, self.netcdf_filename)
     
-    def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+    def fill_values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
         return self.netcdf_file[self.name_in_netcdf]
         
     def values_finalize(self, values):
@@ -27,16 +27,13 @@ class StaticVariable(Variable):
 
 class PenalisationVariable(StaticVariable):
     # Variables written to penalisation metadata. Automatically padded to fill full_grid
-    def __init__(self, name_in_netcdf, **kwargs):
-        self.netcdf_filename = "penalisation_file"
-        super().__init__(name_in_netcdf, **kwargs)
     
-    def update_run_values(self):
+    def set_run(self):
         self.netcdf_file = getattr(self.run.directory, self.netcdf_filename)
         self.pad_to_grid = PadToGrid(run=self.run)
     
-    def call_finalize(self, values):
-        
+    def values_finalize(self, values):
+        values = super().values_finalize(values)
         return self.pad_to_grid(values)
 
 # From Grid

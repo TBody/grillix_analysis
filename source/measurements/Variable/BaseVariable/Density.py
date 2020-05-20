@@ -3,12 +3,12 @@ from . import BaseVariable
 
 class Density(BaseVariable):
     
-    def __init__(self, **kwargs):
-        super().__init__('logne', **kwargs)
-        self.title = "Density"
+    def __init__(self, run=None):
+        super().__init__('logne', 'Density', run)
 
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.n0
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.n0
     
     def __format_value__(self, value):
         # N.b. may be overwritten by children classes

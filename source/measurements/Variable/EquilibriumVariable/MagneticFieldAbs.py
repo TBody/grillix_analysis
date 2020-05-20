@@ -1,12 +1,12 @@
 from source import Quantity, np
-from ...Result import VectorResult
+from ...WrappedArray import VectorArray
 from . import EquilibriumVariable
 
 class MagneticFieldAbs(EquilibriumVariable):
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.title = "magnitude(B)"
+    def __init__(self, run=None):
+        super().__init__(run=run)
+        title = "magnitude(B)"
 
     def update_normalisation_factor(self):
         self.normalisation_factor = self.normalisation.B0

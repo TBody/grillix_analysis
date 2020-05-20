@@ -1,20 +1,16 @@
 from source import np
-from .Annotate import Annotate
+from .. import MComponent
 
-class Projector:
-
-    annotate = Annotate()
+class Projector(MComponent):
 
     def __init__(self, reduction, run=None):
         self.reduction = reduction
-        self.run = run
+        super().__init__(run)
     
-    from source.shared.properties import (update_run_values, update_normalisation_factor, run, SI_units)
-
     def slice_and_structure(self, variable):
         return NotImplemented
     
-    def __call__(self, variable, **kwargs):
+    def __call__(self, variable, run=None):
         # If setting time_slice, toroidal_slice, or poloidal_slice, must pass as keyword arguments
 
         for key, value in kwargs.items():

@@ -2,10 +2,10 @@ from . import BaseVariable
 
 class ParallelVectorPotential(BaseVariable):
     
-    def __init__(self, **kwargs):
-        super().__init__('aparx', **kwargs)
-        self.title = "Vector Potential"
-        
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.beta_0 * self.normalisation.B0 * self.normalisation.rho_s0
+    def __init__(self, run=None):
+        super().__init__('aparx', "Vector Potential", run=run)
+    
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.beta_0 * self.normalisation.B0 * self.normalisation.rho_s0
         

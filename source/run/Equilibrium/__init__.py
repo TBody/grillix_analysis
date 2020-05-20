@@ -1,4 +1,5 @@
 from source import Path, np, Dataset, Quantity
+from ..components import RunComponent
 from source.measurements.Variable import Variable
 from source.measurements.Variable.EquilibriumVariable import (
     Psi,
@@ -13,7 +14,7 @@ from source.measurements.Variable.EquilibriumVariable import (
     RadialUnitVector
 )
 
-class Equilibrium:
+class Equilibrium(RunComponent):
 
     def __init__(self, run):
 
@@ -49,9 +50,7 @@ class Equilibrium:
 
         self.run = run
 
-    from source.shared.properties import (update_normalisation_factor, run, SI_units)
-
-    def update_run_values(self):
+    def set_run(self):
         self.params = self.run.parameters['equi_params']
 
         for variable in {self.psi, self.rho, self.Bx, self.By, self.Btor,

@@ -1,22 +1,23 @@
 from source import np
-from ...Result import VectorResult
+from ...WrappedArray import VectorArray
 from . import DerivedVariable
 from ..BaseVariable import ScalarPotential
 from source.measurements.Operator import PerpendicularGradient
 
 class ElectricField(DerivedVariable):
     
-    def __init__(self, **kwargs):
-        self.title = "Electric field"
+    def __init__(self, run=None):
+        title = "Electric field"
         self.vector_variable = True
-        self.scalar_potential = ScalarPotential(**kwargs)
-        self.perpendicular_gradient = PerpendicularGradient(**kwargs)
+        self.scalar_potential = ScalarPotential(run=run)
+        self.perpendicular_gradient = PerpendicularGradient(run=run)
         self.base_variables = [self.scalar_potential, self.perpendicular_gradient]
         
-        super().__init__(**kwargs)
+        super().__init__(title, run=None)
 
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.Te0 / (self.normalisation.electron_charge * self.normalisation.R0)
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.Te0 / (self.normalisation.electron_charge * self.normalisation.R0)
         self.normalisation_factor = self.normalisation_factor.to('kilovolts/m')
         self.delta = self.normalisation.delta
 

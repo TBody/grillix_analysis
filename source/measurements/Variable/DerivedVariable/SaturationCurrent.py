@@ -3,17 +3,18 @@ from ..BaseVariable import Density
 
 class SaturationCurrent(DerivedVariable):
     
-    def __init__(self, **kwargs):
-        self.title = "Saturation current"
-        self.density = Density(**kwargs)
-        self.sound_speed = SoundSpeed(**kwargs)
+    def __init__(self, run=None):
+        title = "Saturation current"
+        self.density = Density(run=run)
+        self.sound_speed = SoundSpeed(run=run)
 
         self.base_variables = [self.density, self.sound_speed]
         
-        super().__init__(**kwargs)
+        super().__init__(title, run=None)
 
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.electron_charge * self.density.normalisation_factor * self.sound_speed.normalisation_factor
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.electron_charge * self.density.normalisation_factor * self.sound_speed.normalisation_factor
         self.normalisation_factor = self.normalisation_factor.to('kiloamperes/meter**2')
     
     @property

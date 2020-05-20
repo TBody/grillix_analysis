@@ -22,7 +22,7 @@ def cross(a, b, **kwargs):
 
 class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
 
-    from source.shared.properties import (update_run_values, update_normalisation_factor, run, SI_units)
+    from source.shared.properties import (set_run, update_normalisation_factor, run, SI_units)
 
     def __init__(self, values, run=None, check_shape=False):
         # Don't convert to np.array -- since this will strip units if passed a Quantity
@@ -170,13 +170,13 @@ class Result(numpy.lib.mixins.NDArrayOperatorsMixin):
 class VectorResult(Result):
 
     @classmethod
-    def poloidal_init_from_subarrays(cls, R_array, Z_array, run=None):
+    def poloidal_init_from_subarrays(cls, R_array, Z_array):
         vector_array = cls.poloidal_vector_from_subarrays(R_array=R_array, Z_array=Z_array)
         
         return cls(values=vector_array, run=run)
     
     @classmethod
-    def init_from_subarrays(cls, R_array, phi_array, Z_array, run=None):
+    def init_from_subarrays(cls, R_array, phi_array, Z_array):
         vector_array = cls.vector_from_subarrays(R_array=R_array, Z_array=Z_array, phi_array=phi_array)
         
         return cls(values=vector_array, run=run)
@@ -230,7 +230,7 @@ class VectorResult(Result):
     def __init__(self, values, run=None, check_shape=False):
         
         self._vector = True
-        super().__init__(values=values, run=run, check_shape=check_shape)
+        super().__init__(values=values, run=run)
     
     def return_Result(self, values):
         if isinstance(values, VectorResult):

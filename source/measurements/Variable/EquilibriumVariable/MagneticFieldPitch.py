@@ -3,10 +3,10 @@ from . import EquilibriumVariable
 
 class MagneticFieldPitch(EquilibriumVariable):
 
-    def __init__(self, **kwargs):
-        self.title = "Field pitch"
+    def __init__(self, run=None):
+        title = "Field pitch"
 
-        super().__init__(**kwargs)
+        super().__init__(run=run)
 
     def update_normalisation_factor(self):
         self.normalisation_factor = self.normalisation.B0

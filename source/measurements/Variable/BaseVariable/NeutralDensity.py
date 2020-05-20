@@ -6,14 +6,14 @@ class NeutralDensity(Variable):
     # Any variable defined in terms of variables written into the snaps (or
     # error_snaps) files
     
-    def __init__(self):
-        super().__init__()
+    def __init__(self, run=None):
+        super().__init__(run=run)
         self.title = "Neutral density"
         
-        name_in_netcdf = "neutN"
-
         # Name of the variable in the snaps netcdfs
-        self.name_in_netcdf = name_in_netcdf
+        self.name_in_netcdf = "neutN"
+
+    def set_run(self):
         # Array of NetCDFPath (see source.__init__)
         if self.run.directory.use_error_snaps:
             self.snap_netcdf = self.run.directory.neutral_error_snaps
@@ -34,8 +34,9 @@ class NeutralDensity(Variable):
         self.n_full_grid = self.n_main_grid + self.n_perp_grid
         self.grid_points = np.arange(self.n_full_grid)
     
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.n0
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.n0
     
     def __call__(self, time_slice=slice(-1,None), toroidal_slice=slice(None), poloidal_slice=slice(None)):
         

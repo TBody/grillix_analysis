@@ -10,7 +10,7 @@ from source.interface.CLI import (
 )
 
 # Set up command-line interface
-from source.measurements.Variable import variable_groups
+from source.measurements.Variable.variable_groups import variable_groups
 class PoloidalPlotCLI(BaseCLI):
 
     def __init__(self, parse=False, display=False):
@@ -66,7 +66,7 @@ if __name__=="__main__":
         
         # Request the 'Poloidal' projector. A projector takes z(t, phi, l) and maps it to a 2D array, in this case z(x, y)
         # The treatment of the 't' and 'phi' axis is via an AllReduction operator, passed as the reduction keyword
-        projector = Poloidal(reduction=allreduce)
+        projector = Poloidal(reduction=allreduce, run=run)
 
         figure = canvas.subplots_with_title(naxs=len(variables), title="Test")
 

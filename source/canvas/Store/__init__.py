@@ -9,7 +9,7 @@ class Display:
         self.determine_layout(nrows, ncols, naxs)
 
         self.run = run
-        self.title = title
+        title = title
         self.SI_units = convert
         self.log_scale = log_scale
 

@@ -5,13 +5,14 @@ class BaseVariable(Variable):
     # Any variable defined in terms of variables written into the snaps (or
     # error_snaps) files
     
-    def __init__(self, name_in_netcdf, **kwargs):
+    def __init__(self, name_in_netcdf, title, run=None):
         # Name of the variable in the snaps netcdfs
         self.name_in_netcdf = name_in_netcdf
-
-        super().__init__(**kwargs)
+        self.title = title
+        
+        super().__init__(run=run)
     
-    def update_run_values(self):
+    def set_run(self):
         # Array of NetCDFPath (see source.__init__)
         if self.run.directory.use_error_snaps:
             self.snap_netcdf = self.run.directory.error_snaps
@@ -35,7 +36,7 @@ class BaseVariable(Variable):
         self.n_full_grid = self.n_main_grid + self.n_perp_grid
         self.grid_points = np.arange(self.n_full_grid)
     
-    def values(self, time_slice=slice(-1,None), toroidal_slice=slice(None), poloidal_slice=slice(None)):
+    def fill_values(self, time_slice=slice(-1,None), toroidal_slice=slice(None), poloidal_slice=slice(None)):
         planes = self.plane_indices[toroidal_slice]
         snaps = self.snap_indices[time_slice]
         points = self.grid_points[poloidal_slice]
@@ -68,7 +69,7 @@ class BaseVariable(Variable):
         if self.log_in_netcdf:
             values = np.exp(values)
         
-        return values
+        return values, self.normalisation_factor
 
 from .Density                 import Density
 from .ElectronTemperature     import ElectronTemperature

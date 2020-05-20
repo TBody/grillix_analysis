@@ -16,10 +16,10 @@ class ParallelGradient(Operator):
     # From grid values, interpolate to find the values at points which intersected by parallel trace
     # Execute qmap * uf
     
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, run=None):
+        super().__init__(run=run)
     
-    def update_run_values(self):
+    def set_run(self):
 
         self.f2s_map_forward = CSRMatrix(self.run.directory.f2s_map_forward_file, self.grid)
         self.f2s_map_reverse = CSRMatrix(self.run.directory.f2s_map_reverse_file, self.grid)

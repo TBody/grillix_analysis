@@ -2,11 +2,11 @@ from . import BaseVariable
 
 class Vorticity(BaseVariable):
     
-    def __init__(self, **kwargs):
-        super().__init__('vortx', **kwargs)
-        self.title = "Vorticity"
+    def __init__(self, run=None):
+        super().__init__('vortx', "Vorticity", run=run)
         
-    def update_normalisation_factor(self):
+    @property
+    def normalisation_factor(self):
         self.normalisation_factor = (
             self.normalisation.Mi * self.normalisation.n0 * self.normalisation.Te0
             /(self.normalisation.electron_charge * self.normalisation.rho_s0**2 * self.normalisation.B0**2 )

@@ -7,8 +7,6 @@ class NumericalEquilibrium(Equilibrium):
     def __init__(self, equilibrium_netcdf, run):
 
         self.netcdf = equilibrium_netcdf
-        self.normalisation = run.normalisation
-
         self.read_magnetic_geometry(run.grid)
 
         print(f"Using {self.netcdf.description}, {self.netcdf.history}")

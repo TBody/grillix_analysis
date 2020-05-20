@@ -1,11 +1,11 @@
 from . import Operator
 from source import np
-from ..Result import VectorResult
+from ..WrappedArray import VectorArray
 
 class PerpendicularGradient(Operator):
     
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, run=None):
+        super().__init__(run=run)
     
     def values(self, z):
         
@@ -23,4 +23,4 @@ class PerpendicularGradient(Operator):
         gradient_R = self.run.grid.matrix_to_vector(gradient_R)
         gradient_Z = self.run.grid.matrix_to_vector(gradient_Z)
 
-        return VectorResult.poloidal_init_from_subarrays(R_array=gradient_R, Z_array=gradient_Z, run=z.run)
+        return VectorArray.poloidal(R_array=gradient_R, Z_array=gradient_Z)

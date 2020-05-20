@@ -2,9 +2,9 @@ from . import Operator
 from source import np
 class VectorRadialProjection(Operator):
 
-    def __init__(self, **kwargs):
-        self.title = "Radial"
-        super().__init__(**kwargs)
+    def __init__(self, run=None):
+        title = "Radial"
+        super().__init__(run=run)
 
     def values(self, z):
 

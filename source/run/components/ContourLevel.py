@@ -1,4 +1,5 @@
 from source import plt, np
+from . import RunComponent
 
 def find_contour_levels(x_values, y_values, shaped_data, levels):
 
@@ -17,7 +18,7 @@ def find_contour_levels(x_values, y_values, shaped_data, levels):
     plt.close()
     return contour_levels
 
-class ContourLevel():
+class ContourLevel(RunComponent):
 
     def __init__(self, x_arrays, y_arrays):
 
@@ -26,12 +27,10 @@ class ContourLevel():
         assert(len(x_arrays)==len(y_arrays))
         self.n_arrays = len(x_arrays)
     
-    from source.shared.properties import (update_run_values, run, SI_units)
-    
     def update_normalisation_factor(self):
         self.R0 = self.normalisation.R0
 
-    def plot(self, ax, **kwargs):
+    def plot(self, ax, run=None):
 
         if self.SI_units:
             # Plot with units
@@ -40,4 +39,4 @@ class ContourLevel():
             normalisation = 1.0
         
         for x_array, y_array in zip(self.x_arrays, self.y_arrays):
-                ax.plot(x_array*normalisation, y_array*normalisation, **kwargs)
+            ax.plot(x_array*normalisation, y_array*normalisation, run=None)

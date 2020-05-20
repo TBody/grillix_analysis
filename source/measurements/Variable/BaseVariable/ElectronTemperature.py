@@ -2,10 +2,10 @@ from . import BaseVariable
 
 class ElectronTemperature(BaseVariable):
     
-    def __init__(self, **kwargs):
-        super().__init__('logte', **kwargs)
-        self.title = "Electron temp."
+    def __init__(self, run=None):
+        super().__init__('logte', "Electron temp.", run)
         
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.Te0
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.Te0
         

@@ -2,10 +2,10 @@ from . import BaseVariable
 
 class IonTemperature(BaseVariable):
     
-    def __init__(self, **kwargs):
-        super().__init__('logti', **kwargs)
-        self.title = "Ion temp."
-        
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.Ti0
+    def __init__(self, run=None):
+        super().__init__('logti', 'Ion temp.', run=run)
+    
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.Ti0
         

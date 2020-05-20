@@ -3,9 +3,9 @@ from . import EquilibriumVariable
 
 class MagneticFieldY(EquilibriumVariable):
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.title = "B y"
+    def __init__(self, run=None):
+        super().__init__(run=run)
+        title = "B y"
 
     def update_normalisation_factor(self):
         self.normalisation_factor = self.normalisation.B0

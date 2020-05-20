@@ -24,13 +24,31 @@ class Directory:
     }
     
     def __init__(self, filepath, use_error_snaps=False):
+
+        # Mark attributes
+        self.main_grid_file = None
+        self.perp_grid_file = None
+        self.parameter_file = None
+        self.scalar_diags_file = None
+        self.zonal_diags_file = None
+        self.penalisation_file = None
+        self.divertor_points_file = None
+        self.exclusion_points_file = None
+        self.equi_storage_file = None
+        self.normalisation_file = None
+        self.map_metadata_file = None
+        self.f2s_map_forward_file = None
+        self.f2s_map_reverse_file = None
+        self.s2f_map_forward_file = None
+        self.s2f_map_reverse_file = None
+
         self.filepath = self.__check_directory_exists(filepath)
         self.use_error_snaps = use_error_snaps
         self.filepath_given = filepath
     
     @classmethod
     def initialise_and_read_parameters(cls, filepath, use_error_snaps):
-        print("Initialising RunDirectory object")
+        print("Initialising Directory object")
         start_time = time.time()
 
         self = cls(filepath, use_error_snaps=use_error_snaps)
@@ -39,7 +57,7 @@ class Directory:
         [parameters, equi_type] = self.check_directory()
         
         stop_time = time.time()
-        print("RunDirectory object is ready to use ({:5.2f}s elapsed)".format(stop_time-start_time))
+        print("Directory object is ready to use ({:5.2f}s elapsed)".format(stop_time-start_time))
         
         return self, parameters, equi_type
         

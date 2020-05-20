@@ -4,8 +4,8 @@ from source import np
 class EquilibriumVariable(Variable):
     # Any variable defined in terms of variables defined by the magnetic equilibria
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, run=None):
+        super().__init__(run=run)
     
     @property
     def equi(self):

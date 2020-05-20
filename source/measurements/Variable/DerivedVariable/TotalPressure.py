@@ -4,17 +4,18 @@ from ..BaseVariable import ElectronTemperature, Density, IonTemperature
 
 class TotalPressure(DerivedVariable):
     
-    def __init__(self, **kwargs):
-        self.title = "Total pressure"
-        self.electron_temperature = ElectronTemperature(**kwargs)
-        self.ion_temperature = IonTemperature(**kwargs)
-        self.density = Density(**kwargs)
+    def __init__(self, run=None):
+        title = "Total pressure"
+        self.electron_temperature = ElectronTemperature(run=run)
+        self.ion_temperature = IonTemperature(run=run)
+        self.density = Density(run=run)
         self.base_variables = [self.electron_temperature, self.density, self.ion_temperature]
 
-        super().__init__(**kwargs)
+        super().__init__(title, run=None)
 
-    def update_normalisation_factor(self):
-        self.normalisation_factor = ((self.normalisation.Te0 + self.normalisation.Ti0)*self.normalisation.n0).to('kilopascal')
+    @property
+    def normalisation_factor(self):
+        return ((self.normalisation.Te0 + self.normalisation.Ti0)*self.normalisation.n0).to('kilopascal')
 
     def values(self, **kwargs):
 

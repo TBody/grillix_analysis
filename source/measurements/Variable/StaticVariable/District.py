@@ -20,13 +20,11 @@ class District(StaticVariable):
         # point located outside additional masks, i.e. shadow region (outside computational domain)
     })
     
-    def __init__(self, **kwargs):
-        self.netcdf_filename = "equi_storage_file"
-        self.title = "District"
+    def __init__(self, run=None):
+        netcdf_filename = "equi_storage_file"
+        title = "District"
         self.numerical_variable = False
-        super().__init__('district',  **kwargs)
-        
-
+        super().__init__('district', netcdf_filename, title, run=run)
     
-    def __format_value__(self, value, **kwargs):
+    def __format_value__(self, value, run=None):
         return self.district_dict[value]

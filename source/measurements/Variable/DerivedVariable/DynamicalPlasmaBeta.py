@@ -4,13 +4,13 @@ from .SoundSpeed import SoundSpeed
 
 class DynamicalPlasmaBeta(DerivedVariable):
     
-    def __init__(self, **kwargs):
-        self.title = "Local Beta_e"
-        self.alfven_speed = AlfvenSpeed(**kwargs)
-        self.sound_speed = SoundSpeed(**kwargs)
+    def __init__(self, run=None):
+        title = "Local Beta_e"
+        self.alfven_speed = AlfvenSpeed(run=run)
+        self.sound_speed = SoundSpeed(run=run)
         self.base_variables = [self.sound_speed, self.alfven_speed]
         
-        super().__init__(**kwargs)
+        super().__init__(title, run=None)
     
     def values(self, **kwargs):
         

@@ -4,15 +4,15 @@ from source.Variable import FluxSurface
 
 class OMPProfile(Projector):
     
-    def __init__(self, time_slice=slice(-1,None), toroidal_slice=slice(None), **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, time_slice=slice(-1,None), toroidal_slice=slice(None), run=None)
+        super().__init__(run=run)
         self.dimension_to_keep = 2
 
         self.time_slice = time_slice
         self.toroidal_slice = toroidal_slice
         self.poloidal_slice = slice(None)
 
-    def update_run_values(self):
+    def set_run(self):
         self.grid = self.run.grid
         
         rho = FluxSurface(run=self.run)

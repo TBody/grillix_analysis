@@ -1,7 +1,8 @@
 from source import plt, np, Dataset
 import matplotlib.path as mpltPath
+from . import RunComponent
 
-class Polygon:
+class Polygon(RunComponent):
     
     @classmethod
     def read_polygon_from_trunk(cls, netcdf_file, z_inverted=False):
@@ -27,8 +28,6 @@ class Polygon:
 
         self.polygon = mpltPath.Path(np.column_stack((x_points, y_points)), closed=True)
     
-    from source.shared.properties import (update_run_values, update_normalisation_factor, run, SI_units)
-
     # Auto-convert to normalised when accessing properties, based on self.SI_units flag
     @property
     def x_points(self):
@@ -74,6 +73,6 @@ class Polygon:
 
         return running_sum/2
     
-    def plot(self, ax, **kwargs):
+    def plot(self, ax, run=None):
 
-        ax.plot(self.x_points, self.y_points, **kwargs)
+        ax.plot(self.x_points, self.y_points, run=None)

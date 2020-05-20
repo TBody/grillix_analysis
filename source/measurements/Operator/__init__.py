@@ -1,20 +1,15 @@
 from source import np, Quantity
+from .. import MComponent
 
-class Operator:
+class Operator(MComponent):
 
     def __init__(self, run=None):
-        self.run = run
-    
-    from source.shared.properties import (update_run_values, update_normalisation_factor, run, SI_units)
+        super().__init__(run)
     
     def values(self, z):
         return NotImplemented
 
     def __call__(self, z, **kwargs):
-        try:
-            assert(z.check_dimensions())
-        except AttributeError:
-            print(f"Warning: operator applied on non-result object")
         
         return self.values(z, **kwargs)
     

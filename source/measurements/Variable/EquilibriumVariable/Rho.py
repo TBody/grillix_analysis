@@ -3,15 +3,15 @@ from . import EquilibriumVariable, Psi
 
 class Rho(EquilibriumVariable):
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.title = "Norm. poloidal Flux"
-        self.psi = Psi(**kwargs)
+    def __init__(self, run=None):
+        super().__init__(run=run)
+        title = "Norm. poloidal Flux"
+        self.psi = Psi(run=run)
 
     def update_normalisation_factor(self):
         self.normalisation_factor = Quantity(1, '')
 
-    def update_run_values(self):
+    def set_run(self):
         self.update_base_variables([self.psi])
 
     def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
