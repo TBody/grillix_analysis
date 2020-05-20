@@ -8,6 +8,9 @@ class Variable():
     
     def __init__(self, run=None):
         
+        # Add a dummy value for normalisation (helps with IDE)
+        self.normalisation = getattr(self, "normalisation", NotImplemented)
+
         # Attributes which can be overwritten by children. If not already set, set defaults
         # Default to dimensionless value
         self.normalisation_factor = getattr(self, "normalisation_factor", Quantity(1, ''))
