@@ -1,5 +1,5 @@
 # Import modules which are globally required
-from interface import UserEnvironment
+from source.interface import UserEnvironment
 usrenv = UserEnvironment()
 
 # Base system requirements
@@ -24,7 +24,7 @@ import matplotlib
 matplotlib.use(usrenv.plot_backend)
 # Interactive figures
 import matplotlib.pyplot as plt
-mplstyle = (Path(__file__).absolute().parents[1] / "canvas" / usrenv.matplotlib_style).with_suffix(".mplstyle")
+mplstyle = (Path(__file__).absolute().parent / "canvas" / usrenv.matplotlib_style).with_suffix(".mplstyle")
 plt.style.use(mplstyle)
 import matplotlib.colors as mplcolors
 # Pretty plotting

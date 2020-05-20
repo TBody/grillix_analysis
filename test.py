@@ -1,9 +1,9 @@
 from ipdb import launch_ipdb_on_exception
-from canvas.layout import Figure, Axes
+from source.canvas.layout import Figure, Axes
 from source import plt
 
 with launch_ipdb_on_exception():
-    from source.Run import Run
+    from source.run import Run
 
     fig = Figure()
 

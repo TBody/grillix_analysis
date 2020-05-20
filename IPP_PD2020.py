@@ -30,7 +30,7 @@ from ipdb import launch_ipdb_on_exception
 from source.shared import check_ffmpeg
 from source import plt, np, perceptually_uniform_cmap, mplcolors, Quantity, matplotlib
 from matplotlib import animation
-from interface import UserEnvironment
+from source.interface import UserEnvironment
 
 def find_omp(grid, rho, plot=False):
     # Find the axis position for the OMP profile
@@ -134,7 +134,7 @@ if __name__=="__main__":
 
         # Select a list of Variable types to animate
         from source.Variable import Density, ElectricField, FluxSurface, TotalPressure
-        from source.Operator import AllReduction, VectorRadialProjection
+        from source.measurements.Operator import AllReduction, VectorRadialProjection
         # For this analysis, we just want the density and the radially-projected electric fieldu
 
         # Need to specify the limits of the OMP by hand

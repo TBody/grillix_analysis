@@ -1,5 +1,5 @@
 from source import np, Quantity
-from source.Variable import Result
+from source.measurements import Result
 from pint.numpy_func import HANDLED_FUNCTIONS, implements
 # Extends the pint.Quantity class by adding additional supported numpy functions
 
