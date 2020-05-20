@@ -251,7 +251,7 @@
 #font.variant : normal
 font.weight  : normal
 font.stretch : semi-condensed
-#font.size    : 10.0
+font.size    : 5.0
 
 font.serif      : Palatino, DejaVu Serif, Bitstream Vera Serif, Computer Modern Roman, New Century Schoolbook, Century Schoolbook L, Utopia, ITC Bookman, Bookman, Nimbus Roman No9 L, Times New Roman, Times, Palatino, Charter, serif
 #font.sans-serif : DejaVu Sans, Bitstream Vera Sans, Computer Modern Sans Serif, Lucida Grande, Verdana, Geneva, Lucid, Arial, Helvetica, Avant Garde, sans-serif
@@ -521,8 +521,10 @@ font.serif      : Palatino, DejaVu Serif, Bitstream Vera Serif, Computer Modern 
 ## See https://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure
 #figure.titlesize   : large     ## size of the figure title (``Figure.suptitle()``)
 #figure.titleweight : normal    ## weight of the figure title
-#figure.figsize     : 6.4, 4.8  ## figure size in inches
-#figure.dpi         : 100       ## figure dots per inch
+# Standard screen size is 1920x1200
+# Set figure size (in inches) as screen_dimension_x/dpi, screen_dimension_y/dpi
+figure.figsize     : 9.6, 6.0  ## figure size in inches
+figure.dpi         : 200       ## figure dots per inch
 #figure.facecolor   : white     ## figure facecolor
 #figure.edgecolor   : white     ## figure edgecolor
 #figure.frameon     : True      ## enable figure frame
@@ -558,7 +560,7 @@ font.serif      : Palatino, DejaVu Serif, Bitstream Vera Serif, Computer Modern 
 ## ***************************************************************************
 #image.aspect : equal            ## {equal, auto} or a number
 #image.interpolation  : antialiased  ## see help(imshow) for options
-#image.cmap   : viridis          ## A colormap name, gray etc...
+image.cmap   : inferno          ## A colormap name, gray etc...
 #image.lut    : 256              ## the size of the colormap lookup table
 #image.origin : upper            ## {lower, upper}
 #image.resample  : True
@@ -637,10 +639,10 @@ font.serif      : Palatino, DejaVu Serif, Bitstream Vera Serif, Computer Modern 
 ## The default savefig params can be different from the display params
 ## e.g., you may want a higher resolution, or to make the figure
 ## background white
-#savefig.dpi       : figure      ## figure dots per inch or 'figure'
+savefig.dpi       : figure      ## figure dots per inch or 'figure'
 #savefig.facecolor : white       ## figure facecolor when saving
 #savefig.edgecolor : white       ## figure edgecolor when saving
-#savefig.format    : png         ## {png, ps, pdf, svg}
+savefig.format    : png         ## {png, ps, pdf, svg}
 #savefig.bbox      : standard    ## {tight, standard}
                                  ## 'tight' is incompatible with pipe-based animation
                                  ## backends but will workd with temporary file based ones:
@@ -650,7 +652,7 @@ font.serif      : Palatino, DejaVu Serif, Bitstream Vera Serif, Computer Modern 
 #savefig.jpeg_quality : 95       ## when a jpeg is saved, the default quality parameter.
 #savefig.directory    : ~        ## default directory in savefig dialog box,
                                  ## leave empty to always use current working directory
-#savefig.transparent : False     ## setting that controls whether figures are saved with a
+savefig.transparent : True     ## setting that controls whether figures are saved with a
                                  ## transparent background by default
 #savefig.orientation : portrait  ## Orientation of saved figure
 

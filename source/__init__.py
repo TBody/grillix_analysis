@@ -22,12 +22,9 @@ import pandas as pd
 # Plotting
 import matplotlib
 matplotlib.use(usrenv.plot_backend)
-font = {'size'   : usrenv.font_size}
-matplotlib.rc('font', **font)
-
 # Interactive figures
 import matplotlib.pyplot as plt
-mplstyle = (Path(__file__).absolute().parents[1] / "show" / usrenv.matplotlib_style).with_suffix(".mplstyle")
+mplstyle = (Path(__file__).absolute().parents[1] / "canvas" / usrenv.matplotlib_style).with_suffix(".mplstyle")
 plt.style.use(mplstyle)
 import matplotlib.colors as mplcolors
 # Pretty plotting

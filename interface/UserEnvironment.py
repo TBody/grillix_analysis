@@ -15,15 +15,6 @@ class UserEnvironment:
         self.plot_backend = "Qt5Agg"
         self.matplotlib_style = "default"
 
-        self.screen_dimension_x = 1920
-        self.screen_dimension_y = 1200
-        self.default_figure_size_x = 1920
-        self.default_figure_size_y = 1200
-
-        self.default_figure_resolution = 200 #in dpi -- affects scaling of 'px' valued objects such as text
-        # Will need to change text size if changing figure dpi
-        self.font_size = 4
-        
         # Animation variables
         self.animation_writer = "FFMpegFileWriter"
         self.animation_framerate = 15
