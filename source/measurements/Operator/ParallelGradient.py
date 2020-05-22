@@ -44,13 +44,13 @@ class ParallelGradient(Operator):
         # # Distance to k-1
         # L_full_backward = self.map_metadata['map_metadata'][4,:]
     
-    def values(self, z):
+    def __call__(self, values, units):
         
         # Assert that all planes have been given
-        assert(z.shape[1] == self.npol)
+        assert(values.shape[1] == self.npol)
         # Assert that the number of points matches the size of the csr matrices (which must be square)
-        assert(np.all(z.shape[2]==np.array(self.f2s_map_forward.get_shape())))
-        assert(np.all(z.shape[2]==np.array(self.f2s_map_reverse.get_shape())))
+        assert(np.all(values.shape[2]==np.array(self.f2s_map_forward.get_shape())))
+        assert(np.all(values.shape[2]==np.array(self.f2s_map_reverse.get_shape())))
         
         L_half_forward = self.map_metadata['map_metadata'][0,:]
         L_half_backward = self.map_metadata['map_metadata'][1,:]
@@ -61,22 +61,22 @@ class ParallelGradient(Operator):
             # N.b. must be left-multiplied to call "multiply" method from pint
             fieldline_length = self.normalisation.R0 * fieldline_length
             # Need to convert to unitless for numpy roll and apply_along_axis
-            z_units = z.units
-            z = z.magnitude
+            z_units = values.units
+            values = values.magnitude
         else:
             z_units = 1.0
         
         # The one-liner code is admittedly confusing. To test against an explicit loop, uncomment the following lines and
         # the assert block at the end
-        # z_stag_forward_v0 = np.zeros_like(z)
-        # z_stag_reverse_v0 = np.zeros_like(z)
-        # gradient_stag_v0 = np.zeros_like(z)
+        # z_stag_forward_v0 = np.zeros_like(values)
+        # z_stag_reverse_v0 = np.zeros_like(values)
+        # gradient_stag_v0 = np.zeros_like(values)
         
-        # for time_index in range(z.shape[0]):
-        #     for plane_index in range(z.shape[1]):
-        #         next_plane_index = np.mod(plane_index+1, z.shape[1])
-        #         z_stag_forward_v0[time_index, plane_index, :] = self.f2s_map_forward(z[time_index, next_plane_index, :])
-        #         z_stag_reverse_v0[time_index, plane_index, :] = self.f2s_map_reverse(z[time_index, plane_index, :])
+        # for time_index in range(values.shape[0]):
+        #     for plane_index in range(values.shape[1]):
+        #         next_plane_index = np.mod(plane_index+1, values.shape[1])
+        #         z_stag_forward_v0[time_index, plane_index, :] = self.f2s_map_forward(values[time_index, next_plane_index, :])
+        #         z_stag_reverse_v0[time_index, plane_index, :] = self.f2s_map_reverse(values[time_index, plane_index, :])
                 
         #         gradient_stag_v0[time_index, plane_index, :] = (
         #               z_stag_forward_v0[time_index, plane_index, :] 
@@ -86,8 +86,8 @@ class ParallelGradient(Operator):
         # next_plane = np.roll(np.arange(n_planes), shift=-1)
         # Then, next_plane[i] will be [i+1]
         
-        z_stag_forward = np.apply_along_axis(self.f2s_map_forward, axis=2, arr=self.find_neighbouring_plane(z))
-        z_stag_reverse = np.apply_along_axis(self.f2s_map_reverse, axis=2, arr=z)
+        z_stag_forward = np.apply_along_axis(self.f2s_map_forward, axis=2, arr=self.find_neighbouring_plane(values))
+        z_stag_reverse = np.apply_along_axis(self.f2s_map_reverse, axis=2, arr=values)
         
         gradient_stag = z_units*(z_stag_forward - z_stag_reverse)/fieldline_length
         
@@ -95,5 +95,5 @@ class ParallelGradient(Operator):
         # assert(np.allclose(z_stag_forward, z_stag_forward_v0))
         # assert(np.allclose(gradient_stag, gradient_stag_v0))
         
-        return gradient_stag
+        return gradient_stag, units
         

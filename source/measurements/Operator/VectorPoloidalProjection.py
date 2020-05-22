@@ -3,13 +3,13 @@ from source import np
 class VectorPoloidalProjection(Operator):
     
     def __init__(self, run=None):
-        title = "Poloidal"
+        self.title = "Poloidal"
         super().__init__(run=run)
     
-    def values(self, z):
+    def __call__(self, values, units):
 
         poloidal_unit_vector = self.run.equilibrium.poloidal_unit_vector()
-        assert(z.is_vector)
-        assert(poloidal_unit_vector.shape[-2:] == z.shape[-2:])
+        assert(values.is_vector)
+        assert(poloidal_unit_vector.shape[-2:] == values.shape[-2:])
 
-        return z.dot_product(poloidal_unit_vector)
+        return values.dot_product(poloidal_unit_vector), units

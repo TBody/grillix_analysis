@@ -1,14 +1,10 @@
 from source import np, mplcolors
 from . import Projector
+from ..Operator import ReduceToPoloidal
 
 class Poloidal(Projector):
     
-    def __init__(self, reduction, time_slice=slice(-1,None), toroidal_slice=slice(None), poloidal_slice=slice(None), run=None):
-        self.dimension_to_keep = 2
-
-        self.time_slice = time_slice
-        self.toroidal_slice = toroidal_slice
-        self.poloidal_slice = poloidal_slice
+    def __init__(self, reduction, run=None):
         super().__init__(reduction=reduction, run=run)
 
     def set_run(self):
@@ -21,20 +17,23 @@ class Poloidal(Projector):
             self.x = self.grid.x_unique
             self.y = self.grid.y_unique
 
-    def slice_z(self, variable):
-        # If setting time_slice, toroidal_slice, or poloidal_slice, must pass as keyword arguments
-        
-        z_unstructured = variable(self.time_slice, self.toroidal_slice, self.poloidal_slice)
-        
-        return z_unstructured
-    
-    def structure_z(self, z_unstructured):
-        
-        z_reduced = np.squeeze(self.reduction(z_unstructured, dimension_to_keep=self.dimension_to_keep))
+    def request_reduction(self, reduction):
+        return reduction.cast_to_subclass(ReduceToPoloidal)
 
-        z_structured = self.grid.vector_to_matrix(z_reduced)
+    # def slice_z(self, variable):
+    #     # If setting time_slice, toroidal_slice, or poloidal_slice, must pass as keyword arguments
         
-        return z_structured
+    #     z_unstructured = variable(self.time_slice, self.toroidal_slice, self.poloidal_slice)
+        
+    #     return z_unstructured
+    
+    # def structure_z(self, z_unstructured):
+        
+    #     z_reduced = np.squeeze(self.reduction(z_unstructured, dimension_to_keep=self.dimension_to_keep))
+
+    #     z_structured = self.grid.vector_to_matrix(z_reduced)
+        
+    #     return z_structured
     
 # 
     # def __call__(self, subplot, linestyle='-', linewidth=0.5):

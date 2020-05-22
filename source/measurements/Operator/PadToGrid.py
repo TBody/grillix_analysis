@@ -8,16 +8,16 @@ class PadToGrid(Operator):
         self.constant_val = constant_val
         super().__init__(run=run)
     
-    def values(self, z):
+    def __call__(self, values, units):
         
         # Pads the last dimension (points) to be the same length as grid
-        if z.shape[2] != self.run.grid.size:
+        if values.len_points != self.run.grid.size:
 
-            if isinstance(z, VectorArray):
-                pad_width = ((0,0), (0,0), (0, self.run.grid.size-z.shape[-1]), (0, 0))
+            if values.is_vector:
+                pad_width = ((0,0), (0,0), (0, self.run.grid.size-values.shape[-1]), (0, 0))
             else:
-                pad_width = ((0,0), (0,0), (0, self.run.grid.size-z.shape[-1]))
+                pad_width = ((0,0), (0,0), (0, self.run.grid.size-values.shape[-1]))
             
-            z = np.pad(z, pad_width=pad_width, constant_values=self.constant_val, mode='constant')
+            values = np.pad(values, pad_width=pad_width, constant_values=self.constant_val, mode='constant')
         
-        return z
+        return values, units

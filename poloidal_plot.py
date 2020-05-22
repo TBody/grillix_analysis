@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # Import CLI user interface
-from source.interface.CLI import (
+from source.interface import (
     BaseCLI,
     FilepathArg, SaveFilepathArg,
     GroupArg, TitleArg,
     TimeSliceArg, ToroidalSliceArg,
-    AllReductionArg,
+    ReductionArg,
     SI_unitsArg, LogScaleArg, ErrorSnapsArg
 )
 
@@ -22,7 +22,7 @@ class PoloidalPlotCLI(BaseCLI):
         self.title              = TitleArg(self)
         self.time_slice         = TimeSliceArg(self)
         self.toroidal_slice     = ToroidalSliceArg(self)
-        self.allred             = AllReductionArg(self)
+        self.reduction          = ReductionArg(self)
         self.convert_to_si      = SI_unitsArg(self)
         self.log_scale          = LogScaleArg(self)
         self.error_snaps        = ErrorSnapsArg(self)
@@ -46,7 +46,7 @@ if __name__=="__main__":
         filepath = CLI['filepath']
         use_error_snaps = CLI['error_snaps']
         group = CLI['group']
-        allreduce = CLI['allreduce']
+        reduction = CLI['reduction']
 
         # Check the run directory and initialise the following
         # directory     = resolved paths to required files
@@ -66,7 +66,7 @@ if __name__=="__main__":
         
         # Request the 'Poloidal' projector. A projector takes z(t, phi, l) and maps it to a 2D array, in this case z(x, y)
         # The treatment of the 't' and 'phi' axis is via an AllReduction operator, passed as the reduction keyword
-        projector = Poloidal(reduction=allreduce, run=run)
+        projector = Poloidal(reduction=reduction, run=run)
 
         figure = canvas.subplots_with_title(naxs=len(variables), title="Test")
 

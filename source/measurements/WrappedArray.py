@@ -44,11 +44,51 @@ class WrappedArray(np.ndarray):
             return True
         else:
             return False
+    
+    def check_dimensions(self):
+        # Should only be checked before structuring with a Projector
+        if self.is_vector:
+            assert(self.ndim == 4)
+            assert(self.len_coords == 3)
+        else:
+            assert(self.ndim == 3)
+    
+    @property
+    def dim_time(self):
+        return 0
+    
+    @property
+    def dim_phi(self):
+        return 1
+    
+    @property
+    def dim_points(self):
+        return 2
+
+    @property
+    def len_time(self):
+        return self.shape[self.dim_time]
+    
+    @property
+    def len_phi(self):
+        return self.shape[self.dim_phi]
+    
+    @property
+    def len_points(self):
+        return self.shape[self.dim_points]
 
 class ScalarArray(WrappedArray):
     pass
 
 class VectorArray(WrappedArray):
+
+    @property
+    def dim_coords(self):
+        return 3
+    
+    @property
+    def len_coords(self):
+        return self.shape[self.dim_coords]
 
     @classmethod
     def poloidal(cls, R_array, Z_array):

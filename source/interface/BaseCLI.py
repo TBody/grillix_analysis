@@ -31,5 +31,3 @@ class BaseCLI():
     
     def __setitem__(self, key, value):
         self.dict[key] = value
-
-from ..arguments import *

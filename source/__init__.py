@@ -43,6 +43,7 @@ os.environ['PINT_ARRAY_PROTOCOL_FALLBACK'] = "0"
 import pint
 unit_registry = pint.UnitRegistry()
 Quantity = unit_registry.Quantity
+Dimensionless = Quantity(1, "")
 
 # Silence NEP 18 warning
 with warnings.catch_warnings():

@@ -3,11 +3,11 @@ from source import np
 class VectorAbsolute(Operator):
     
     def __init__(self, run=None):
-        title = "Magnitude"
+        self.title = "Magnitude"
         
         super().__init__(run=run)
     
-    def values(self, z):
+    def __call__(self, values, units):
         
-        assert(z.is_vector)
-        return z.vector_magnitude
+        assert(values.is_vector)
+        return values.vector_magnitude, units

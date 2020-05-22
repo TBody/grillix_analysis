@@ -26,5 +26,8 @@ class Projector(MComponent):
     def structure_z(self, z_unstructured):
         
         return NotImplemented
+    
+    def request_reduction(self, reduction):
+        raise NotImplementedError(f"{self.__class__.__name__} has not implemented request_reduction")
 
 from .Poloidal import Poloidal

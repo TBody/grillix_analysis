@@ -1,4 +1,6 @@
-from source import np
+# Called before source/__init__.py
+import numpy as np
+
 class CLIArgument:
 
     def __init__(self, CLI, name):
@@ -113,4 +115,4 @@ from .SI_units         import SI_units         as SI_unitsArg
 from .LogScale         import LogScale         as LogScaleArg
 from .LaunchIPDB       import LaunchIPDB       as LaunchIPDBArg
 from .ErrorSnaps       import ErrorSnaps       as ErrorSnapsArg
-from .Reduction import *
+from .Reduction        import Reduction        as ReductionArg
