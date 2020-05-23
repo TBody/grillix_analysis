@@ -1,5 +1,6 @@
 from source import Quantity, np
 from . import EquilibriumVariable, Psi
+from ...WrappedArray import ScalarArray, VectorArray
 
 class Rho(EquilibriumVariable):
 
@@ -17,7 +18,7 @@ class Rho(EquilibriumVariable):
         # Make values which would give rho < 0 return rho = 0
         psi[np.asarray(psi > self.equi.psiO).nonzero()] = self.equi.psiO
 
-        return np.sqrt((psi - self.equi.psiO)/(self.equi.psiX - self.equi.psiO))
+        return ScalarArray(np.sqrt((psi - self.equi.psiO)/(self.equi.psiX - self.equi.psiO)))
 
     def value(self, x, y):
-        return self.equi.psi_func(x,y)
+        return ScalarArray(self.equi.psi_func(x,y))

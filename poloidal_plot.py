@@ -33,6 +33,7 @@ class PoloidalPlotCLI(BaseCLI):
 # import the necessary components from source
 from source.run import Run
 from source.measurements.Projector import Poloidal
+from source.measurements import Measurement
 from ipdb import launch_ipdb_on_exception
 import source.canvas as canvas
 
@@ -66,15 +67,23 @@ if __name__=="__main__":
         
         # Request the 'Poloidal' projector. A projector takes z(t, phi, l) and maps it to a 2D array, in this case z(x, y)
         # The treatment of the 't' and 'phi' axis is via an AllReduction operator, passed as the reduction keyword
-        projector = Poloidal(reduction=reduction, run=run)
+        projector = Poloidal()
 
-        figure = canvas.subplots_with_title(naxs=len(variables), title="Test")
+        measurement = Measurement(projector=projector, variable=variables[0], reduction=reduction, operators=operators)
 
-        from ipdb import set_trace; set_trace()
-        figure.axes[0][0]
+        measurement.run = run
+
+        import matplotlib.pyplot as plt
+        plt.pcolormesh(projector.x, projector.y, measurement()[0])
+
+        plt.show()
+
+        # figure = canvas.subplots_with_title(naxs=len(variables), title="Test")
+
+        
 
 
-        figure.show()
+        # figure.show()
 
         # # Generate a figure which has enough subplots to plot all the variables, and request a figure title, conversion to
         # # SI and logarithmic plot depending on ctrl arguments

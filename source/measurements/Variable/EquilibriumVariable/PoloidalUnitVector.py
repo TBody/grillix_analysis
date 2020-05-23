@@ -1,5 +1,5 @@
 from source import Quantity, np
-from ...WrappedArray import VectorArray
+from ...WrappedArray import ScalarArray, VectorArray
 from . import EquilibriumVariable
 
 class PoloidalUnitVector(EquilibriumVariable):
@@ -14,11 +14,11 @@ class PoloidalUnitVector(EquilibriumVariable):
         By = self.equi.By_grid_vector[poloidal_slice]
         Bpol = np.sqrt(Bx**2 + By**2)
 
-        return VectorArray.poloidal_vector(R_array = Bx/Bpol, Z_array = By/Bpol)
+        return VectorArray.poloidal(R_array = Bx/Bpol, Z_array = By/Bpol)
 
     def value(self, x, y):
         Bx = self.equi.Bx_func(x,y)
         By = self.equi.By_func(x,y)
         Bpol = np.sqrt(Bx**2 + By**2)
 
-        return VectorArray.poloidal_vector(R_array = Bx/Bpol, Z_array = By/Bpol)
+        return VectorArray.poloidal(R_array = Bx/Bpol, Z_array = By/Bpol)

@@ -39,11 +39,7 @@ class Variable(MComponent):
         
         [values, units] = self.fetch_values(time_slice=time_slice, toroidal_slice=toroidal_slice, poloidal_slice=poloidal_slice)
 
-        if not(isinstance(values, WrappedArray)):
-            if self.vector_variable:
-                values = VectorArray(values)
-            else:
-                values = ScalarArray(values)
+        assert (isinstance(values, WrappedArray))
 
         [values, units] = self.values_finalize(values, units)
         values.check_dimensions()
@@ -79,7 +75,7 @@ class Variable(MComponent):
 #             return value
 
     def values_finalize(self, values, units):
-        # Optional function to call before the "Result" is been constructed
+        
         return values, units
     
 #     def call_finalize(self, value):

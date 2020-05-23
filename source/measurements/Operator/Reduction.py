@@ -1,15 +1,15 @@
 from source import np, Quantity
 from . import Operator
-from .. import WrappedArray
+from ..WrappedArray import WrappedArray
 
-def reduction_mean(values, units, axis):
-    return np.mean(values, axis=axis, keepdims=True), units
+def reduction_mean(values, axis, keepdims=True):
+    return np.mean(values, axis=axis, keepdims=keepdims)
 
-def reduction_median(values, units, axis):
-    return np.median(values, axis=axis, keepdims=True), units
+def reduction_median(values, axis, keepdims=True):
+    return np.median(values, axis=axis, keepdims=keepdims)
 
-def reduction_std(values, units, axis):
-    return np.std(values, axis=axis, keepdims=True), units
+def reduction_std(values, axis, keepdims=True):
+    return np.std(values, axis=axis, keepdims=keepdims)
 
 reduction_functions = {
     "mean": reduction_mean,
@@ -49,17 +49,17 @@ class Reduction(Operator):
 class PoloidalReduction(Reduction):
 
     def __call__(self, values, units):
-        return self.reduction(values, axis=values.dim_points, keepdims=True), units
+        return self.reduction(values, axis=values.dim_points), units
 
 class TimeReduction(Reduction):
 
     def __call__(self, values, units):
-        return self.reduction(values, axis=values.dim_time, keepdims=True), units
+        return self.reduction(values, axis=values.dim_time), units
 
 class ToroidalReduction(Reduction):
 
     def __call__(self, values, units):
-        return self.reduction(values, axis=values.dim_phi, keepdims=True), units
+        return self.reduction(values, axis=values.dim_phi), units
 
 class ReduceTo1D(Reduction):
     # For higher order moments, reducing each dimension in turn is not equivalent to 
@@ -90,7 +90,7 @@ class ReduceTo1D(Reduction):
         # Reshape the vector to a new_shape
         z_shaped = np.reshape(values, tuple(new_shape))
 
-        # Apply the reduction on the dummy first dimension
+        # Apply the reduction on the dummy first dimension (keepdims=False to eliminate the new dimension)
         z_reduced = self.reduction(z_shaped, axis=0, keepdims=False)
 
         return z_reduced
@@ -100,7 +100,7 @@ class ReduceTo1D(Reduction):
         # then convert it to a subclass to determine which dimension should be operated on
         assert(type(cls) == type)
         
-        if self.run:
+        if self.run != None:
             new_object = cls(reduction=self.reduction, run=self.run)
         else:
             new_object = cls(reduction=self.reduction)

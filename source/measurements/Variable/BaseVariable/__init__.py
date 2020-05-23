@@ -1,5 +1,5 @@
 from source import np, Quantity
-from .. import Variable
+from .. import Variable, ScalarArray
 
 class BaseVariable(Variable):
     # Any variable defined in terms of variables written into the snaps (or
@@ -8,9 +8,8 @@ class BaseVariable(Variable):
     def __init__(self, name_in_netcdf, title, run=None):
         # Name of the variable in the snaps netcdfs
         self.name_in_netcdf = name_in_netcdf
-        self.title = title
         
-        super().__init__(run=run)
+        super().__init__(title=title, run=run)
     
     def set_run(self):
         # Array of NetCDFPath (see source.__init__)
@@ -69,7 +68,7 @@ class BaseVariable(Variable):
         if self.log_in_netcdf:
             values = np.exp(values)
         
-        return values, self.normalisation_factor
+        return ScalarArray(values), self.normalisation_factor
 
 from .Density                 import Density
 from .ElectronTemperature     import ElectronTemperature

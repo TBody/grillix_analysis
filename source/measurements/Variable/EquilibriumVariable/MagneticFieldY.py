@@ -1,5 +1,6 @@
 from source import Quantity, np
 from . import EquilibriumVariable
+from ...WrappedArray import ScalarArray, VectorArray
 
 class MagneticFieldY(EquilibriumVariable):
 
@@ -11,7 +12,7 @@ class MagneticFieldY(EquilibriumVariable):
         return self.normalisation.B0
 
     def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
-        return self.equi.By_grid_vector[poloidal_slice]
+        return ScalarArray(self.equi.By_grid_vector[poloidal_slice])
 
     def value(self, x, y):
-        return self.equi.By_func(x,y)
+        return ScalarArray(self.equi.By_func(x,y))

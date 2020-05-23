@@ -1,41 +1,41 @@
-from source import np, mplcolors
+from source import np
 from . import Projector
 from ..Operator import ReduceToPoloidal
 
 class Poloidal(Projector):
     
-    def __init__(self, reduction, run=None):
-        super().__init__(reduction=reduction, run=run)
-
-    def set_run(self):
-        
-        self.grid = self.run.grid
-        if self.grid.SI_units:
-            self.x = self.grid.x_unique.magnitude
-            self.y = self.grid.y_unique.magnitude
-        else:
-            self.x = self.grid.x_unique
-            self.y = self.grid.y_unique
+    def __init__(self, run=None):
+        super().__init__(run=run)
 
     def request_reduction(self, reduction):
         return reduction.cast_to_subclass(ReduceToPoloidal)
 
-    # def slice_z(self, variable):
-    #     # If setting time_slice, toroidal_slice, or poloidal_slice, must pass as keyword arguments
-        
-    #     z_unstructured = variable(self.time_slice, self.toroidal_slice, self.poloidal_slice)
-        
-    #     return z_unstructured
+    def set_run(self):
+        self.grid = self.run.grid
     
-    # def structure_z(self, z_unstructured):
-        
-    #     z_reduced = np.squeeze(self.reduction(z_unstructured, dimension_to_keep=self.dimension_to_keep))
+    @property
+    def x(self):
+        if self.grid.SI_units:
+            return self.grid.x_unique.magnitude
+        else:
+            return self.grid.x_unique
+    
+    @property
+    def y(self):
+        if self.grid.SI_units:
+            return self.grid.y_unique.magnitude
+        else:
+            return self.grid.y_unique
 
-    #     z_structured = self.grid.vector_to_matrix(z_reduced)
-        
-    #     return z_structured
-    
-# 
+    def determine_slices(self, time_slice=slice(-1, None), toroidal_slice=slice(1), poloidal_slice=slice(None)):
+        # Natural slicing
+        # Default to use the last snap, the 0th plane, and all poloidal points
+        return time_slice, toroidal_slice, poloidal_slice
+
+    def shape_values(self, values):
+        # Convert z(l) unstructured vector to z(x, y) structured matrix
+        return self.grid.vector_to_matrix(values)
+
     # def __call__(self, subplot, linestyle='-', linewidth=0.5):
     #     assert(self.initialised), f"Annotate called before supplying Run values"
         
