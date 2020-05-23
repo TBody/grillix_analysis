@@ -4,12 +4,11 @@ from . import EquilibriumVariable
 class MagneticFieldPitch(EquilibriumVariable):
 
     def __init__(self, run=None):
-        title = "Field pitch"
+        super().__init__(title="Field pitch", run=run)
 
-        super().__init__(run=run)
-
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.B0
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.B0
 
     def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
         

@@ -36,7 +36,7 @@ class BaseVariable(Variable):
         self.n_full_grid = self.n_main_grid + self.n_perp_grid
         self.grid_points = np.arange(self.n_full_grid)
     
-    def fill_values(self, time_slice=slice(-1,None), toroidal_slice=slice(None), poloidal_slice=slice(None)):
+    def fetch_values(self, time_slice=slice(-1,None), toroidal_slice=slice(None), poloidal_slice=slice(None)):
         planes = self.plane_indices[toroidal_slice]
         snaps = self.snap_indices[time_slice]
         points = self.grid_points[poloidal_slice]

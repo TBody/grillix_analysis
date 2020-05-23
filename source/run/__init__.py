@@ -99,7 +99,7 @@ class Run:
 
     def calculate_penalisation_contours(self):
         
-        chi = CharacteristicFunction(run=self)()
+        chi, _ = CharacteristicFunction(run=self)()
     
         max_characteristic = np.nanmax(chi) - np.finfo('float').eps
         levels = np.array([0, 0.5, max_characteristic])
@@ -114,8 +114,8 @@ class Run:
     def calculate_parallel_limits(self):
         from source.shared.common_functions import smoothstep
 
-        phi_forward = PhiForward(run=self)()
-        phi_backward = PhiBackward(run=self)()
+        phi_forward, _ = PhiForward(run=self)()
+        phi_backward, _ = PhiBackward(run=self)()
         
         # Find the phi-spacing between planes
         chi_width = self.parameters["params_penalisation"]["chi_width"]
@@ -150,7 +150,7 @@ class Run:
         self.exclusion_polygon.run = self
     
     def calculate_seperatrix(self):
-        flux_surface   = FluxSurface(run=self)()
+        flux_surface, _ = FluxSurface(run=self)()
         
         self.seperatrix = find_contour_levels(
             self.grid.x_unique, self.grid.y_unique, np.squeeze(self.grid.vector_to_matrix(flux_surface)),

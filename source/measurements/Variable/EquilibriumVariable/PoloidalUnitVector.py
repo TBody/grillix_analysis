@@ -5,10 +5,8 @@ from . import EquilibriumVariable
 class PoloidalUnitVector(EquilibriumVariable):
     # Unit vector along the flux surface
     def __init__(self, run=None):
-        super().__init__(run=run)
         self.vector_variable = True
-
-        title = "Poloidal unit vector"
+        super().__init__(title="Poloidal unit vector", run=run)
 
     def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
 

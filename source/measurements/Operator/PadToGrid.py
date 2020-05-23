@@ -18,6 +18,7 @@ class PadToGrid(Operator):
             else:
                 pad_width = ((0,0), (0,0), (0, self.run.grid.size-values.shape[-1]))
             
-            values = np.pad(values, pad_width=pad_width, constant_values=self.constant_val, mode='constant')
+            # Wrap the np.pad call in __class__, to make sure that values stays a WrappedArray
+            values = values.__class__(np.pad(values, pad_width=pad_width, constant_values=self.constant_val, mode='constant'))
         
         return values, units

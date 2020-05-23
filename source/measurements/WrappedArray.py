@@ -76,6 +76,10 @@ class WrappedArray(np.ndarray):
     @property
     def len_points(self):
         return self.shape[self.dim_points]
+    
+    def shape_poloidal(self):
+        # If given only points data, add singleton dimension for time and planes
+        return self[np.newaxis, np.newaxis, :]
 
 class ScalarArray(WrappedArray):
     pass

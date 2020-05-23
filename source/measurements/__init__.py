@@ -7,15 +7,28 @@ from .WrappedArray import WrappedArray, ScalarArray, VectorArray
 
 class Measurement(MComponent):
 
-    def __init__(self, projector, variable, reduction, operators=[]):
-        
+    def __init__(self, projector, variable, reduction, operators=[], run=None):
+
         self.projector = projector
         # Operators are applied in list order -- so [f, g, h] will return h(g(f(values))
         # Note that the leftmost operator will be applied first
         self.operators = operators
         self.variable  = variable
         self.reduction = reduction
-    
+
+        # If run is passed, this triggers a callback which sets it on all components
+        self.run = run
+
+    def set_run(self):
+        # Pass the run object to each sub-object
+        run = self.run
+
+        self.projector.run = run
+        for operator in self.operators:
+            operator.run = run
+        self.variable.run = run
+        self.reduction.run = run
+
     def __call__(self, **kwargs):
 
         # keyword arguments are specific to the projector
@@ -38,7 +51,7 @@ class Measurement(MComponent):
         # N.b. operators are applied in list order -- i.e. 0th element will be applied first, and so on
         for operator in self.operators:
             [values, units] = operator.operate_on_values(values=values, units=units)
-        
+
         # The projector assumes a certain data shape, but at this point we have data of shape (times, planes,
         # point, [coordinates])
         # We reduce to the required shape with a reduction operator
@@ -54,27 +67,27 @@ class Measurement(MComponent):
     @property
     def projector(self):
         return self._projector
-    
+
     @projector.setter
     def projector(self, projector):
         if type(projector) == type:
             self._projector = projector()
         else:
             self._projector = projector
-        
+
         assert(isinstance(self._projector, Projector))
-    
+
     @property
     def reduction(self):
         return self._reduction
-    
+
     @reduction.setter
     def reduction(self, reduction):
         if type(reduction) == type:
             self._reduction = reduction()
         else:
             self._reduction = reduction
-        
+
         if type(self._reduction) == ReduceTo1D:
             self._reduction = self.projector.request_reduction(self._reduction)
 
@@ -83,20 +96,20 @@ class Measurement(MComponent):
     @property
     def operators(self):
         return np.atleast_1d(self._operators)
-    
+
     @operators.setter
     def operators(self, operators):
         # Shallow copy the list of operators to prevent non-local effects
         operators = operators.copy()
         self._operators = [operator() if type(operator) == type else operator for operator in operators]
-        
+
         for operator in self._operators:
             assert(isinstance(operator, Operator))
-    
+
     @property
     def variable(self):
         return self._variable
-    
+
     @variable.setter
     def variable(self, variable):
         if type(variable) == tuple:
@@ -107,22 +120,22 @@ class Measurement(MComponent):
             self._variable = variable()
         else:
             self._variable = variable
-        
+
         assert(isinstance(self._variable, Variable))
-    
+
     def split_variable_tuple(self, variable_tuple):
         assert((len(variable_tuple) == 2) and (type(variable_tuple[0]) == list)
         ), f"If using the operator-variable tuple notation, must use the form ([operators], variable). variable tuple was {variable_tuple}"
 
         variable = variable_tuple[1]
-        
+
         operators = self.operators.copy()
         for operator in variable_tuple[0]:
             # Prepend the operators to the operator list
             # N.b. operators are applied in list order (i.e. 0th first) so the last element of variable_tuple[0] will be the
             # first operator to be applied
             operators.insert(0, operator)
-        
+
         self.operators = operators
 
         return variable

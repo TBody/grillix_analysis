@@ -1,4 +1,4 @@
-from source import np
+from source import np, Dimensionless
 from .. import Variable
 from source.measurements.Operator import PadToGrid
 
@@ -7,23 +7,19 @@ class StaticVariable(Variable):
     
     def __init__(self, name_in_netcdf, netcdf_filename, title, run=None):
         
-        self.title = title
         self.name_in_netcdf = name_in_netcdf
         self.netcdf_filename = netcdf_filename
         
-        super().__init__(run=run)
+        super().__init__(title=title, run=run)
     
     def set_run(self):
         self.netcdf_file = getattr(self.run.directory, self.netcdf_filename)
     
-    def fill_values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
-        return self.netcdf_file[self.name_in_netcdf]
+    def fetch_values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+        return self.netcdf_file[self.name_in_netcdf], Dimensionless
         
-    def values_finalize(self, values):
-        if self.vector_variable:
-            return np.atleast_3d(values).reshape((1,1,-1,3))
-        else:
-            return np.atleast_3d(values).reshape((1,1,-1))
+    def values_finalize(self, values, units):
+        return values.shape_poloidal(), units
 
 class PenalisationVariable(StaticVariable):
     # Variables written to penalisation metadata. Automatically padded to fill full_grid
@@ -32,9 +28,9 @@ class PenalisationVariable(StaticVariable):
         self.netcdf_file = getattr(self.run.directory, self.netcdf_filename)
         self.pad_to_grid = PadToGrid(run=self.run)
     
-    def values_finalize(self, values):
-        values = super().values_finalize(values)
-        return self.pad_to_grid(values)
+    def values_finalize(self, values, units):
+        [values, units] = super().values_finalize(values, units)
+        return self.pad_to_grid(values, units)
 
 # From Grid
 from .Grid import Grid

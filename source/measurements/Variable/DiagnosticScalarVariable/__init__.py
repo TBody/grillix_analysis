@@ -27,7 +27,7 @@ class DiagnosticScalarVariable(Variable):
         
         values = self.values
         
-        return np.atleast_3d(values).reshape((1,1,-1))
+        return values.shape_poloidal()
 
 class Time(DiagnosticScalarVariable):
 
@@ -36,8 +36,9 @@ class Time(DiagnosticScalarVariable):
         
         super().__init__(index_in_netcdf, run=run)
     
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.tau_0
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.tau_0
 
 class Timestep(DiagnosticScalarVariable):
 
@@ -46,63 +47,59 @@ class Timestep(DiagnosticScalarVariable):
         
         super().__init__(index_in_netcdf, run=run)
     
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.tau_0
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.tau_0
 
 class AverageDensity(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 11
-        title = "Density"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Density", run=run)
     
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.n0
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.n0
 
 class AverageElectronTemperature(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 12
-        title = "ETemp"
-
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="ETemp", run=run)
     
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.Te0
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.Te0
 
 class AverageIonTemperature(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 13
-        title = "ITemp"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="ITemp", run=run)
     
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.Ti0
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.Ti0
 
 class AverageScalarPotential(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 14
-        title = "Phi"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Phi", run=run)
     
-    def update_normalisation_factor(self):
-        self.normalisation_factor = (self.normalisation.Te0/self.normalisation.electron_charge).to("kilovolt")
+    @property
+    def normalisation_factor(self):
+        return (self.normalisation.Te0/self.normalisation.electron_charge).to("kilovolt")
 
 class AverageVorticity(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 15
-        title = "Vort"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Vort", run=run)
     
-    def update_normalisation_factor(self):
-        self.normalisation_factor = (
+    @property
+    def normalisation_factor(self):
+        return (
             self.normalisation.Mi * self.normalisation.n0 * self.normalisation.Te0
             /(self.normalisation.electron_charge * self.normalisation.rho_s0**2 * self.normalisation.B0**2 )
         ).to('coulomb/meter**3')
@@ -111,12 +108,11 @@ class AverageParallelCurrent(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 16
-        title = "Jpar"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Jpar", run=run)
     
-    def update_normalisation_factor(self):
-        self.normalisation_factor = (self.normalisation.c_s0 * self.normalisation.electron_charge * self.normalisation.n0).to(
+    @property
+    def normalisation_factor(self):
+        return (self.normalisation.c_s0 * self.normalisation.electron_charge * self.normalisation.n0).to(
             'kiloampere*meter**-2'
         )
 
@@ -124,20 +120,17 @@ class AverageParallelIonVelocity(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 17
-        title = "Upar"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Upar", run=run)
     
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.c_s0.to('kilometers/second')
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.c_s0.to('kilometers/second')
 
 class AverageParallelVectorPotential(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 18
-        title = "Apar"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Apar", run=run)
     
     def update_normalisation_factor(self):
     
@@ -147,275 +140,208 @@ class AveragePerpendicularKineticEnergy(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 21
-        title = "K.E. perp"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="K.E. perp", run=run)
         
 class AverageParallelKineticEnergy(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 22
-        title = "K.E. par"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="K.E. par", run=run)
         
 class AverageElectronThermalEnergy(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 23
-        title = "T.E. e"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="T.E. e", run=run)
 
 class AverageIonThermalEnergy(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 24
-        title = "T.E. i"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="T.E. i", run=run)
         
 class AverageMagneticEnergy(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 25
-        title = "Mag.E."
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Mag.E.", run=run)
         
 class AverageParallelKineticElectronEnergy(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 26
-        title = "K.E. par e"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="K.E. par e", run=run)
         
 class DerivativeDensity(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 31
-        title = "d/dt Density"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="d/dt Density", run=run)
         
 class DerivativePerpendicularKineticEnergy(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 32
-        title = "d/dt K.E. perp"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="d/dt K.E. perp", run=run)
 
 class DerivativeParallelKineticEnergy(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 33
-        title = "d/dt K.E. par"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="d/dt K.E. par", run=run)
 
 class DerivativeElectronThermalEnergy(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 34
-        title = "d/dt T.E. e"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="d/dt T.E. e", run=run)
 
 class DerivativeIonThermalEnergy(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 35
-        title = "d/dt T.E. i"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="d/dt T.E. i", run=run)
 
 class DerivativeMagneticEnergy(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 36
-        title = "d/dt Mag.E."
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="d/dt Mag.E.", run=run)
 
 class DerivativeParallelKineticElectronEnergy(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 37
-        title = "d/dt K.E. par e"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="d/dt K.E. par e", run=run)
 
 class ParticleSource(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 41
-        title = "Source"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Source", run=run)
         
 class ParticleSink(DiagnosticScalarVariable):
     # Particle Sink (due to diffusion/dissipation at boundaries)
 
     def __init__(self, run=None):
         index_in_netcdf = 42
-        title = "Sink"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Sink", run=run)
         
 class TransferTermOfEperpAndEthe(DiagnosticScalarVariable):
     # "Jpar*Grad_par(Pot)"
     def __init__(self, run=None):
         index_in_netcdf = 51
-        title = "E perp -> Ethe"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="E perp -> Ethe", run=run)
             
 class TransferTermOfEperpFromTe(DiagnosticScalarVariable):
     # Nea*Tea*Div(V_e)
     def __init__(self, run=None):
         index_in_netcdf = 52
-        title = "Te -> E perp "
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Te -> E perp ", run=run)
         
 class TransferTermOfEparFromTe(DiagnosticScalarVariable):
     # -Upar*Grad_par(Nea*Tea)>
     def __init__(self, run=None):
         index_in_netcdf = 53
-        title = "Te -> E par"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Te -> E par", run=run)
         
 class TransferTermOfEthe1(DiagnosticScalarVariable):
     # Vpar*Grad_par(Nea*Tea)>
     def __init__(self, run=None):
         index_in_netcdf = 54
-        title = "E the 1"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="E the 1", run=run)
             
 class TransferTermOfEthe2(DiagnosticScalarVariable):
     # Etapar/Jpar^2/(Tea^(3/2))>
     def __init__(self, run=None):
         index_in_netcdf = 55
-        title = "E the 2"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="E the 2", run=run)
         
 class TransferTermOfEthe3(DiagnosticScalarVariable):
     # -0.71*Jpar*Grad_par(Tea)
     def __init__(self, run=None):
         index_in_netcdf = 56
-        title = "E the 3"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="E the 3", run=run)
         
 class TransferTermOfEperpFromTi(DiagnosticScalarVariable):
     # Nea*Tia*Div(V_e)
     def __init__(self, run=None):
         index_in_netcdf = 57
-        title = "Ti -> E perp"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Ti -> E perp", run=run)
         
 class TransferTermOfEparFromTi(DiagnosticScalarVariable):
     # -Upar*Grad_par(Nea*Tia)
     def __init__(self, run=None):
         index_in_netcdf = 58
-        title = "Ti -> E par"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Ti -> E par", run=run)
         
 class DissipSourceOfEperp(DiagnosticScalarVariable):
     # - Pot*Dw + (1-Bsq)>*|Nabla_perp(Pot)|^2 / (2b^2) * (Dn+Sn-Dw)
     def __init__(self, run=None):
         index_in_netcdf = 61
-        title = "Eperp"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Eperp", run=run)
         
 class DissipSourceOfEpar(DiagnosticScalarVariable):
     # Nea*Upar*Su + Nea*Upar*Du< + >Upar^2/2*(Dn+Sn-Dw)
     def __init__(self, run=None):
         index_in_netcdf = 62
-        title = "Epar"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Epar", run=run)
         
 class DissipSourceOfEthe(DiagnosticScalarVariable):
     # 3/2*Tea*(Dn+Sn) + 3/2*Nea*(Dte+Ste)
     def __init__(self, run=None):
         index_in_netcdf = 63
-        title = "Ethe"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Ethe", run=run)
         
 class DissipSourceOfEemAndEpare(DiagnosticScalarVariable):
     # 1/2*Mu*(Jpar/Nea)^2 * (Dn+Sn)
     def __init__(self, run=None):
         index_in_netcdf = 64
-        title = "Eem+Epare"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Eem+Epare", run=run)
         
 class DissipSourceOfEthi(DiagnosticScalarVariable):
     # 3/2*Tia*(Dn+Sn) + 3/2*Nea*(Dti+Sti)
     def __init__(self, run=None):
         index_in_netcdf = 65
-        title = "Ethi"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Ethi", run=run)
         
 class NeutralsDensity(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 71
-        title = "N Dens"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="N Dens", run=run)
     
-    def update_normalisation_factor(self):
-        self.normalisation_factor = self.normalisation.n0
+    @property
+    def normalisation_factor(self):
+        return self.normalisation.n0
         
 class IonizationDensitySource(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 72
-        title = "Iz src"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Iz src", run=run)
         
 class IonizationCooling(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 73
-        title = "Iz cooling"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="Iz cooling", run=run)
         
 class CXFrictionOnParallelIonVelocity(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 74
-        title = "CX on Upar"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="CX on Upar", run=run)
         
 class CXFrictionOnVorticity(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 75
-        title = "CX on Vort"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="CX on Vort", run=run)
         
 class DerivativeNeutralsDensity(DiagnosticScalarVariable):
 
     def __init__(self, run=None):
         index_in_netcdf = 76
-        title = "d/dt  N Dens"
-        
-        super().__init__(index_in_netcdf, run=run)
+        super().__init__(index_in_netcdf, title="d/dt  N Dens", run=run)
         

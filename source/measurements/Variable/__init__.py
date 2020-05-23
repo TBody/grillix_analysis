@@ -1,17 +1,18 @@
-from source import Quantity, np
+from source import Quantity, np, Dimensionless
 from .. import MComponent
+from ..WrappedArray import ScalarArray, VectorArray, WrappedArray
 
 class Variable(MComponent):
     # Generic variable container
     # Any field which can be plotted should be of this form
     # Data objects must have a Variable object which matches this pattern
     
-    def __init__(self, run=None):
+    def __init__(self, title, run=None):
+
+        # Every variable must have a title
+        self.title = title
 
         # Attributes which can be overwritten by children. If not already set, set defaults
-        
-        # Default to dimensionless value
-        self.normalisation_factor = getattr(self, "normalisation_factor", Quantity(1, ''))
         
         # continuous_result variables should be treated as having continuous rather than discrete values
         self.continuous_result = getattr(self, "continuous_result", True)
@@ -24,16 +25,28 @@ class Variable(MComponent):
 
         # Initialise the run property callbacks
         super().__init__(run=run)
+    
+    @property
+    def normalisation_factor(self):
+        # Default to dimensionless quantity (this should be overwritten in child classes)
+        return Dimensionless
 
-    def fill_values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+    def fetch_values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
         return NotImplemented
 
     def __call__(self, time_slice=slice(-1,None), toroidal_slice=slice(None), poloidal_slice=slice(None)):
         # Read in the values, and apply the appropriate normalisation factor
         
-        values = self.fill_values(time_slice=time_slice, toroidal_slice=toroidal_slice, poloidal_slice=poloidal_slice)
-        
-        values = self.values_finalize(values)
+        [values, units] = self.fetch_values(time_slice=time_slice, toroidal_slice=toroidal_slice, poloidal_slice=poloidal_slice)
+
+        if not(isinstance(values, WrappedArray)):
+            if self.vector_variable:
+                values = VectorArray(values)
+            else:
+                values = ScalarArray(values)
+
+        [values, units] = self.values_finalize(values, units)
+        values.check_dimensions()
 
         # if self.SI_units and not(self.derived_variable):
         #     values *= self.normalisation_factor
@@ -47,7 +60,7 @@ class Variable(MComponent):
         #     result = Result(values, run=self.run, check_shape=True)
         
         # return self.call_finalize(result)
-        return values
+        return values, units
     
 #     def __format_value__(self, value):
 #         # N.b. may be overwritten by children classes
@@ -65,10 +78,9 @@ class Variable(MComponent):
 #             print(f"__format_value__ failed for input {value} of type {type(value)}")
 #             return value
 
-    def values_finalize(self, value):
+    def values_finalize(self, values, units):
         # Optional function to call before the "Result" is been constructed
-        # Usually a reshape such as np.atleast_3d(values).reshape((1,1,-1))
-        return value
+        return values, units
     
 #     def call_finalize(self, value):
 #         # Optional function to call before returning values, after the "Result" has been constructed

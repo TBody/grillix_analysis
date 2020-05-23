@@ -10,10 +10,6 @@ class MComponent():
         # Dummies, should be overwritten
         pass
 
-    def update_normalisation_factor(self):
-        # Dummies, should be overwritten
-        pass
-
     @property
     def run(self):
         return self._run

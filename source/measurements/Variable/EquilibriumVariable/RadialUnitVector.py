@@ -5,9 +5,8 @@ from . import EquilibriumVariable
 class RadialUnitVector(EquilibriumVariable):
     # Unit vector across the flux surface
     def __init__(self, run=None):
-        super().__init__(run=run)
         self.vector_variable = True
-        title = "Radial unit vector"
+        super().__init__(title="Radial unit vector", run=run)
 
     def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
 
