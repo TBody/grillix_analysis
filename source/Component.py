@@ -1,6 +1,6 @@
-class MComponent():
-    # Generic measurement element -- i.e. an operator, variable or projector -- 
-    # or the Measurement itself
+class Component:
+    # Generic element which provides an interface to data stored in a 'run'
+    # data super-object
 
     def __init__(self, run=None):
         
@@ -29,19 +29,6 @@ class MComponent():
         self._run = value
         if value != None:
             self.set_run()
-
-    @property
-    def SI_units(self):
-        try:
-            return self._run.SI_units
-        except AttributeError:
-            # If run isn't defined yet, assume call is before initialisation. Return default
-            return False
-
-    @SI_units.setter
-    def SI_units(self, value):
-        assert(self.run.SI_units == value)
-        raise NotImplementedError(f"Should set SI_units directly on run")
 
     @property
     def normalisation(self):

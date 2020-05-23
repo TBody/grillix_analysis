@@ -15,17 +15,11 @@ class Poloidal(Projector):
     
     @property
     def x(self):
-        if self.grid.SI_units:
-            return self.grid.x_unique.magnitude
-        else:
-            return self.grid.x_unique
+        return self.grid.x_unique
     
     @property
     def y(self):
-        if self.grid.SI_units:
-            return self.grid.y_unique.magnitude
-        else:
-            return self.grid.y_unique
+        return self.grid.y_unique
 
     def determine_slices(self, time_slice=slice(-1, None), toroidal_slice=slice(1), poloidal_slice=slice(None)):
         # Natural slicing

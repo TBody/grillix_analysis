@@ -1,4 +1,4 @@
-from .components import NamelistReader
+from .components.NamelistReader import NamelistReader
 from source import Path
 
 class Parameters(NamelistReader):

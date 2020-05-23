@@ -117,4 +117,3 @@ class Figure:
         
         return nrows, ncols
     
-

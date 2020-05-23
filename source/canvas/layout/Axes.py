@@ -1,4 +1,5 @@
 from source import plt
+from ..painter import Painter
 
 class Axes:
 
@@ -22,3 +23,8 @@ class Axes:
     def __init__(self, ax, **kwargs):
 
         self.ax = ax
+        self.painter = []
+    
+    def draw(self, **kwargs):
+        
+        self.painter.draw(**kwargs)

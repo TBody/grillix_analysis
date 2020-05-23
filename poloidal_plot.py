@@ -23,7 +23,7 @@ class PoloidalPlotCLI(BaseCLI):
         self.time_slice         = TimeSliceArg(self)
         self.toroidal_slice     = ToroidalSliceArg(self)
         self.reduction          = ReductionArg(self)
-        self.convert_to_si      = SI_unitsArg(self)
+        self.SI_units           = SI_unitsArg(self)
         self.log_scale          = LogScaleArg(self)
         self.error_snaps        = ErrorSnapsArg(self)
 
@@ -33,9 +33,9 @@ class PoloidalPlotCLI(BaseCLI):
 # import the necessary components from source
 from source.run import Run
 from source.measurements.Projector import Poloidal
-from source.measurements import Measurement
+from source.measurements import Measurement, measurement_array_from_variable_array
 from ipdb import launch_ipdb_on_exception
-import source.canvas as canvas
+from source.canvas import Canvas, Colormesh
 
 if __name__=="__main__":
     # Wrapping everything with "with launch_ipdb_on_exception():" has the helpful effect that, upon a crash, the ipdb debugger is launched
@@ -44,10 +44,13 @@ if __name__=="__main__":
         # CLI behaves exactly like a dictionary. If you want, you can modify it with standard dictionary methods, or replace it altogether
         CLI = PoloidalPlotCLI(parse=True, display=True)
         
-        filepath = CLI['filepath']
+        filepath        = CLI['filepath']
         use_error_snaps = CLI['error_snaps']
-        group = CLI['group']
-        reduction = CLI['reduction']
+        group           = CLI['group']
+        reduction       = CLI['reduction']
+        title           = CLI['title']
+        SI_units        = CLI['SI_units']
+        log_scale       = CLI['log_scale']
 
         # Check the run directory and initialise the following
         # directory     = resolved paths to required files
@@ -68,36 +71,21 @@ if __name__=="__main__":
         # Request the 'Poloidal' projector. A projector takes z(t, phi, l) and maps it to a 2D array, in this case z(x, y)
         # The treatment of the 't' and 'phi' axis is via an AllReduction operator, passed as the reduction keyword
         projector = Poloidal()
-
-        measurement = Measurement(projector=projector, variable=variables[0], reduction=reduction, operators=operators)
-
-        measurement.run = run
-
-        import matplotlib.pyplot as plt
-        plt.pcolormesh(projector.x, projector.y, measurement()[0])
-
-        plt.show()
-
-        # figure = canvas.subplots_with_title(naxs=len(variables), title="Test")
-
         
+        measurement_array = measurement_array_from_variable_array(
+            projector=projector, variable_array=variables, reduction=reduction, operators=operators, run=run)
 
+        canvas = Canvas.blank_canvas(SI_units=SI_units, log_scale=log_scale, run=run)
 
-        # figure.show()
+        canvas.add_subplots_from_naxs(naxs=len(variables))
+        canvas.add_title(title=title)
 
-        # # Generate a figure which has enough subplots to plot all the variables, and request a figure title, conversion to
-        # # SI and logarithmic plot depending on ctrl arguments
-        # figure = Plot(run                 = run,
-        #               naxs                = len(variables),
-        #               title               = ctrl["title"],
-        #               convert             = ctrl["convert_to_SI"],
-        #               log_scale = ctrl["log_scale"])
+        canvas.associate_subplots_with_measurements(painter=Colormesh, measurement_array=measurement_array)
 
-        # # For each Subplot in the Plot, set values for the run, projector, variable, and operators
-        # figure.set_data_array(run=run, projector=projector, variables=variables, operators=operators)
+        canvas.draw()
 
-        # # For each Subplot in the Plot, fill the axes with values
-        # figure.fill_values(time_slice=ctrl["time_slice"], toroidal_slice=ctrl["toroidal_slice"])
+        canvas.show()
+
 
         # # Save or display the figure
         # if ctrl["save"]:

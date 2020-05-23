@@ -10,7 +10,7 @@ class CombinedGrid(Grid):
         
         full_grid = self.main_grid + self.perp_grid
         
-        super().__init__(x=full_grid.x, y=full_grid.y, grid_spacing=full_grid._grid_spacing, run=run)
+        super().__init__(x=full_grid.x, y=full_grid.y, grid_spacing=full_grid.grid_spacing, run=run)
     
     def invert_z(self):
         # Invert the sub-grids

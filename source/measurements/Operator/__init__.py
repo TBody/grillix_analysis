@@ -1,7 +1,7 @@
-from source import np, Quantity
-from .. import MComponent, WrappedArray
+from source import np, Quantity, Component
+from .. import WrappedArray
 
-class Operator(MComponent):
+class Operator(Component):
 
     def __init__(self, run=None):
         super().__init__(run)

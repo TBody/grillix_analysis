@@ -1,8 +1,7 @@
-from source import Quantity, np, Dimensionless
-from .. import MComponent
+from source import Quantity, np, Dimensionless, Component
 from ..WrappedArray import ScalarArray, VectorArray, WrappedArray
 
-class Variable(MComponent):
+class Variable(Component):
     # Generic variable container
     # Any field which can be plotted should be of this form
     # Data objects must have a Variable object which matches this pattern
@@ -44,18 +43,6 @@ class Variable(MComponent):
         [values, units] = self.values_finalize(values, units)
         values.check_dimensions()
 
-        # if self.SI_units and not(self.derived_variable):
-        #     values *= self.normalisation_factor
-        # elif not(self.SI_units) and hasattr(values, "units"):
-        #     values = values.to('').magnitude
-        
-        # assert(not(isinstance(values, Result))), f"{self.__class__.__name__} error: Wrapping a Result object in a Result is undefined"
-        # if self.vector_variable:
-        #     result = VectorResult(values, run=self.run, check_shape=True)
-        # else:
-        #     result = Result(values, run=self.run, check_shape=True)
-        
-        # return self.call_finalize(result)
         return values, units
     
 #     def __format_value__(self, value):

@@ -1,11 +1,10 @@
-from source import np, Quantity
-from .MComponent import MComponent
+from source import np, Quantity, Component
 from .Projector import Projector
 from .Variable import Variable
 from .Operator import Operator, Reduction, ReduceTo1D
 from .WrappedArray import WrappedArray, ScalarArray, VectorArray
 
-class Measurement(MComponent):
+class Measurement(Component):
 
     def __init__(self, projector, variable, reduction, operators=[], run=None):
 

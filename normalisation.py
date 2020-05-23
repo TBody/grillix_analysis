@@ -52,7 +52,6 @@ if __name__=="__main__":
         print(N)
 
         if ctrl["launch_ipdb"]:
-            run.SI_units = True
             import ipdb
             ipdb.set_trace()
             print("Launching ipdb -- you can use the workspace interactively")

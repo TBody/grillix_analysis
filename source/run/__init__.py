@@ -5,7 +5,8 @@ from .Grid import Grid, CombinedGrid
 from .Equilibrium import Equilibrium
 
 from source import np
-from .components import find_contour_levels, Polygon
+from .components.ContourLevel import find_contour_levels
+from .components.Polygon import Polygon
 from source.measurements.Variable.StaticVariable import CharacteristicFunction, FluxSurface, PhiForward, PhiBackward
 
 class Run:
@@ -13,7 +14,6 @@ class Run:
 
     def __init__(self, filepath, calculate_metainfo=True, use_error_snaps=False):
         # Add a flag whether to convert to SI units or not -- default false since it is easier to calculate in non-normalised units
-        self._SI_units = False
         self.children = []
 
         # Resolve the filepaths for the run directory, and read the params.in file
@@ -67,19 +67,6 @@ class Run:
                 # try:
                 # except (IndexError, FileNotFoundError, AttributeError):
                 #     print(f"Unable to calculate run metadata in {function}: missing information")
-    
-    def add_to_children(self, child_object):
-        self.children.append(child_object)
-
-    @property
-    def SI_units(self):
-        return self._SI_units
-    
-    @SI_units.setter
-    def SI_units(self, value):
-        # Setter for SI_units
-        # N.b. all objects in the analysis routines directly read this value to set their own value for convert
-        self._SI_units = value
 
     def calculate_tau_values(self):
         if self.directory.use_error_snaps:
@@ -87,15 +74,8 @@ class Run:
         else:
             snap_netcdf = self.directory.snaps
         
-        self._tau_values = np.array(np.atleast_1d(snap_netcdf[0]['tau']))
-        self.snap_indices = np.arange(np.size(self._tau_values))
-    
-    @property
-    def tau_values(self):
-        if self.SI_units:
-            return self._tau_values * self.normalisation.tau_0
-        else:
-            return self._tau_values
+        self.tau_values = np.array(np.atleast_1d(snap_netcdf[0]['tau']))
+        self.snap_indices = np.arange(np.size(self.tau_values))
 
     def calculate_penalisation_contours(self):
         

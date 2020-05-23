@@ -7,7 +7,7 @@ class Vorticity(BaseVariable):
         
     @property
     def normalisation_factor(self):
-        self.normalisation_factor = (
+        return (
             self.normalisation.Mi * self.normalisation.n0 * self.normalisation.Te0
             /(self.normalisation.electron_charge * self.normalisation.rho_s0**2 * self.normalisation.B0**2 )
         ).to('coulomb/meter**3')

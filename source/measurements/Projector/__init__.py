@@ -1,7 +1,6 @@
-from source import np
-from .. import MComponent
+from source import np, Component
 
-class Projector(MComponent):
+class Projector(Component):
 
     def __init__(self, run=None):
         super().__init__(run)

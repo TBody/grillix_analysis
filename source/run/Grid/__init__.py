@@ -26,85 +26,45 @@ class Grid(RunComponent):
     def __init__(self, x, y, grid_spacing, run, test_size=True):
         self.vector_to_matrix_initialised = False
         
-        self._x = x
-        self._y = y
+        self.x = x
+        self.y = y
         
-        self._grid_spacing = grid_spacing
+        self.grid_spacing = grid_spacing
 
-        self._x_unique = np.unique(self._x)
-        self._y_unique = np.unique(self._y)
+        self.x_unique = np.unique(self.x)
+        self.y_unique = np.unique(self.y)
 
-        self._xmin = self._x_unique[0]
-        self._xmax = self._x_unique[-1]
-        self._ymin = self._y_unique[0]
-        self._ymax = self._y_unique[-1]
+        self.xmin = self.x_unique[0]
+        self.xmax = self.x_unique[-1]
+        self.ymin = self.y_unique[0]
+        self.ymax = self.y_unique[-1]
         
         if test_size:
-            assert(np.size(self._x) == np.size(self._y))
-        self.size = np.size(self._x)
+            assert(np.size(self.x) == np.size(self.y))
+        self.size = np.size(self.x)
 
         super().__init__(run=run)
 
     def invert_z(self):
-        self._y = -self._y
-        self._y_unique = np.unique(self._y)
-        self._ymin = self._y_unique[0]
-        self._ymax = self._y_unique[-1]
-
-    def update_normalisation_factor(self):
-        self.R0 = self.normalisation.R0
-
-    # Auto-convert to normalised when accessing properties, based on self.SI_units flag
-    @property
-    def x(self):
-        return self._x * self.R0 if self.SI_units else self._x
-
-    @property
-    def y(self):
-        return self._y * self.R0 if self.SI_units else self._y
-    
-    @property
-    def x_unique(self):
-        return self._x_unique * self.R0 if self.SI_units else self._x_unique
-
-    @property
-    def y_unique(self):
-        return self._y_unique * self.R0 if self.SI_units else self._y_unique
-
-    @property
-    def xmin(self):
-        return self._xmin * self.R0 if self.SI_units else self._xmin
-
-    @property
-    def xmax(self):
-        return self._xmax * self.R0 if self.SI_units else self._xmax
-
-    @property
-    def ymin(self):
-        return self._ymin * self.R0 if self.SI_units else self._ymin
-
-    @property
-    def ymax(self):
-        return self._ymax * self.R0 if self.SI_units else self._ymax
-    
-    @property
-    def grid_spacing(self):
-        return self._grid_spacing * self.R0 if self.SI_units else self._grid_spacing
+        self.y = -self.y
+        self.y_unique = np.unique(self.y)
+        self.ymin = self.y_unique[0]
+        self.ymax = self.y_unique[-1]
     
     def __add__(self, other):
 
-        new_x = np.append(self._x, other._x)
-        new_y = np.append(self._y, other._y)
+        newx = np.append(self.x, other.x)
+        newy = np.append(self.y, other.y)
 
-        return Grid(x=new_x, y=new_y, grid_spacing=self._grid_spacing, run=self.run)
+        return Grid(x=newx, y=newy, grid_spacing=self.grid_spacing, run=self.run)
     
     def find_nearest_index(self, x, y, print_error=False):
 
         # Returns nearest element for linear distance
-        nearest_index = np.argmin(np.sqrt((self._x - x)**2 + (self._y - y)**2))
+        nearest_index = np.argmin(np.sqrt((self.x - x)**2 + (self.y - y)**2))
 
         if print_error:
-            print(self._x[nearest_index] - x, self._y[nearest_index] - y)
+            print(self.x[nearest_index] - x, self.y[nearest_index] - y)
 
         if np.size(nearest_index):
             return nearest_index

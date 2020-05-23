@@ -22,23 +22,11 @@ class Polygon(RunComponent):
     
     def __init__(self, x_points, y_points, invert_polygon=False):
         
-        self._x_points = np.array(x_points)
-        self._y_points = np.array(y_points)
+        self.x_points = np.array(x_points)
+        self.y_points = np.array(y_points)
         self.invert_polygon = invert_polygon
 
         self.polygon = mpltPath.Path(np.column_stack((x_points, y_points)), closed=True)
-    
-    # Auto-convert to normalised when accessing properties, based on self.SI_units flag
-    @property
-    def x_points(self):
-        return self._x_points * self.R0 if self.SI_units else self._x_points
-
-    @property
-    def y_points(self):
-        return self._y_points * self.R0 if self.SI_units else self._y_points
-
-    def update_normalisation_factor(self):
-        self.R0 =self.normalisation.R0
 
     def points_inside(self, x_tests, y_tests):
 

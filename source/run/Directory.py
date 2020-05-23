@@ -1,5 +1,5 @@
 from source import Path, np, time, os
-from .components import NetCDFPath
+from .components.NetCDFPath import NetCDFPath
 from source.interface import UserEnvironment
 from .Parameters import Parameters
 
