@@ -60,7 +60,8 @@ if __name__=="__main__":
         # normalisation = dimensional quantities which give conversion to SI
         # grid          = vgrid + perpghost, including vector_to_matrix routines
         # 
-        run = Run(filepath, use_error_snaps=use_error_snaps)
+        run = Run(filepath)
+        run.directory.use_error_snaps = use_error_snaps
 
         # Select a list of Variable types to plot
         variables = variable_groups[group]
@@ -75,12 +76,12 @@ if __name__=="__main__":
         measurement_array = measurement_array_from_variable_array(
             projector=projector, variable_array=variables, reduction=reduction, operators=operators, run=run)
 
-        canvas = Canvas.blank_canvas(SI_units=SI_units, log_scale=log_scale, run=run)
+        canvas = Canvas.blank_canvas()
 
         canvas.add_subplots_from_naxs(naxs=len(variables))
         canvas.add_title(title=title)
 
-        canvas.associate_subplots_with_measurements(painter=Colormesh, measurement_array=measurement_array)
+        canvas.associate_subplots_with_measurements(painter=Colormesh, measurement_array=measurement_array, SI_units=SI_units, log_scale=log_scale)
 
         canvas.draw()
 

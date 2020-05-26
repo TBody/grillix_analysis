@@ -5,16 +5,12 @@ from source.measurements import Measurement
 
 class Canvas:
 
-    def __init__(self, figure, SI_units, log_scale, run=None):
+    def __init__(self, figure):
         self.figure = figure
-        self.SI_units = SI_units
-        self.log_scale = log_scale
 
-        self.run = run
-    
     @classmethod
-    def blank_canvas(cls, SI_units=False, log_scale=False, run=None):
-        return cls(figure=Figure(), SI_units=SI_units, log_scale=log_scale, run=run)
+    def blank_canvas(cls):
+        return cls(figure=Figure())
 
     def draw(self, **kwargs):
         for axes in self.axes_array:
@@ -30,10 +26,16 @@ class Canvas:
     def add_title(self, title):
         self.figure.make_suptitle(title)
     
-    def associate_subplots_with_measurements(self, painter, measurement_array):
+    def associate_subplots_with_measurements(self, painter, measurement_array, SI_units=False, log_scale=False):
 
         for measurement, axes in zip(measurement_array, self.axes_array):
 
-            axes.painter = painter(measurement=measurement, axes=axes)
+            axes.painter = painter(canvas=self, measurement=measurement, axes=axes, SI_units=SI_units, log_scale=log_scale)
         
+    def set_SI_units(self, value):
+        for axes in self.axes_array:
+            axes.SI_units = value
     
+    def set_log_scale(self, value):
+        for axes in self.axes_array:
+            axes.log_scale = value

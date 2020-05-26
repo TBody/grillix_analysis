@@ -60,7 +60,3 @@ class Polygon(RunComponent):
             running_sum += self.x_points[index] * self.y_points[np.mod(index+1, n_points)] - self.x_points[np.mod(index+1, n_points)] * self.y_points[index]
 
         return running_sum/2
-    
-    def plot(self, ax, run=None):
-
-        ax.plot(self.x_points, self.y_points, run=None)

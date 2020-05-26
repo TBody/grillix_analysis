@@ -16,8 +16,11 @@ class Variable(Component):
         # continuous_result variables should be treated as having continuous rather than discrete values
         self.continuous_result = getattr(self, "continuous_result", True)
         
-        # # vector_variable means that the variable has an additional length (3) dimension, which corresponds to (R, phi, Z) components
+        # vector_variable means that the variable has an additional length (3) dimension, which corresponds to (R, phi, Z) components
         self.vector_variable = getattr(self, "vector_variable", False)
+        
+        # allow_diverging_cmap will make the colormap centre on zero if both positive and negative values are in the range of values
+        self.allow_diverging_cmap = getattr(self, "allow_diverging_cmap", True)
         
         # # derived_variable means that the normalisation is already applied in the __call__, and so should be skipped
         # self.derived_variable = getattr(self, "derived_variable", False)

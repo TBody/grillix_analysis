@@ -27,7 +27,7 @@ class ContourLevel(RunComponent):
         assert(len(x_arrays)==len(y_arrays))
         self.n_arrays = len(x_arrays)
 
-    def plot(self, ax, run=None):
-        
+    def plot_all_arrays(self, plot_function, **kwargs):
+
         for x_array, y_array in zip(self.x_arrays, self.y_arrays):
-            ax.plot(x_array, y_array, run=None)
+            plot_function(x_array, y_array, **kwargs)
