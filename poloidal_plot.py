@@ -6,7 +6,7 @@ from source.interface import (
     GroupArg, TitleArg,
     TimeSliceArg, ToroidalSliceArg,
     ReductionArg,
-    SI_unitsArg, LogScaleArg, ErrorSnapsArg
+    SI_unitsArg, LogScaleArg, ErrorSnapsArg, ExcludeOutliersArg
 )
 
 # Set up command-line interface
@@ -24,6 +24,7 @@ class PoloidalPlotCLI(BaseCLI):
         self.toroidal_slice     = ToroidalSliceArg(self)
         self.reduction          = ReductionArg(self)
         self.SI_units           = SI_unitsArg(self)
+        self.exclude_outliers   = ExcludeOutliersArg(self)
         self.log_scale          = LogScaleArg(self)
         self.error_snaps        = ErrorSnapsArg(self)
 
@@ -44,13 +45,14 @@ if __name__=="__main__":
         # CLI behaves exactly like a dictionary. If you want, you can modify it with standard dictionary methods, or replace it altogether
         CLI = PoloidalPlotCLI(parse=True, display=True)
         
-        filepath        = CLI['filepath']
-        use_error_snaps = CLI['error_snaps']
-        group           = CLI['group']
-        reduction       = CLI['reduction']
-        title           = CLI['title']
-        SI_units        = CLI['SI_units']
-        log_scale       = CLI['log_scale']
+        filepath         = CLI['filepath']
+        use_error_snaps  = CLI['error_snaps']
+        group            = CLI['group']
+        reduction        = CLI['reduction']
+        title            = CLI['title']
+        SI_units         = CLI['SI_units']
+        exclude_outliers = CLI['exclude_outliers']
+        log_scale        = CLI['log_scale']
 
         # Check the run directory and initialise the following
         # directory     = resolved paths to required files
@@ -81,7 +83,7 @@ if __name__=="__main__":
         canvas.add_subplots_from_naxs(naxs=len(variables))
         canvas.add_title(title=title)
 
-        canvas.associate_subplots_with_measurements(painter=Colormesh, measurement_array=measurement_array, SI_units=SI_units, log_scale=log_scale)
+        canvas.associate_subplots_with_measurements(painter=Colormesh, measurement_array=measurement_array, SI_units=SI_units, log_scale=log_scale, exclude_outliers=exclude_outliers)
 
         canvas.draw()
 

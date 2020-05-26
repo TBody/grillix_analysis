@@ -22,6 +22,9 @@ class UserEnvironment:
         self.animation_format = "mp4"
         self.animation_codec = "h264"
 
+        # If using exclude outliers, how much of the range to clip
+        self.exclude_outliers_quantiles = (0.001, 0.999)
+
         # Variables for quiver (vector) plots
         self.max_vector_points_per_dim = 100
         # How much to increase/decrease the (autoscaled) vector scale factor

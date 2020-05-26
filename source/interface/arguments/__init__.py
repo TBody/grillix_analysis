@@ -112,6 +112,7 @@ from .TimeSlice        import TimeSlice        as TimeSliceArg
 from .ToroidalSlice    import ToroidalSlice    as ToroidalSliceArg
 from .PoloidalSlice    import PoloidalSlice    as PoloidalSliceArg
 from .SI_units         import SI_units         as SI_unitsArg
+from .ExcludeOutliers  import ExcludeOutliers  as ExcludeOutliersArg
 from .LogScale         import LogScale         as LogScaleArg
 from .LaunchIPDB       import LaunchIPDB       as LaunchIPDBArg
 from .ErrorSnaps       import ErrorSnaps       as ErrorSnapsArg

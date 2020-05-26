@@ -36,7 +36,7 @@ def find_colormap_normalisation(self, values):
         zero_proportion = 1 - np.count_nonzero(abs_sort)/len(abs_sort)
         self.linear_proportion += zero_proportion
 
-        linscale = ((np.log10(cbar_max) - np.log10(linthres)) + (np.log10(-cbar_min) - np.log10(linthres)))*linear_proportion
+        linscale = ((np.log10(cbar_max) - np.log10(linthres)) + (np.log10(-cbar_min) - np.log10(linthres)))*self.linear_proportion
 
         if cbar_max <= 0:
             # All negative values

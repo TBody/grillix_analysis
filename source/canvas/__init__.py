@@ -26,11 +26,11 @@ class Canvas:
     def add_title(self, title):
         self.figure.make_suptitle(title)
     
-    def associate_subplots_with_measurements(self, painter, measurement_array, SI_units=False, log_scale=False):
+    def associate_subplots_with_measurements(self, painter, measurement_array, SI_units=False, log_scale=False, exclude_outliers=False):
 
         for measurement, axes in zip(measurement_array, self.axes_array):
 
-            axes.painter = painter(canvas=self, measurement=measurement, axes=axes, SI_units=SI_units, log_scale=log_scale)
+            axes.painter = painter(canvas=self, measurement=measurement, axes=axes, SI_units=SI_units, log_scale=log_scale, exclude_outliers=exclude_outliers)
         
     def set_SI_units(self, value):
         for axes in self.axes_array:
