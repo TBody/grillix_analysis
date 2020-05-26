@@ -11,8 +11,5 @@ class MagneticFieldY(EquilibriumVariable):
     def normalisation_factor(self):
         return self.normalisation.B0
 
-    def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
-        return ScalarArray(self.equi.By_grid_vector[poloidal_slice])
-
-    def value(self, x, y):
-        return ScalarArray(self.equi.By_func(x,y))
+    def fetch_values(self, poloidal_slice=slice(None), **kwargs):
+        return ScalarArray(self.equi.By_grid_vector[poloidal_slice]) 

@@ -1,17 +1,23 @@
 from source import np, Quantity
-from source.measurements import Result
-from pint.numpy_func import HANDLED_FUNCTIONS, implements
-# Extends the pint.Quantity class by adding additional supported numpy functions
 
-# Uncomment to show what is supported already
-# print(sorted(list(HANDLED_FUNCTIONS)))
+# Add WrappedArray properties
+@property
+def vector_magnitude(quantity):
+    return Quantity(quantity.magnitude.vector_magnitude, quantity.units)
 
-@implements("apply_along_axis", "function")
-def apply_along_axis(func1d, axis, arr, *args, **kwargs):
-    assert(isinstance(arr, (Quantity, Result)))
-    return Quantity(np.apply_along_axis(func1d, axis, arr.magnitude, *args, **kwargs), arr.units)
+@property
+def R(quantity):
+    return Quantity(quantity.magnitude.R, quantity.units)
+    
+@property
+def phi(quantity):
+    return Quantity(quantity.magnitude.phi, quantity.units)
 
-@implements("linalg.norm", "function")
-def norm(x, ord=None, axis=None, keepdims=False):
-    assert(isinstance(x, (Quantity, Result)))
-    return Quantity(np.linalg.norm(x.magnitude, ord=ord, axis=axis, keepdims=keepdims), x.units)
+@property
+def Z(quantity):
+    return Quantity(quantity.magnitude.Z, quantity.units)
+
+Quantity.vector_magnitude = vector_magnitude
+Quantity.R = R
+Quantity.phi = phi
+Quantity.Z = Z

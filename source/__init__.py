@@ -53,6 +53,6 @@ with warnings.catch_warnings():
 unit_registry.setup_matplotlib()
 unit_registry.default_format = '~'
 
-# import source.shared.pint_extension
+import source.shared.pint_extension
 
 from .Component import Component

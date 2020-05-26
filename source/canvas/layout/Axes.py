@@ -27,4 +27,12 @@ class Axes:
     
     def draw(self, **kwargs):
         
-        self.painter.draw(**kwargs)
+        if self.painter:
+            self.painter.draw(**kwargs)
+        else:
+            self.clear()
+
+    def clear(self):
+        self.ax.clear()
+        self.ax.set_axis_off()
+        self.ax.set_frame_on(False)

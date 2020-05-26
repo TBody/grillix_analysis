@@ -35,7 +35,8 @@ class Measurement(Component):
 
         # time_slice, toroidal_slice and poloidal_slice give which values should be fetched from the variable entry in the
         # NetCDF (potentially via several intermediate derived variables)
-        [values, units] = self.variable.fetch_values(time_slice=time_slice, toroidal_slice=toroidal_slice, poloidal_slice=poloidal_slice)
+        # import ipdb; ipdb.set_trace()
+        [values, units] = self.variable(time_slice=time_slice, toroidal_slice=toroidal_slice, poloidal_slice=poloidal_slice)
 
         # values is a WrappedArray of shape (times, planes, points) for scalar variables, or of
         # shape (times, planes, points, coordinates) for vector variables
@@ -138,4 +139,12 @@ class Measurement(Component):
         self.operators = operators
 
         return variable
+    
+    def title_string(self):
+        title_string = self.variable.title
 
+        for operator in self.operators:
+            if hasattr(operator, "title"):
+                title_string = f"{operator.title}({title_string})"
+
+        return title_string

@@ -6,7 +6,7 @@ class SoundSpeed(DerivedVariable):
     
     def __init__(self, run=None):
         title = "Local sound speed"
-        self.electron_temperature = ElectronTemperature(run=run)
+        self.electron_temperature = ElectronTemperature()
         self.base_variables = [self.electron_temperature]
 
         super().__init__(title, run=None)
@@ -14,17 +14,13 @@ class SoundSpeed(DerivedVariable):
     @property
     def normalisation_factor(self):
         return self.normalisation.c_s0.to('kilometers/second')
-        self._Mi = self.normalisation.Mi
     
     @property
     def Mi(self):
-        if self.SI_units:
-            return self._Mi
-        else:
-            return 1.0
+        return self.normalisation.Mi
 
-    def values(self, **kwargs):
+    def fetch_values(self, **kwargs):
 
-        output = np.sqrt(self.electron_temperature(**kwargs)/self.Mi)
+        sound_speed = np.sqrt(self.dimensional_array(self.electron_temperature(**kwargs))/self.Mi)
 
-        return self.check_units(output)
+        return self.normalised_ScalarArray(sound_speed)

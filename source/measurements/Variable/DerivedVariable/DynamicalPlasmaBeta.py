@@ -12,10 +12,13 @@ class DynamicalPlasmaBeta(DerivedVariable):
         
         super().__init__(title, run=None)
     
-    def values(self, **kwargs):
+    def fetch_values(self, **kwargs):
         
-        output = self.sound_speed(**kwargs)**2/self.alfven_speed(**kwargs)**2
-        
-        return self.check_units(output)
+        sound_speed = self.dimensional_array(self.sound_speed(**kwargs))
+        alfven_speed = self.dimensional_array(self.alfven_speed(**kwargs))
+
+        plasma_beta = sound_speed**2 / alfven_speed**2
+
+        return self.normalised_ScalarArray(plasma_beta)
     
     

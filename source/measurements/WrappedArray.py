@@ -78,6 +78,10 @@ class WrappedArray(np.ndarray):
         return self.shape[self.dim_points]
     
     def shape_poloidal(self):
+        if self.is_vector:
+            assert(self.ndim == 2), f"shape_poloidal requested on object which appears to be already shaped (shape {self.shape})"
+        else:
+            assert(self.ndim == 1), f"shape_poloidal requested on object which appears to be already shaped (shape {self.shape})"
         # If given only points data, add singleton dimension for time and planes
         return self[np.newaxis, np.newaxis, :]
 
@@ -154,15 +158,16 @@ class VectorArray(WrappedArray):
     
     @property
     def R(self):
-        return ScalarArray(self.values[...,0])
+        return ScalarArray(self[...,0])
     
     @property
     def phi(self):
-        return ScalarArray(self.values[...,1])
+        return ScalarArray(self[...,1])
 
     @property
     def Z(self):
-        return ScalarArray(self.values[...,2])
+        return ScalarArray(self[...,2])
     
     def dot_product(self, other):
         return ScalarArray(np.sum(np.multiply(self, other), axis=-1))
+    

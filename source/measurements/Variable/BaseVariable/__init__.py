@@ -68,7 +68,7 @@ class BaseVariable(Variable):
         if self.log_in_netcdf:
             values = np.exp(values)
         
-        return ScalarArray(values), self.normalisation_factor
+        return ScalarArray(values)
 
 from .Density                 import Density
 from .ElectronTemperature     import ElectronTemperature

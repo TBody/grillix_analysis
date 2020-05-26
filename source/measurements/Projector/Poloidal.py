@@ -21,6 +21,30 @@ class Poloidal(Projector):
     def y(self):
         return self.grid.y_unique
 
+    @property
+    def xmin(self):
+        return self.grid.xmin
+
+    @property
+    def xmax(self):
+        return self.grid.xmax
+
+    @property
+    def ymin(self):
+        return self.grid.ymin
+
+    @property
+    def ymax(self):
+        return self.grid.ymax
+
+    @property
+    def x_normalisation(self):
+        return self.grid.spatial_normalisation
+    
+    @property
+    def y_normalisation(self):
+        return self.grid.spatial_normalisation
+
     def determine_slices(self, time_slice=slice(-1, None), toroidal_slice=slice(1), poloidal_slice=slice(None)):
         # Natural slicing
         # Default to use the last snap, the 0th plane, and all poloidal points

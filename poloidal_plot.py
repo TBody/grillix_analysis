@@ -36,7 +36,7 @@ from source.run import Run
 from source.measurements.Projector import Poloidal
 from source.measurements import Measurement, measurement_array_from_variable_array
 from ipdb import launch_ipdb_on_exception
-from source.canvas import Canvas, Colormesh
+from source.canvas import Canvas, PoloidalPlot
 
 if __name__=="__main__":
     # Wrapping everything with "with launch_ipdb_on_exception():" has the helpful effect that, upon a crash, the ipdb debugger is launched
@@ -75,15 +75,22 @@ if __name__=="__main__":
         # The treatment of the 't' and 'phi' axis is via an AllReduction operator, passed as the reduction keyword
         projector = Poloidal()
         
-        measurement_array = measurement_array_from_variable_array(
-            projector=projector, variable_array=variables, reduction=reduction, operators=operators, run=run)
+        measurement_array = measurement_array_from_variable_array(projector=projector,
+                                                                  variable_array=variables,
+                                                                  reduction=reduction,
+                                                                  operators=operators,
+                                                                  run=run)
 
         canvas = Canvas.blank_canvas()
 
         canvas.add_subplots_from_naxs(naxs=len(variables))
         canvas.add_title(title=title)
 
-        canvas.associate_subplots_with_measurements(painter=Colormesh, measurement_array=measurement_array, SI_units=SI_units, log_scale=log_scale, exclude_outliers=exclude_outliers)
+        canvas.associate_subplots_with_measurements(painter=PoloidalPlot,
+                                                    measurement_array=measurement_array,
+                                                    SI_units=SI_units,
+                                                    log_scale=log_scale,
+                                                    exclude_outliers=exclude_outliers)
 
         canvas.draw()
 

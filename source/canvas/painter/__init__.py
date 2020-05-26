@@ -1,1 +1,2 @@
-from .Painter import Painter, Colormesh
+from .Painter import Painter
+from .Poloidal import PoloidalPlot

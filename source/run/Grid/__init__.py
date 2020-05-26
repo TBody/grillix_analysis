@@ -71,4 +71,8 @@ class Grid(RunComponent):
         else:
             raise RuntimeError("Nearest point is not unique")
     
+    @property
+    def spatial_normalisation(self):
+        return self.run.normalisation.R0
+    
 from .CombinedGrid import CombinedGrid

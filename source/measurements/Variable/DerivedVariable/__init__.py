@@ -13,15 +13,6 @@ class DerivedVariable(Variable):
         for base_variable in self.base_variables:
             base_variable.run = self.run
     
-    # def check_units(self, output):
-        
-    #     if self.SI_units:
-    #         return output.to(self.normalisation_factor.units)
-    #     elif hasattr(output, "units"):
-    #         return output.to('').magnitude
-    #     else:
-    #         return output
-
 from .SoundSpeed import SoundSpeed
 from .AlfvenSpeed import AlfvenSpeed
 from .DynamicalPlasmaBeta import DynamicalPlasmaBeta

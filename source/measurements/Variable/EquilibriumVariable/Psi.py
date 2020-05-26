@@ -11,8 +11,5 @@ class Psi(EquilibriumVariable):
     def normalisation_factor(self):
         return Quantity(1, 'weber')
 
-    def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+    def fetch_values(self, poloidal_slice=slice(None), **kwargs):
         return ScalarArray(self.equi.psi_grid_vector[poloidal_slice])
-
-    def value(self, x, y):
-        return ScalarArray(self.equi.psi_func(x, y))

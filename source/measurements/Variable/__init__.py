@@ -34,19 +34,29 @@ class Variable(Component):
         return Dimensionless
 
     def fetch_values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
-        return NotImplemented
+        raise NotImplementedError(f"{self} has not implemented fetch_values")
 
     def __call__(self, time_slice=slice(-1,None), toroidal_slice=slice(None), poloidal_slice=slice(None)):
         # Read in the values, and apply the appropriate normalisation factor
         
-        [values, units] = self.fetch_values(time_slice=time_slice, toroidal_slice=toroidal_slice, poloidal_slice=poloidal_slice)
+        values = self.fetch_values(time_slice=time_slice, toroidal_slice=toroidal_slice, poloidal_slice=poloidal_slice)
+        units = self.normalisation_factor
 
         assert (isinstance(values, WrappedArray))
+        assert (isinstance(units, Quantity))
 
         [values, units] = self.values_finalize(values, units)
         values.check_dimensions()
 
         return values, units
+    
+    def dimensional_array(self, value_unit_tuple):
+        return value_unit_tuple[0] * value_unit_tuple[1]
+
+    def normalised_ScalarArray(self, SI_array):
+        # Divide the SI array by the normalisation factor, and assert that the result is dimensionless
+        # Then return the ScalarArray and the normalisation_factor
+        return ScalarArray((SI_array/self.normalisation_factor).to('').magnitude)
     
 #     def __format_value__(self, value):
 #         # N.b. may be overwritten by children classes

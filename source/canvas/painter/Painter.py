@@ -1,9 +1,5 @@
-from source import np, plt, perceptually_uniform_cmap, diverging_cmap, mplcolors, matplotlib, UserEnvironment
+from source import np, plt, perceptually_uniform_cmap, diverging_cmap, mplcolors, Dimensionless, usrenv
 # An object which paints a Measurement onto an Axes
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-from copy import deepcopy
-
-usrenv = UserEnvironment()
 
 class Painter():
 
@@ -52,14 +48,36 @@ class Painter():
     @property
     def fig(self):
         return self.canvas.figure.fig
+    
+    @property
+    def projector(self):
+        return self.measurement.projector
+    
+    @property
+    def variable(self):
+        return self.measurement.variable
 
     @property
     def x_values(self):
-        return self.measurement.projector.x
+        return self.measurement.projector.x * self.x_normalisation
     
     @property
     def y_values(self):
-        return self.measurement.projector.y
+        return self.measurement.projector.y * self.y_normalisation
+    
+    @property
+    def x_normalisation(self):
+        if self.SI_units:
+            return self.measurement.projector.x_normalisation
+        else:
+            return Dimensionless
+
+    @property
+    def y_normalisation(self):
+        if self.SI_units:
+            return self.measurement.projector.y_normalisation
+        else:
+            return Dimensionless
     
     @property
     def log_scale(self):
@@ -75,14 +93,19 @@ class Painter():
 
     def format_coord(self, x, y):
 
-        if ((x > self.x_values.min()) & (x <= self.x_values.max()) &
-            (y > self.y_values.min()) & (y <= self.y_values.max())):
-            row = np.searchsorted(self.x_values, x)-1
-            col = np.searchsorted(self.y_values, y)-1
+        if ((x > self.x_values.magnitude.min()) & (x <= self.x_values.magnitude.max()) &
+            (y > self.y_values.magnitude.min()) & (y <= self.y_values.magnitude.max())):
+            row = np.searchsorted(self.x_values.magnitude, x)-1
+            col = np.searchsorted(self.y_values.magnitude, y)-1
             z = self.values[col, row]
 
+            if self.SI_units:
+                x *= self.x_normalisation.units
+                y *= self.y_normalisation.units
+                z *= self.units
+
             # See if the field defines a custom formatter for z values. If not, just print the value
-            format_value = getattr(self.measurement.variable, "__format_value__", None)
+            format_value = getattr(self.variable, "__format_value__", None)
             if callable(format_value):
                 return f'x={x:f}, y={y:f}, z={format_value(z)}   [{row},{col}]'
             else:
@@ -90,11 +113,6 @@ class Painter():
 
         else:
             return 'x={:f}, y={:f}'.format(x, y)
-    
-    def clear(self):
-        self.ax.clear()
-        self.ax.set_axis_off()
-        self.ax.set_frame_on(False)
     
     @property
     def run(self):
@@ -119,68 +137,3 @@ class Painter():
     @property
     def parallel_limit_contours(self):
         return self.measurement.run.parallel_limit_contours
-
-class Poloidal(Painter):
-
-    def __init__(self, *args, colorbar_axes=None, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        if colorbar_axes is None:
-            # create an axes on the right side of ax. The width of cax will be 5%
-            # of ax and the padding between cax and ax will be fixed at 0.05 inch.
-            divider = make_axes_locatable(self.ax)
-            self.colorbar_axes = divider.append_axes("right", size="5%", pad=0.05)
-        else:
-            self.colorbar_axes = colorbar_axes
-        
-        self.colorbar = None
-
-    def style_plot(self):
-        self.ax.format_coord = self.format_coord
-        self.ax.set_aspect('equal')
-
-        default_linewidth = matplotlib.rcParams['lines.linewidth']
-
-        self.ax.plot(self.divertor_polygon.x_points, self.divertor_polygon.y_points, color='b', linewidth=default_linewidth*0.5)
-        self.ax.plot(self.exclusion_polygon.x_points, self.exclusion_polygon.y_points, color='r', linewidth=default_linewidth*0.5)
-
-        self.seperatrix[0].plot_all_arrays(plot_function=self.ax.plot, color='g', linewidth=default_linewidth*0.5)
-
-        self.penalisation_contours[0].plot_all_arrays(plot_function=self.ax.plot, color='r', linestyle='--', linewidth=default_linewidth*0.5)
-        self.penalisation_contours[-1].plot_all_arrays(plot_function=self.ax.plot, color='r', linestyle='--', linewidth=default_linewidth*0.5)
-
-        self.parallel_limit_contours[0].plot_all_arrays(plot_function=self.ax.plot, color='b', linestyle='--', linewidth=default_linewidth*0.5)
-        self.parallel_limit_contours[1].plot_all_arrays(plot_function=self.ax.plot, color='b', linestyle='--', linewidth=default_linewidth*0.5)
-
-        self.ax.set_xlim(left=self.run.grid.xmin, right=self.run.grid.xmax)
-        self.ax.set_ylim(bottom=self.run.grid.ymin, top=self.run.grid.ymax)
-    
-    def make_colorbar(self, image, colormap_norm):
-        
-        ticks = np.linspace(start=colormap_norm.vmin, stop=colormap_norm.vmax, num=self.num_cbar_ticks)
-        self.colorbar = self.fig.colorbar(image, cax=self.colorbar_axes, ticks=ticks, extend='both' if self.exclude_outliers else 'neither')
-
-class Colormesh(Poloidal):
-
-    def draw_plot(self):
-
-        # import ipdb; ipdb.set_trace()
-        # Copy and break reference
-        values = deepcopy(self.values)
-        colormap_norm = deepcopy(self.colormap_norm)
-
-        if self.SI_units:
-            units_magnitude = self.units.magnitude
-            values *= units_magnitude
-            colormap_norm.vmin *= units_magnitude
-            colormap_norm.vmax *= units_magnitude
-            if hasattr(colormap_norm, "linthres"):
-                colormap_norm.linthres *= units_magnitude
-
-        image = self.ax.pcolormesh(self.x_values, self.y_values, values, cmap=self.colormap, norm=colormap_norm)
-        
-        self.make_colorbar(image, colormap_norm)
-
-        self.style_plot()
-        
-        return image

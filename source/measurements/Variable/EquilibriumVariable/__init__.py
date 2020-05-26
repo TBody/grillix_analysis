@@ -11,8 +11,8 @@ class EquilibriumVariable(Variable):
     def equi(self):
         return self.run.equilibrium
     
-    def values_finalize(self, values):
-        return values.shape_poloidal()
+    def values_finalize(self, values, units):
+        return values.shape_poloidal(), units
     
 from .Psi                import Psi
 from .Rho                import Rho

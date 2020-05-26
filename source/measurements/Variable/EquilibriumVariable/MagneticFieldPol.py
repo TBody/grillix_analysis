@@ -11,14 +11,8 @@ class MagneticFieldPol(EquilibriumVariable):
     def normalisation_factor(self):
         return self.normalisation.B0
 
-    def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+    def fetch_values(self, poloidal_slice=slice(None), **kwargs):
 
         return VectorArray.poloidal(
             R_array=self.equi.Bx_grid_vector[poloidal_slice],
-            Z_array=self.equi.By_grid_vector[poloidal_slice])
-
-    def value(self, x, y):
-
-        return VectorArray.poloidal(
-            R_array=self.equi.Bx_func(x,y),
-            Z_array=self.equi.By_func(x,y))
+            Z_array=self.equi.By_grid_vector[poloidal_slice]) 

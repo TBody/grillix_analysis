@@ -1,6 +1,6 @@
 from source import np
 from .layout import Figure, Axes
-from .painter import Painter, Colormesh
+from .painter import Painter, PoloidalPlot
 from source.measurements import Measurement
 
 class Canvas:

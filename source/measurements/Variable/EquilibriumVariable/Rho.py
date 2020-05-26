@@ -11,14 +11,15 @@ class Rho(EquilibriumVariable):
     def set_run(self):
         self.psi.run = self.run
 
-    def values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
+    def fetch_values(self, poloidal_slice=slice(None), **kwargs):
         
-        psi = self.psi(poloidal_slice)
+        psi = self.dimensional_array(self.psi(poloidal_slice))
 
         # Make values which would give rho < 0 return rho = 0
         psi[np.asarray(psi > self.equi.psiO).nonzero()] = self.equi.psiO
 
         return ScalarArray(np.sqrt((psi - self.equi.psiO)/(self.equi.psiX - self.equi.psiO)))
 
-    def value(self, x, y):
-        return ScalarArray(self.equi.psi_func(x,y))
+    def values_finalize(self, values, units):
+        
+        return values, units
