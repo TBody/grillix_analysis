@@ -24,7 +24,6 @@ class Figure:
     def add_subplots(self, nrows=1, ncols=1, sharex=True, sharey=True, squeeze=False, subplot_kw=None, gridspec_kw=None):
         
         axes = self.fig.subplots(nrows=nrows, ncols=ncols, sharex=sharex, sharey=sharey, squeeze=False, subplot_kw=subplot_kw, gridspec_kw=gridspec_kw)
-
         self.convert_to_Axes(axes, sharex, sharey)
     
     @property

@@ -53,6 +53,7 @@ if __name__=="__main__":
         SI_units         = CLI['SI_units']
         exclude_outliers = CLI['exclude_outliers']
         log_scale        = CLI['log_scale']
+        save_path        = CLI['save']
 
         # Check the run directory and initialise the following
         # directory     = resolved paths to required files
@@ -94,11 +95,8 @@ if __name__=="__main__":
 
         canvas.draw()
 
-        canvas.show()
-
-
-        # # Save or display the figure
-        # if ctrl["save"]:
-        #     figure.save_as_png(ctrl["save"])
-        # else:
-        #     figure.show()
+        # Save or display the canvas
+        if save_path:
+            canvas.save(save_path)
+        else:
+            canvas.show()

@@ -1,4 +1,4 @@
-from source import np
+from source import np, plt
 from .layout import Figure, Axes
 from .painter import Painter, PoloidalPlot
 from source.measurements import Measurement
@@ -12,9 +12,13 @@ class Canvas:
     def blank_canvas(cls):
         return cls(figure=Figure())
 
-    def draw(self, **kwargs):
+    def draw(self, with_tight_layout=True, **kwargs):
         for axes in self.axes_array:
             axes.draw(**kwargs)
+        
+        if with_tight_layout:
+            # Leave space for the suptitle
+            plt.tight_layout(rect=[0, 0, 1, 0.95])
 
     def show(self):
         self.figure.show()
@@ -39,3 +43,6 @@ class Canvas:
     def set_log_scale(self, value):
         for axes in self.axes_array:
             axes.log_scale = value
+    
+    def save(self, filename):
+        plt.savefig(f"{filename}", transparent=True)
