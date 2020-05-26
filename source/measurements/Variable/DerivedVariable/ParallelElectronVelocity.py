@@ -7,9 +7,9 @@ class ParallelElectronVelocity(DerivedVariable):
     
     def __init__(self, run=None):
         title = "Electron Velocity"
-        self.density = Density(run=run)
-        self.ion_velocity = ParallelIonVelocity(run=run)
-        self.current = ParallelCurrent(run=run)
+        self.density = Density()
+        self.ion_velocity = ParallelIonVelocity()
+        self.current = ParallelCurrent()
 
         self.base_variables = [self.density, self.ion_velocity, self.current]
         
@@ -18,17 +18,12 @@ class ParallelElectronVelocity(DerivedVariable):
     @property
     def normalisation_factor(self):
         return self.normalisation.c_s0.to('kilometers/second')
-        self._ion_charge = self.normalisation.Z
-    
-    @property
-    def ion_charge(self):
-        if self.SI_units:
-            return self._ion_charge
-        else:
-            return self._ion_charge.magnitude
 
-    def values(self, **kwargs):
-        
-        output = self.ion_velocity(**kwargs) - self.current(**kwargs)/(self.ion_charge * self.density(**kwargs))
+    def fetch_values(self, **kwargs):
+        ion_velocity = self.dimensional_array(self.ion_velocity(**kwargs))
+        current = self.dimensional_array(self.current(**kwargs))
+        density = self.dimensional_array(self.density(**kwargs))
 
-        return self.check_units(output)
+        electron_velocity = ion_velocity - current/(self.normalisation.Z * density)
+
+        return self.normalised_ScalarArray(electron_velocity)

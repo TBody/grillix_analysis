@@ -1,15 +1,13 @@
 from source import np
-from . import DerivedVariable
-from ..BaseVariable import ElectronTemperature, Density, IonTemperature
+from . import DerivedVariable, ElectronPressure, IonPressure
 
 class TotalPressure(DerivedVariable):
     
     def __init__(self, run=None):
         title = "Total pressure"
-        self.electron_temperature = ElectronTemperature(run=run)
-        self.ion_temperature = IonTemperature(run=run)
-        self.density = Density(run=run)
-        self.base_variables = [self.electron_temperature, self.density, self.ion_temperature]
+        self.electron_pressure = ElectronPressure()
+        self.ion_pressure = IonPressure()
+        self.base_variables = [self.electron_pressure, self.ion_pressure]
 
         super().__init__(title, run=None)
 
@@ -17,8 +15,8 @@ class TotalPressure(DerivedVariable):
     def normalisation_factor(self):
         return ((self.normalisation.Te0 + self.normalisation.Ti0)*self.normalisation.n0).to('kilopascal')
 
-    def values(self, **kwargs):
+    def fetch_values(self, **kwargs):
+        
+        total_pressure = self.dimensional_array(self.electron_pressure(**kwargs)) + self.dimensional_array(self.ion_pressure(**kwargs))
 
-        output = (self.electron_temperature(**kwargs) + self.ion_temperature(**kwargs))*self.density(**kwargs)
-
-        return self.check_units(output)
+        return self.normalised_ScalarArray(total_pressure)

@@ -5,8 +5,8 @@ class SaturationCurrent(DerivedVariable):
     
     def __init__(self, run=None):
         title = "Saturation current"
-        self.density = Density(run=run)
-        self.sound_speed = SoundSpeed(run=run)
+        self.density = Density()
+        self.sound_speed = SoundSpeed()
 
         self.base_variables = [self.density, self.sound_speed]
         
@@ -14,16 +14,14 @@ class SaturationCurrent(DerivedVariable):
 
     @property
     def normalisation_factor(self):
-        return self.normalisation.electron_charge * self.density.normalisation_factor * self.sound_speed.normalisation_factor
-        self.normalisation_factor = self.normalisation_factor.to('kiloamperes/meter**2')
+        return (self.normalisation.electron_charge * self.density.normalisation_factor * self.sound_speed.normalisation_factor).to('kiloamperes/meter**2')
     
     @property
     def e(self):
-        if self.SI_units:
-            return self.normalisation.electron_charge
-        else:
-            return 1.0
+        return self.normalisation.electron_charge
 
-    def values(self, **kwargs):
-        
-        return self.check_units(0.5 * self.e * self.density(**kwargs) * self.sound_speed(**kwargs))
+    def fetch_values(self, **kwargs):
+        density = self.dimensional_array(self.density(**kwargs))
+        sound_speed = self.dimensional_array(self.sound_speed(**kwargs))
+
+        return self.normalised_ScalarArray(0.5 * self.e * density * sound_speed)

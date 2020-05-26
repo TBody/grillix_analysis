@@ -3,18 +3,11 @@ from ..BaseVariable import ElectronTemperature, ScalarPotential
 from source import Quantity, unit_registry
 
 class FloatingPotential(DerivedVariable):
-    default_lambda_sh = Quantity(3.1, '1/e')
 
-    def __init__(self, lambda_sh=None, run=None):
-        if lambda_sh is None:
-            self.lambda_sh = self.default_lambda_sh
-            print(f"lambda_sh not supplied to FloatingPotential. Using default value {self.lambda_sh}")
-        else:
-            self.lambda_sh = Quantity(lambda_sh, '1/e')
-            print(f"lambda_sh supplied to FloatingPotential. Using lambda_sh = {self.lambda_sh}")
-
-        self.electron_temperature = ElectronTemperature(run=run)
-        self.scalar_potential = ScalarPotential(run=run)
+    def __init__(self, run=None):
+        self.allow_diverging_cmap = False
+        self.electron_temperature = ElectronTemperature()
+        self.scalar_potential = ScalarPotential()
 
         self.base_variables = [self.electron_temperature, self.scalar_potential]
         
@@ -26,15 +19,16 @@ class FloatingPotential(DerivedVariable):
     def normalisation_factor(self):
         return self.scalar_potential.normalisation_factor
     
-    def values(self, **kwargs):
-        
-        if self.SI_units:
-            output = self.calculate_wrapped(self.scalar_potential(**kwargs).values, self.lambda_sh, self.electron_temperature(**kwargs).values)
-        else:
-            output = self.scalar_potential(**kwargs) - self.lambda_sh.magnitude * self.electron_temperature(**kwargs)
+    @property
+    def lambda_sh(self):
+        return Quantity(self.run.parameters["params_bndconds"]["lambda_sh"], '1/e')
 
-        return self.check_units(output)
-    
-    @unit_registry.wraps('V', (None, 'V', '1/e', 'eV'))
-    def calculate_wrapped(self, scalar_potential, lambda_sh, electron_temperature):
-        return scalar_potential - lambda_sh * electron_temperature
+    def fetch_values(self, **kwargs):
+        
+        scalar_potential = self.dimensional_array(self.scalar_potential(**kwargs))
+        electron_temperature = self.dimensional_array(self.electron_temperature(**kwargs))
+        
+        floating_potential = scalar_potential - self.lambda_sh * electron_temperature
+
+        return self.normalised_ScalarArray(floating_potential)
+
