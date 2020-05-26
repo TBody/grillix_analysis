@@ -83,9 +83,10 @@ if __name__=="__main__":
                                                                   run=run)
 
         canvas = Canvas.blank_canvas()
+        canvas.run = run
 
         canvas.add_subplots_from_naxs(naxs=len(variables))
-        canvas.add_title(title=title)
+        canvas.add_title(title=title, title_SI=SI_units)
 
         canvas.associate_subplots_with_measurements(painter=PoloidalPlot,
                                                     measurement_array=measurement_array,

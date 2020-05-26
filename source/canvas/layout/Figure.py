@@ -60,15 +60,9 @@ class Figure:
         if self.suptitle_time is None:
             suptitle_string = f"{self.suptitle_base}"
         elif len(self.suptitle_time) > 1:
-            if hasattr(self.suptitle_time[0], "units"):
-                suptitle_string = f"{self.suptitle_base} [t={self.suptitle_time[0].to_compact()} to {self.suptitle_time[-1].to_compact()}]"
-            else:
-                suptitle_string = f"{self.suptitle_base} [time={self.suptitle_time[0]} to {self.suptitle_time[-1]}]"
+            suptitle_string = f"{self.suptitle_base} [t={self.suptitle_time[0].to_compact():4.3f} to {self.suptitle_time[-1].to_compact():4.3f}]"
         else:
-            if hasattr(self.suptitle_time[0], "units"):
-                suptitle_string = f"{self.suptitle_base} [t={self.suptitle_time.to_compact()}]"
-            else:
-                suptitle_string = f"{self.suptitle_base} [time={self.suptitle_time}]"
+            suptitle_string = f"{self.suptitle_base} [t={self.suptitle_time[0].to_compact():4.3f}]"
         
         self._suptitle.set_text(suptitle_string)
     
