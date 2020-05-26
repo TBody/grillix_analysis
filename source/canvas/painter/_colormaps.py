@@ -3,7 +3,7 @@ from source import np, perceptually_uniform_cmap, diverging_cmap, mplcolors
 def find_static_colormap_normalisation(self, **kwargs):
     # Find colormap normalisation over a range, without plotting.
     # Useful for animating since it ensures that no points are clipped from the colormap
-    values, _ = self.measurement(**kwargs)
+    values, _ = self.measurement(keep_time=True, **kwargs)
     
     self.find_colormap_normalisation(values=values)
 

@@ -55,6 +55,9 @@ if __name__=="__main__":
         log_scale        = CLI['log_scale']
         save_path        = CLI['save']
 
+        time_slice       = CLI['time_slice']
+        toroidal_slice   = CLI['toroidal_slice']
+
         # Check the run directory and initialise the following
         # directory     = resolved paths to required files
         # parameters    = dictionary of parameters from params.in
@@ -76,25 +79,31 @@ if __name__=="__main__":
         # The treatment of the 't' and 'phi' axis is via an AllReduction operator, passed as the reduction keyword
         projector = Poloidal()
         
+        # Bundle the projector, variable, reduction and operators together into a "measurement" object
+        # Make one measurement for each variable in variables
         measurement_array = measurement_array_from_variable_array(projector=projector,
                                                                   variable_array=variables,
                                                                   reduction=reduction,
                                                                   operators=operators,
                                                                   run=run)
 
+        # Make a clean figure
         canvas = Canvas.blank_canvas()
         canvas.run = run
 
+        # Populate the figure with subplots, and add a title
         canvas.add_subplots_from_naxs(naxs=len(variables))
         canvas.add_title(title=title, title_SI=SI_units)
 
+        # Associate a measurement and a painter with each subplot
         canvas.associate_subplots_with_measurements(painter=PoloidalPlot,
                                                     measurement_array=measurement_array,
                                                     SI_units=SI_units,
                                                     log_scale=log_scale,
                                                     exclude_outliers=exclude_outliers)
 
-        canvas.draw()
+        # Fill the subplots with values
+        canvas.draw(time_slice=time_slice, toroidal_slice=toroidal_slice)
 
         # Save or display the canvas
         if save_path:

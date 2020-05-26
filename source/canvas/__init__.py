@@ -23,6 +23,10 @@ class Canvas(Component):
         if with_tight_layout:
             # Leave space for the suptitle
             plt.tight_layout(rect=[0, 0, 1, 0.95])
+    
+    def find_static_colormap_normalisations(self, **kwargs):
+        for axes in self.axes_array:
+            axes.painter.find_static_colormap_normalisation(**kwargs)
 
     def show(self):
         self.figure.show()

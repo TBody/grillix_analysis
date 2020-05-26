@@ -1,20 +1,20 @@
 #!/usr/bin/env python
 # Import CLI user interface
-from interface.CLI import (
+from source.interface import (
     BaseCLI,
     FilepathArg, SaveFilepathArg,
     GroupArg, TitleArg,
     TimeSliceArg, ToroidalSliceArg,
-    AllReductionArg,
-    ConvertToSIArg, DisplayLogarithmArg
+    ReductionArg,
+    SI_unitsArg, LogScaleArg, ErrorSnapsArg, ExcludeOutliersArg
 )
 
 # Set up command-line interface
-from source.Variable import variable_groups
+from source.measurements.Variable.variable_groups import variable_groups
 class PoloidalAnimateCLI(BaseCLI):
 
     def __init__(self, parse=False, display=False):
-        super().__init__("Animate values over a poloidal plane")
+        super().__init__("animate values over a poloidal plane")
         
         self.filepath           = FilepathArg(self)
         self.save               = SaveFilepathArg(self)
@@ -22,31 +22,42 @@ class PoloidalAnimateCLI(BaseCLI):
         self.title              = TitleArg(self)
         self.time_slice         = TimeSliceArg(self, default_all=True, allow_range=True, allow_step=True)
         self.toroidal_slice     = ToroidalSliceArg(self)
-        self.allred             = AllReductionArg(self)
-        self.convert_to_si      = ConvertToSIArg(self)
-        self.log_scalearithm  = DisplayLogarithmArg(self)
+        self.reduction          = ReductionArg(self)
+        self.SI_units           = SI_unitsArg(self)
+        self.exclude_outliers   = ExcludeOutliersArg(self)
+        self.log_scale          = LogScaleArg(self)
+        self.error_snaps        = ErrorSnapsArg(self)
 
         if parse: self.parse()
         if display: print(self)
 
 # import the necessary components from source
-from source.Run import Run
-from show import Animate
-from source.Projector.Poloidal import Poloidal
+from source import usrenv
+from source.run import Run
+from source.measurements.Projector import Poloidal
+from source.measurements import Measurement, measurement_array_from_variable_array
 from ipdb import launch_ipdb_on_exception
-from source.shared import check_ffmpeg
+from source.canvas import Canvas, PoloidalPlot
 
 if __name__=="__main__":
     # Wrapping everything with "with launch_ipdb_on_exception():" has the helpful effect that, upon a crash, the ipdb debugger is launched
     # so you can find out what went wrong
     with launch_ipdb_on_exception():
-        check_ffmpeg()
         # CLI behaves exactly like a dictionary. If you want, you can modify it with standard dictionary methods, or replace it altogether
         CLI = PoloidalAnimateCLI(parse=True, display=True)
         
-        # Extract the dictionary -- this could equally be determined programmatically
-        # We call it 'ctrl' for control, but it doesn't really matter: it is just a normal dictionary
-        ctrl = CLI.dict
+        filepath         = CLI['filepath']
+        use_error_snaps  = CLI['error_snaps']
+        group            = CLI['group']
+        reduction        = CLI['reduction']
+        title            = CLI['title']
+        SI_units         = CLI['SI_units']
+        exclude_outliers = CLI['exclude_outliers']
+        log_scale        = CLI['log_scale']
+        save_path        = CLI['save']
+
+        time_slice       = CLI['time_slice']
+        toroidal_slice   = CLI['toroidal_slice']
 
         # Check the run directory and initialise the following
         # directory     = resolved paths to required files
@@ -56,34 +67,55 @@ if __name__=="__main__":
         # normalisation = dimensional quantities which give conversion to SI
         # grid          = vgrid + perpghost, including vector_to_matrix routines
         # 
-        run = Run(ctrl['filepath'])
+        run = Run(filepath)
+        run.directory.use_error_snaps = use_error_snaps
 
-        # Select a list of Variable types to animate
-        variables = variable_groups[ctrl["group"]]
+        # Select a list of Variable types to plot
+        variables = variable_groups[group]
 
         # Construct the list of operators
         operators = []
         
         # Request the 'Poloidal' projector. A projector takes z(t, phi, l) and maps it to a 2D array, in this case z(x, y)
         # The treatment of the 't' and 'phi' axis is via an AllReduction operator, passed as the reduction keyword
-        projector = Poloidal(reduction=ctrl["allreduce"])
+        projector = Poloidal()
+        
+        # Bundle the projector, variable, reduction and operators together into a "measurement" object
+        # Make one measurement for each variable in variables
+        measurement_array = measurement_array_from_variable_array(projector=projector,
+                                                                  variable_array=variables,
+                                                                  reduction=reduction,
+                                                                  operators=operators,
+                                                                  run=run)
 
-        # Generate a figure which has enough subplots to animate all the variables, and request a figure title, conversion to
-        # SI and logarithmic plt depending on ctrl arguments
-        figure = Animate(run                 = run,
-                         naxs                = len(variables),
-                         title               = ctrl["title"],
-                         convert             = ctrl["convert_to_SI"],
-                         log_scale = ctrl["log_scale"])
+        # Make a clean figure
+        canvas = Canvas.blank_canvas()
+        canvas.run = run
 
-        # For each Subplot in figure, set values for the run, projector, variable, and operators
-        figure.set_data_array(run=run, projector=projector, variables=variables, operators=operators)
+        # Populate the figure with subplots, and add a title
+        canvas.add_subplots_from_naxs(naxs=len(variables))
+        canvas.add_title(title=title, title_SI=SI_units)
 
-        # For each Subplot in figure, animate the values
-        figure.setup_animation(time_slice=ctrl["time_slice"], toroidal_slice=ctrl["toroidal_slice"])
+        # Associate a measurement and a painter with each subplot
+        canvas.associate_subplots_with_measurements(painter=PoloidalPlot,
+                                                    measurement_array=measurement_array,
+                                                    SI_units=SI_units,
+                                                    log_scale=log_scale,
+                                                    exclude_outliers=exclude_outliers)
 
-        # Save the animation, or animate it on repeat
-        if ctrl["save"]:
-            figure.save_animation(ctrl["save"])
-        else:
-            figure.animate_on_repeat()
+        # Up until this point, everything has been identical to making a static plot. Now, we need to
+        # do a few animation-specific things.
+        sparse_time_slice = slice(time_slice.start, time_slice.stop, usrenv.sparse_time_slice)
+        canvas.find_static_colormap_normalisations(time_slice=sparse_time_slice, toroidal_slice=toroidal_slice)
+        
+        
+
+
+        # # Fill the subplots with values
+        # canvas.draw(time_slice=time_slice, toroidal_slice=toroidal_slice)
+
+        # # Save or display the canvas
+        # if save_path:
+        #     canvas.save(save_path)
+        # else:
+        #     canvas.show()

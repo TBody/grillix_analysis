@@ -28,7 +28,7 @@ class Measurement(Component):
         self.variable.run = run
         self.reduction.run = run
 
-    def __call__(self, **kwargs):
+    def __call__(self, keep_time=False, **kwargs):
 
         # keyword arguments are specific to the projector
         [time_slice, toroidal_slice, poloidal_slice] = self.projector.determine_slices(**kwargs)
@@ -55,7 +55,8 @@ class Measurement(Component):
         # The projector assumes a certain data shape, but at this point we have data of shape (times, planes,
         # point, [coordinates])
         # We reduce to the required shape with a reduction operator
-        [values, units] = self.reduction.reduce_extra_dimensions(values=values, units=units)
+        # N.b. if calculating colormaps, don't reduce before taking limits since otherwise will clip values.
+        [values, units] = self.reduction.reduce_extra_dimensions(values=values, units=units, keep_time=keep_time)
 
         # We then cast our values into the basis of our projector -- i.e. for cartesian data our projector
         # would define 'x' and 'y', and this step would convert values into a matrix of shape (x, y)

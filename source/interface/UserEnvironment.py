@@ -15,6 +15,8 @@ class UserEnvironment:
         self.plot_backend = "Qt5Agg"
         self.matplotlib_style = "default"
 
+        # What stride to use when calculating constant colormaps?
+        self.sparse_time_slice = 10
         # Animation variables
         self.animation_writer = "FFMpegFileWriter"
         self.animation_framerate = 15
