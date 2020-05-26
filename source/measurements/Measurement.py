@@ -134,7 +134,7 @@ class Measurement(Component):
             # Prepend the operators to the operator list
             # N.b. operators are applied in list order (i.e. 0th first) so the last element of variable_tuple[0] will be the
             # first operator to be applied
-            operators.insert(0, operator)
+            operators = np.concatenate(([operator], operators))
 
         self.operators = operators
 

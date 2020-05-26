@@ -58,6 +58,11 @@ class Variable(Component):
         # Then return the ScalarArray and the normalisation_factor
         return ScalarArray((SI_array/self.normalisation_factor).to('').magnitude)
     
+    def normalised_VectorArray(self, SI_array):
+        # Divide the SI array by the normalisation factor, and assert that the result is dimensionless
+        # Then return the VectorArray and the normalisation_factor
+        return VectorArray((SI_array/self.normalisation_factor).to('').magnitude)
+    
 #     def __format_value__(self, value):
 #         # N.b. may be overwritten by children classes
         

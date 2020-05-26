@@ -8,7 +8,7 @@ class VectorRadialProjection(Operator):
 
     def __call__(self, values, units):
 
-        radial_unit_vector = self.run.equilibrium.radial_unit_vector()
+        radial_unit_vector, _ = self.run.equilibrium.radial_unit_vector()
         assert(values.is_vector)
         assert(radial_unit_vector.shape[-2:] == values.shape[-2:])
 

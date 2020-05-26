@@ -106,7 +106,7 @@ class VectorArray(WrappedArray):
     
     @classmethod
     def cylindrical(cls, R_array, phi_array, Z_array):
-        vector_array = cls.vector(R_array=R_array, Z_array=Z_array, phi_array=phi_array)
+        vector_array = cls.cylindrical_vector(R_array=R_array, Z_array=Z_array, phi_array=phi_array)
         
         return cls.__new__(cls, vector_array)
 

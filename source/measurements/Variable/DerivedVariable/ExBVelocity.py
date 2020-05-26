@@ -19,22 +19,20 @@ class ExBVelocity(DerivedVariable):
     def normalisation_factor(self):
         return self.normalisation.c_s0.to('kilometers/second')
 
-    def values(self, **kwargs):
+    def fetch_values(self, **kwargs):
 
-        electric_field = self.electric_field(**kwargs)
-        Btor = self.toroidal_magentic_field(**kwargs)
+        
+        electric_field = self.dimensional_array(self.electric_field(**kwargs))
+        Btor = self.dimensional_array(self.toroidal_magentic_field(**kwargs))
 
-        if self.SI_units:
-            zero_array = Quantity(np.zeros_like(Btor), Btor.units)
-        else:
-            zero_array = np.zeros_like(Btor)
-
-        magnetic_field = VectorArray.cylindrical(
+        zero_array = np.zeros_like(Btor)
+        
+        magnetic_field = Quantity(VectorArray.cylindrical(
             R_array = zero_array,
-            phi_array=Btor.values,
+            phi_array=Btor.magnitude,
             Z_array = zero_array
-        )
+        ), Btor.units)
         
         ExB = np.cross(electric_field, magnetic_field)/magnetic_field.vector_magnitude[:,:,:, np.newaxis]**2
 
-        return self.check_units(ExB)
+        return self.normalised_VectorArray(ExB)

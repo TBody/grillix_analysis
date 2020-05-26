@@ -8,7 +8,7 @@ class VectorPoloidalProjection(Operator):
     
     def __call__(self, values, units):
 
-        poloidal_unit_vector = self.run.equilibrium.poloidal_unit_vector()
+        poloidal_unit_vector, _ = self.run.equilibrium.poloidal_unit_vector()
         assert(values.is_vector)
         assert(poloidal_unit_vector.shape[-2:] == values.shape[-2:])
 
