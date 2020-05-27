@@ -49,6 +49,10 @@ class Painter():
         self.values, self.units = self.measurement(**kwargs)
         self.update_plot()
     
+    def clean_frame(self):
+        assert(self.measurement.initialised and self._drawn)
+        self.image.set_array([])
+    
     def update_plot(self):
         raise NotImplementedError(f"{self} has not implemented update_plot")
 

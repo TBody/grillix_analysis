@@ -45,3 +45,7 @@ class Axes:
             return self.painter.image
         else:
             return []
+    
+    def clean_frame(self):
+        if self.painter:
+            return self.painter.clean_frame()

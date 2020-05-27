@@ -3,7 +3,31 @@ from .. import Component
 from .layout import Figure, Axes
 from .painter import Painter, PoloidalPlot
 from source.measurements import Measurement
-from matplotlib import animation
+import matplotlib.animation as animation
+
+# def _blit_draw(self, artists, bg_cache):
+#     # Handles blitted drawing, which renders only the artists given instead
+#     # of the entire figure.
+#     updated_ax = []
+#     for a in artists:
+#         # If we haven't cached the background for this axes object, do
+#         # so now. This might not always be reliable, but it's an attempt
+#         # to automate the process.
+#         if a.axes not in bg_cache:
+#             # bg_cache[a.axes] = a.figure.canvas.copy_from_bbox(a.axes.bbox)
+#             # change here
+#             bg_cache[a.axes] = a.figure.canvas.copy_from_bbox(a.axes.figure.bbox)
+#         a.axes.draw_artist(a)
+#         updated_ax.append(a.axes)
+
+#     # After rendering all the needed artists, blit each axes individually.
+#     for ax in set(updated_ax):
+#         # and here
+#         # ax.figure.canvas.blit(ax.bbox)
+#         ax.figure.canvas.blit(ax.figure.bbox)
+
+# # MONKEY PATCH!!
+# matplotlib.animation.Animation._blit_draw = _blit_draw
 
 class Canvas(Component):
 
@@ -23,7 +47,7 @@ class Canvas(Component):
         for axes in self.axes_array:
             axes.draw(**kwargs)
         
-        self.add_time_to_title(**kwargs)
+        # self.add_time_to_title(**kwargs)
 
         if with_tight_layout:
             # Leave space for the suptitle
@@ -33,7 +57,17 @@ class Canvas(Component):
         for axes in self.axes_array:
             axes.update(**kwargs)
         
-        self.add_time_to_title(**kwargs)
+        # self.add_time_to_title(**kwargs)
+        # self.figure._suptitle.set_text("Hello")
+        # plt.suptitle("Hello")
+        # self.figure._suptitle.set_text("Hello")
+        # self.figure._suptitle.draw()
+    
+    def clean_frame(self):
+        for axes in self.axes_array:
+            axes.clean_frame()
+        
+        # self.figure._suptitle.set_text("")
     
     def find_static_colormap_normalisations(self, **kwargs):
         for axes in self.axes_array:
@@ -82,7 +116,7 @@ class Canvas(Component):
             if artist:
                 animation_artists.append(artist)
         
-        animation_artists.append(self.figure._suptitle)
+        # animation_artists.append(self.figure._suptitle)
         
         return animation_artists
     

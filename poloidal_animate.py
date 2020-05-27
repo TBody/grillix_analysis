@@ -98,7 +98,7 @@ if __name__=="__main__":
 
         # Populate the figure with subplots, and add a title
         canvas.add_subplots_from_naxs(naxs=len(variables))
-        canvas.add_title(title=title, title_SI=SI_units)
+        # canvas.add_title(title=title, title_SI=SI_units)
 
         # Associate a measurement and a painter with each subplot
         canvas.associate_subplots_with_measurements(painter=PoloidalPlot,
@@ -120,16 +120,38 @@ if __name__=="__main__":
         # Draw the first frame
         canvas.draw(time_slice=snap_indices[0], toroidal_slice=toroidal_slice)
 
+        from source import plt
+        title_ax = canvas.fig.add_axes([0.4, 0.95, 0.2, 0.05], frameon=True)
+        title_ax.set_axis_off()
+        title_text = title_ax.text(0.5, 0.5, f"{title}", fontsize=20, horizontalalignment='center',
+                      verticalalignment='center', transform=title_ax.transAxes)
+
+        # canvas.show()
+
+        # quit()
+        
+        def make_clean_frame():
+            canvas.clean_frame()
+            # print(canvas.return_animation_artists())
+            title_text.set_text("")
+            artists = canvas.return_animation_artists()
+            artists.append(title_text)
+            return artists
+
         # Make a function which animates the next frames
         def animate(t):
             print(f"\tMaking frame {t} of [{snap_indices[0]}-{snap_indices[-1]}]")
             canvas.update(time_slice=[t], toroidal_slice=toroidal_slice)
-
-            return canvas.return_animation_artists()
+            # print(canvas.return_animation_artists())
+            title_text.set_text(t)
+            artists = canvas.return_animation_artists()
+            artists.append(title_text)
+            return artists
         
         from matplotlib import animation
         # Build the 'animator' which plots each frame
-        canvas.make_animator(frames=snap_indices, animation_function=animate)
+        canvas.animator = animation.FuncAnimation(canvas.fig, animate, init_func=make_clean_frame, frames=snap_indices, blit=True, repeat = True)
+        # canvas.make_animator(frames=snap_indices, animation_function=animate)
 
         # Save or display the canvas
         if save_path:
