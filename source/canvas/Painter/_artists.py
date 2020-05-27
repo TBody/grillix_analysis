@@ -5,9 +5,6 @@ class Artist:
     def __init__(self):
         pass
 
-    def set_blank_data(self):
-        pass
-    
     def __getattr__(self, key):
         try:
             return getattr(self.artist, key)
@@ -30,6 +27,9 @@ class pcolormesh(Artist):
     
     def update_values(self):
         self.artist.set_array(self.painter.values[:-1, :-1].ravel())
+    
+    def set_blank_data(self):
+        self.artist.set_array([])
 
 class quiver(Artist):
 

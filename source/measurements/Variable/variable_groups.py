@@ -1,9 +1,6 @@
 # There are a LOT of things that you can choose to plot.
 #
 # Generally, however, you want to plot a specific group of variables
-# The easiest way to do this is to call
-# 
-#   figure.set_data_array(run=run, projector=projector, variables=variable_groups[key], operators=operators)
 # 
 # UserInterface groups can use the keys of variable_groups to define allowed options for a user
 # Feel free to add groups: add a new key, and point it to a list of Variable types

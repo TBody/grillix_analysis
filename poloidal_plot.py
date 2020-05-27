@@ -91,6 +91,9 @@ if __name__=="__main__":
         # Make a clean figure
         canvas = Canvas()
 
+        # Make a subplot for each measurement in measurement_array
+        # Associate a "Painter" (which takes a measurement and draws its values)
+        # A "Colorbar" for each "Painter" will be automatically generated
         canvas.subplots_from_measurement_array(
             painter=PoloidalPlot,
             measurement_array=measurement_array,
@@ -98,23 +101,16 @@ if __name__=="__main__":
             SI_units=SI_units,
             log_scale=log_scale,
             exclude_outliers=exclude_outliers)
+        
+        # Add a title
+        canvas.title(title_string=title, SI_units=SI_units, run=run)
 
-        # # Populate the figure with subplots, and add a title
-        # canvas.add_subplots_from_naxs(naxs=len(variables))
-        # canvas.add_title(title=title, title_SI=SI_units)
-
-        # # Associate a measurement and a painter with each subplot
-        # canvas.associate_subplots_with_measurements(painter=PoloidalPlot,
-        #                                             measurement_array=measurement_array,
-        #                                             SI_units=SI_units,
-        #                                             log_scale=log_scale,
-        #                                             exclude_outliers=exclude_outliers)
-
-        # # Fill the subplots with values
+        # For each "Axes" object, call the "draw" method
         canvas.draw(time_slice=time_slice, toroidal_slice=toroidal_slice)
+        canvas.tight_layout()
 
-        # # Save or display the canvas
-        # if save_path:
-        #     canvas.save_figure(save_path)
-        # else:
-        canvas.show()
+        # Save or display the canvas
+        if save_path:
+            canvas.save_figure(save_path)
+        else:
+            canvas.show()

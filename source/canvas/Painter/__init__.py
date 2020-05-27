@@ -1,8 +1,8 @@
 from source import np
-from ..Axes import AnimatedAxis
+from ..Axes import AnimatedAxes
 from ._artists import Artist
 
-class Painter(AnimatedAxis):
+class Painter(AnimatedAxes):
 
     def __init__(self, axes, measurement, run=None, SI_units=False):
 
@@ -11,6 +11,7 @@ class Painter(AnimatedAxis):
         self.measurement = measurement
         self.SI_units = SI_units
         self.artist = Artist()
+        self.annotations = []
 
         self.run = run
         self._drawn = False
@@ -49,7 +50,7 @@ class Painter(AnimatedAxis):
     def update_plot(self):
         raise NotImplementedError(f"{self} has not implemented update_plot")
 
-    def clear_frame(self):
+    def clean_frame(self):
         assert(self.measurement.initialised and self._drawn)
         self.artist.set_blank_data()
 
@@ -64,6 +65,7 @@ class Painter(AnimatedAxis):
             if self.SI_units:
                 x *= self.x_normalisation.units
                 y *= self.y_normalisation.units
+                z *= self.units.units
 
             # See if the field defines a custom formatter for z values. If not, just print the value
             format_value = getattr(self.variable, "__format_value__", None)

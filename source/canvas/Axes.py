@@ -26,7 +26,7 @@ class Axes(Component):
         self.ax.set_axis_off()
         self.ax.set_frame_on(False)
     
-class AnimatedAxis(Axes):
+class AnimatedAxes(Axes):
 
     def __init__(self, ax):
         super().__init__(ax)
@@ -35,8 +35,8 @@ class AnimatedAxis(Axes):
     def update(self):
         raise NotImplementedError(f"{self.__class__.__name__} has not implemented update")
 
-    def clear_frame(self):
-        raise NotImplementedError(f"{self.__class__.__name__} has not implemented clear_frame")
+    def clean_frame(self):
+        raise NotImplementedError(f"{self.__class__.__name__} has not implemented clean_frame")
 
     def return_artist(self):
         return self.artist

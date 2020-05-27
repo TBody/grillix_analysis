@@ -37,6 +37,9 @@ class Colorbar(Axes):
         # How many ticks to label? Should always be odd to get centre value
         self.num_cbar_ticks = 7
 
+        # Don't currently need run, but declare it to make "initialised" flag = True
+        self.run = run
+
     @property
     def painter(self):
         if self._painter is None:
@@ -58,7 +61,7 @@ class Colorbar(Axes):
     def colormap_norm(self):
 
         if self._colormap_norm is None:
-            self.find_colormap_normalisation(values=self.painter._values)
+            self.find_colormap(values=self.painter._values)
 
         if self.SI_units:
             colormap_norm = deepcopy(self._colormap_norm)
@@ -80,11 +83,14 @@ class Colorbar(Axes):
     def draw(self, **kwargs):
         colormap_norm = self.colormap_norm
     
-        ticks = np.linspace(start=colormap_norm.vmin, stop=colormap_norm.vmax, num=self.num_cbar_ticks)
-        self.colorbar = plt.colorbar(self.painter.artist, cax=self.ax, ticks=ticks, extend='both' if self.exclude_outliers else 'neither')
+        if not self.log_scale:
+            ticks = np.linspace(start=colormap_norm.vmin, stop=colormap_norm.vmax, num=self.num_cbar_ticks)
+            self.colorbar = plt.colorbar(self.painter.artist, cax=self.ax, ticks=ticks, extend='both' if self.exclude_outliers else 'neither')
+        else:
+            self.colorbar = plt.colorbar(self.painter.artist, cax=self.ax, extend='both' if self.exclude_outliers else 'neither')
 
     @property
     def allow_diverging_cmap(self):
         return self.painter.measurement.variable.allow_diverging_cmap
 
-    from ._find_colormap import find_static_colormap_normalisation, find_colormap_normalisation, data_limits
+    from ._find_colormap import find_static_colormap, find_colormap, data_limits

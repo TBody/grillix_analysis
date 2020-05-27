@@ -37,7 +37,8 @@ from source.run import Run
 from source.measurements.Projector import Poloidal
 from source.measurements import Measurement, measurement_array_from_variable_array
 from ipdb import launch_ipdb_on_exception
-from source.canvas import Canvas, PoloidalPlot
+from source.canvas import Canvas
+from source.canvas.Painter import PoloidalPlot
 from source.shared import check_ffmpeg
 
 if __name__=="__main__":
@@ -93,67 +94,28 @@ if __name__=="__main__":
                                                                   run=run)
 
         # Make a clean figure
-        canvas = Canvas.blank_canvas()
-        canvas.run = run
+        canvas = Canvas()
 
-        # Populate the figure with subplots, and add a title
-        canvas.add_subplots_from_naxs(naxs=len(variables))
-        # canvas.add_title(title=title, title_SI=SI_units)
+        # Make a subplot for each measurement in measurement_array
+        # Associate a "Painter" (which takes a measurement and draws its values)
+        # A "Colorbar" for each "Painter" will be automatically generated
+        canvas.subplots_from_measurement_array(
+            painter=PoloidalPlot,
+            measurement_array=measurement_array,
+            run=run,
+            SI_units=SI_units,
+            log_scale=log_scale,
+            exclude_outliers=exclude_outliers)
 
-        # Associate a measurement and a painter with each subplot
-        canvas.associate_subplots_with_measurements(painter=PoloidalPlot,
-                                                    measurement_array=measurement_array,
-                                                    SI_units=SI_units,
-                                                    log_scale=log_scale,
-                                                    exclude_outliers=exclude_outliers)
-
+        # Add a title
+        canvas.title(title_string=title, SI_units=SI_units, run=run)
+        
+        ######################################################################
         # Up until this point, everything has been identical to making a static plot. Now, we need to
-        # do a few animation-specific things.
-        
-        # First, we iterate over all of the snaps to find the limits of the colormap
-        sparse_time_slice = slice(time_slice.start, time_slice.stop, usrenv.sparse_time_slice)
-        canvas.find_static_colormap_normalisations(time_slice=sparse_time_slice, toroidal_slice=toroidal_slice)
-        
-        # Then, determine which planes actually correspond to the given time_slice
-        snap_indices = run.snap_indices[time_slice]
+        # do a few animation-specific things. These are all wrapped in "make_animator"
+        canvas.make_animator(run=run, time_slice=time_slice, toroidal_slice=toroidal_slice)
 
-        # Draw the first frame
-        canvas.draw(time_slice=snap_indices[0], toroidal_slice=toroidal_slice)
-
-        from source import plt
-        title_ax = canvas.fig.add_axes([0.4, 0.95, 0.2, 0.05], frameon=True)
-        title_ax.set_axis_off()
-        title_text = title_ax.text(0.5, 0.5, f"{title}", fontsize=20, horizontalalignment='center',
-                      verticalalignment='center', transform=title_ax.transAxes)
-
-        # canvas.show()
-
-        # quit()
-        
-        def make_clean_frame():
-            canvas.clean_frame()
-            # print(canvas.return_animation_artists())
-            title_text.set_text("")
-            artists = canvas.return_animation_artists()
-            artists.append(title_text)
-            return artists
-
-        # Make a function which animates the next frames
-        def animate(t):
-            print(f"\tMaking frame {t} of [{snap_indices[0]}-{snap_indices[-1]}]")
-            canvas.update(time_slice=[t], toroidal_slice=toroidal_slice)
-            # print(canvas.return_animation_artists())
-            title_text.set_text(t)
-            artists = canvas.return_animation_artists()
-            artists.append(title_text)
-            return artists
-        
-        from matplotlib import animation
-        # Build the 'animator' which plots each frame
-        canvas.animator = animation.FuncAnimation(canvas.fig, animate, init_func=make_clean_frame, frames=snap_indices, blit=True, repeat = True)
-        # canvas.make_animator(frames=snap_indices, animation_function=animate)
-
-        # Save or display the canvas
+        # # Save or display the canvas
         if save_path:
             canvas.save_animation(save_path)
         else:

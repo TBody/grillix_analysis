@@ -63,52 +63,22 @@ class Variable(Component):
         # Then return the VectorArray and the normalisation_factor
         return VectorArray((SI_array/self.normalisation_factor).to('').magnitude)
     
-#     def __format_value__(self, value):
-#         # N.b. may be overwritten by children classes
+    def __format_value__(self, value):
+        # N.b. may be overwritten by children classes
         
-#         try:
-#             if isinstance(value, Quantity) and not(self.vector_variable):
-#                 return f"{value.to_compact():6.4g}"
-#             elif isinstance(value, np.ndarray):
-#                 # Vector result
-#                 assert(np.size(value)==3)
-#                 return f"(R={value[0]:6.4g}, phi={value[1]:6.4g}, Z={value[2]:6.4g})"
-#             else:
-#                 return f"{value:6.4g}"
-#         except TypeError:
-#             print(f"__format_value__ failed for input {value} of type {type(value)}")
-#             return value
+        try:
+            if isinstance(value, Quantity) and not(self.vector_variable):
+                return f"{value.to_compact():6.4g}"
+            elif isinstance(value, np.ndarray):
+                # Vector result
+                assert(np.size(value)==3)
+                return f"(R={value[0]:6.4g}, phi={value[1]:6.4g}, Z={value[2]:6.4g})"
+            else:
+                return f"{value:6.4g}"
+        except TypeError:
+            print(f"__format_value__ failed for input {value} of type {type(value)}")
+            return value
 
     def values_finalize(self, values, units):
         
         return values, units
-    
-#     def call_finalize(self, value):
-#         # Optional function to call before returning values, after the "Result" has been constructed
-#         return value
-    
-#     def update_base_variables(self, variables):
-#         # Passes run to base variable
-
-#         for base_variable in variables:
-#             base_variable.run = self.run
-    
-#     def check_base_variables(self, variables):
-#         # Should define the following from BaseVariables
-#         attributes_to_check = ["n_planes", "plane_indices", "n_snaps", 
-#             "snap_indices", "n_main_grid", "n_perp_grid", "n_full_grid", "grid_points"]
-
-#         # Checks each attribute
-#         for attribute in attributes_to_check:
-#             for base_variable in variables:
-
-#                 if hasattr(base_variable, attribute):
-#                     if hasattr(self, attribute):
-#                         # If it's already defined, make sure that all base variables give
-#                         # the same values
-#                         assert(np.allclose(getattr(self, attribute), getattr(base_variable, attribute)))
-#                     else:
-#                         # Otherwise, set the attribute from the current base_variable
-#                         setattr(self, attribute, getattr(base_variable, attribute))
-
-# from .variable_groups import *

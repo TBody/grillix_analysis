@@ -1,15 +1,16 @@
 from source import np, perceptually_uniform_cmap, diverging_cmap, mplcolors
 
-def find_static_colormap_normalisation(self, **kwargs):
+def find_static_colormap(self, **kwargs):
     # Find colormap normalisation over a range, without plotting.
     # Useful for animating since it ensures that no points are clipped from the colormap
     values, _ = self.painter.measurement(keep_time=True, **kwargs)
     
-    self.find_colormap_normalisation(values=values)
+    self.find_colormap(values=values)
 
-def find_colormap_normalisation(self, values):
+def find_colormap(self, values):
 
     [cbar_min, cbar_max] = self.data_limits(values)
+
     maximum_magnitude = np.max([np.abs(cbar_min), np.abs(cbar_max)])
 
     if not self.log_scale:
@@ -43,11 +44,11 @@ def find_colormap_normalisation(self, values):
             self.colormap_norm = mplcolors.SymLogNorm(linthresh=0, linscale=linscale,
                                                 vmin=cbar_min, vmax=cbar_max, base=10)
             self.colormap = perceptually_uniform_cmap
-        elif self.allow_diverging_cmap:
-            # Diverging about zero
-            self.colormap_norm = mplcolors.SymLogNorm(linthresh=linthres, linscale=linscale,
-                                                vmin=-maximum_magnitude, vmax=maximum_magnitude, base=10)
-            self.colormap = diverging_cmap
+        # elif self.allow_diverging_cmap:
+        #     # Diverging about zero
+        #     self.colormap_norm = mplcolors.SymLogNorm(linthresh=linthres, linscale=linscale,
+        #                                         vmin=-maximum_magnitude, vmax=maximum_magnitude, base=10)
+        #     self.colormap = diverging_cmap
         else:
             # Non-centred
             self.colormap_norm = mplcolors.SymLogNorm(linthresh=linthres, linscale=linscale,

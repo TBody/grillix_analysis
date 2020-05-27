@@ -29,5 +29,9 @@ class ContourLevel(RunComponent):
 
     def plot_all_arrays(self, plot_function, **kwargs):
 
+        plot_objects = []
+
         for x_array, y_array in zip(self.x_arrays, self.y_arrays):
-            plot_function(x_array, y_array, **kwargs)
+            plot_objects.append(plot_function(x_array, y_array, **kwargs))
+        
+        return plot_objects

@@ -17,7 +17,9 @@ class UserEnvironment:
         self.matplotlib_style = "default"
 
         # How much space (in fractions of figure height) to leave for making the suptitle
-        self.suptitle_spacing = 0.05
+        self.suptitle_vspace = 0.05
+        self.suptitle_hspace = 1.0
+        self.suptitle_fontsize = 14
 
         # What stride to use when calculating constant colormaps?
         self.sparse_time_slice = 10
@@ -44,4 +46,6 @@ class UserEnvironment:
     
         for key, value in user_environment.items():
             setattr(self, key, value)
+        
+        self.suptitle_axes_extent = [0.5 - self.suptitle_hspace/2, 1 - self.suptitle_vspace, self.suptitle_hspace, self.suptitle_vspace]
         

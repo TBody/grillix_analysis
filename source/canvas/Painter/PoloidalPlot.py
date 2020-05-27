@@ -32,21 +32,25 @@ class PoloidalPlot(Painter):
         self.style_plot()
 
     def plot_in_SI(self, x, y, **kwargs):
-        self.ax.plot(x * self.x_normalisation.magnitude, y * self.y_normalisation.magnitude, **kwargs)
+        lines, = self.ax.plot(x * self.x_normalisation.magnitude, y * self.y_normalisation.magnitude, **kwargs)
+        return lines
 
     def annotate_plot(self):
         default_linewidth = matplotlib.rcParams['lines.linewidth']
 
-        self.plot_in_SI(self.run.divertor_polygon.x_points, self.run.divertor_polygon.y_points, color='b', linewidth=default_linewidth*0.5)
-        self.plot_in_SI(self.run.exclusion_polygon.x_points, self.run.exclusion_polygon.y_points, color='r', linewidth=default_linewidth*0.5)
-
-        self.run.seperatrix[0].plot_all_arrays(plot_function=self.plot_in_SI, color='g', linewidth=default_linewidth*0.5)
-
-        self.run.penalisation_contours[0].plot_all_arrays(plot_function=self.plot_in_SI, color='r', linestyle='--', linewidth=default_linewidth*0.5)
-        self.run.penalisation_contours[-1].plot_all_arrays(plot_function=self.plot_in_SI, color='r', linestyle='--', linewidth=default_linewidth*0.5)
-
-        self.run.parallel_limit_contours[0].plot_all_arrays(plot_function=self.plot_in_SI, color='b', linestyle='--', linewidth=default_linewidth*0.5)
-        self.run.parallel_limit_contours[1].plot_all_arrays(plot_function=self.plot_in_SI, color='b', linestyle='--', linewidth=default_linewidth*0.5)
+        for annotation_plot in [
+            self.plot_in_SI(self.run.divertor_polygon.x_points, self.run.divertor_polygon.y_points, color='b', linewidth=default_linewidth*0.5),
+            self.plot_in_SI(self.run.exclusion_polygon.x_points, self.run.exclusion_polygon.y_points, color='r', linewidth=default_linewidth*0.5),
+            self.run.seperatrix[0].plot_all_arrays(plot_function=self.plot_in_SI, color='g', linewidth=default_linewidth*0.5),
+            self.run.penalisation_contours[0].plot_all_arrays(plot_function=self.plot_in_SI, color='r', linestyle='--', linewidth=default_linewidth*0.5),
+            self.run.penalisation_contours[-1].plot_all_arrays(plot_function=self.plot_in_SI, color='r', linestyle='--', linewidth=default_linewidth*0.5),
+            self.run.parallel_limit_contours[0].plot_all_arrays(plot_function=self.plot_in_SI, color='b', linestyle='--', linewidth=default_linewidth*0.5),
+            self.run.parallel_limit_contours[1].plot_all_arrays(plot_function=self.plot_in_SI, color='b', linestyle='--', linewidth=default_linewidth*0.5)
+        ]:
+            if type(annotation_plot) is list:
+                self.annotations += annotation_plot
+            else:
+                self.annotations.append(annotation_plot)
 
     def style_plot(self):
         self.ax.format_coord = self.format_coord
