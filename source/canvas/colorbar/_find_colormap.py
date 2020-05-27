@@ -3,7 +3,7 @@ from source import np, perceptually_uniform_cmap, diverging_cmap, mplcolors
 def find_static_colormap_normalisation(self, **kwargs):
     # Find colormap normalisation over a range, without plotting.
     # Useful for animating since it ensures that no points are clipped from the colormap
-    values, _ = self.measurement(keep_time=True, **kwargs)
+    values, _ = self.painter.measurement(keep_time=True, **kwargs)
     
     self.find_colormap_normalisation(values=values)
 
@@ -14,7 +14,7 @@ def find_colormap_normalisation(self, values):
 
     if not self.log_scale:
         # Linear (standard) colormap
-        if cbar_min >= 0 or not(self.measurement.variable.allow_diverging_cmap):
+        if cbar_min >= 0 or not(self.allow_diverging_cmap):
             self.colormap_norm = mplcolors.Normalize(vmin=cbar_min, vmax=cbar_max)
             self.colormap = perceptually_uniform_cmap
         else:
@@ -43,7 +43,7 @@ def find_colormap_normalisation(self, values):
             self.colormap_norm = mplcolors.SymLogNorm(linthresh=0, linscale=linscale,
                                                 vmin=cbar_min, vmax=cbar_max, base=10)
             self.colormap = perceptually_uniform_cmap
-        elif self.measurement.variable.allow_diverging_cmap:
+        elif self.allow_diverging_cmap:
             # Diverging about zero
             self.colormap_norm = mplcolors.SymLogNorm(linthresh=linthres, linscale=linscale,
                                                 vmin=-maximum_magnitude, vmax=maximum_magnitude, base=10)

@@ -3,7 +3,6 @@ class Component:
     # data super-object
 
     def __init__(self, run=None):
-        
         self.run = run
 
     def set_run(self):

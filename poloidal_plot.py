@@ -36,7 +36,7 @@ from source.run import Run
 from source.measurements.Projector import Poloidal
 from source.measurements import Measurement, measurement_array_from_variable_array
 from ipdb import launch_ipdb_on_exception
-from source.canvas import Canvas, PoloidalPlot
+from source.canvas import Canvas
 
 if __name__=="__main__":
     # Wrapping everything with "with launch_ipdb_on_exception():" has the helpful effect that, upon a crash, the ipdb debugger is launched
@@ -88,25 +88,24 @@ if __name__=="__main__":
                                                                   run=run)
 
         # Make a clean figure
-        canvas = Canvas.blank_canvas()
-        canvas.run = run
+        canvas = Canvas()
 
-        # Populate the figure with subplots, and add a title
-        canvas.add_subplots_from_naxs(naxs=len(variables))
-        canvas.add_title(title=title, title_SI=SI_units)
+        # # Populate the figure with subplots, and add a title
+        # canvas.add_subplots_from_naxs(naxs=len(variables))
+        # canvas.add_title(title=title, title_SI=SI_units)
 
-        # Associate a measurement and a painter with each subplot
-        canvas.associate_subplots_with_measurements(painter=PoloidalPlot,
-                                                    measurement_array=measurement_array,
-                                                    SI_units=SI_units,
-                                                    log_scale=log_scale,
-                                                    exclude_outliers=exclude_outliers)
+        # # Associate a measurement and a painter with each subplot
+        # canvas.associate_subplots_with_measurements(painter=PoloidalPlot,
+        #                                             measurement_array=measurement_array,
+        #                                             SI_units=SI_units,
+        #                                             log_scale=log_scale,
+        #                                             exclude_outliers=exclude_outliers)
 
-        # Fill the subplots with values
-        canvas.draw(time_slice=time_slice, toroidal_slice=toroidal_slice)
+        # # Fill the subplots with values
+        # canvas.draw(time_slice=time_slice, toroidal_slice=toroidal_slice)
 
-        # Save or display the canvas
-        if save_path:
-            canvas.save_figure(save_path)
-        else:
-            canvas.show()
+        # # Save or display the canvas
+        # if save_path:
+        #     canvas.save_figure(save_path)
+        # else:
+        #     canvas.show()
