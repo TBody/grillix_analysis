@@ -1,8 +1,9 @@
-from source import np, plt, Dimensionless
+from source import np, plt, Dimensionless, usrenv
 from .. import Component
 from .layout import Figure, Axes
 from .painter import Painter, PoloidalPlot
 from source.measurements import Measurement
+from matplotlib import animation
 
 class Canvas(Component):
 
@@ -13,6 +14,10 @@ class Canvas(Component):
     @classmethod
     def blank_canvas(cls):
         return cls(figure=Figure())
+    
+    @property
+    def fig(self):
+        return self.figure.fig
 
     def draw(self, with_tight_layout=True, **kwargs):
         for axes in self.axes_array:
@@ -23,6 +28,12 @@ class Canvas(Component):
         if with_tight_layout:
             # Leave space for the suptitle
             plt.tight_layout(rect=[0, 0, 1, 0.95])
+    
+    def update(self, **kwargs):
+        for axes in self.axes_array:
+            axes.update(**kwargs)
+        
+        self.add_time_to_title(**kwargs)
     
     def find_static_colormap_normalisations(self, **kwargs):
         for axes in self.axes_array:
@@ -60,5 +71,46 @@ class Canvas(Component):
         for axes in self.axes_array:
             axes.log_scale = value
     
-    def save(self, filename):
+    def save_figure(self, filename):
         plt.savefig(f"{filename}", transparent=True)
+    
+    def return_animation_artists(self):
+        animation_artists = []
+        
+        for axes in self.axes_array:
+            artist = axes.return_artist()
+            if artist:
+                animation_artists.append(artist)
+        
+        animation_artists.append(self.figure._suptitle)
+        
+        return animation_artists
+    
+    def make_animator(self, frames, animation_function):
+        self.animator = animation.FuncAnimation(self.fig, animation_function, frames=frames, blit=False, repeat = True)
+    
+    def save_animation(self, filename):
+        animation_kwargs = {
+        "fps": usrenv.animation_framerate,
+        "metadata": dict(artist=usrenv.author_name),
+        "bitrate": usrenv.animation_bitrate,
+        "codec": usrenv.animation_codec
+        }
+
+        if usrenv.animation_writer == "FFMpegFileWriter":
+            # Saves temporary figures to disk, then stiches them together
+            # Slower, but better memory handling
+            writer = animation.FFMpegFileWriter(**animation_kwargs)
+        elif usrenv.animation_writer == "FFMpegWriter":
+            # Stores images in memory, then stiches together.
+            # May be faster, but could result in out-of-memory issues for large animations
+            writer = animation.FFMpegWriter(**animation_kwargs)
+        else:
+            print(f"Warning: writer {usrenv.animation_writer} not implemented. Falling back to FFMpegFileWriter")
+            writer = animation.FFMpegFileWriter(**animation_kwargs)
+        
+        animation_filename = filename.with_suffix('.'+usrenv.animation_format)
+
+        print(f"Saving video as {animation_filename}")
+        self.animator.save(animation_filename, writer=writer, dpi=usrenv.animation_dpi)
+        print("Done")

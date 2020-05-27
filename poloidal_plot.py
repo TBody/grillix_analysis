@@ -107,6 +107,6 @@ if __name__=="__main__":
 
         # Save or display the canvas
         if save_path:
-            canvas.save(save_path)
+            canvas.save_figure(save_path)
         else:
             canvas.show()

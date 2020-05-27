@@ -23,14 +23,18 @@ class PoloidalPlot(Painter):
         [values, colormap_norm] = self.convert_to_SI()
 
         if values.is_vector:
-            image = self.draw_quiver(values, colormap_norm)
+            self.image = self.draw_quiver(values, colormap_norm)
         else:
-            image = self.draw_colormesh(values, colormap_norm)
+            self.image = self.draw_colormesh(values, colormap_norm)
         
-        self.make_colorbar(image, colormap_norm)
+        self.make_colorbar(colormap_norm)
 
         self.annotate_plot()
         self.style_plot()
+    
+    def update_plot(self):
+        values, _ = self.convert_to_SI()
+        self.image.set_array(values[:-1, :-1].ravel())
     
     def convert_to_SI(self):
         # Copy and break reference
@@ -77,10 +81,10 @@ class PoloidalPlot(Painter):
         else:
             self.title = self.ax.set_title(self.measurement.title_string())
     
-    def make_colorbar(self, image, colormap_norm):
+    def make_colorbar(self, colormap_norm):
         
         ticks = np.linspace(start=colormap_norm.vmin, stop=colormap_norm.vmax, num=self.num_cbar_ticks)
-        self.colorbar = self.fig.colorbar(image, cax=self.colorbar_axes, ticks=ticks, extend='both' if self.exclude_outliers else 'neither')
+        self.colorbar = self.fig.colorbar(self.image, cax=self.colorbar_axes, ticks=ticks, extend='both' if self.exclude_outliers else 'neither')
 
     def draw_colormesh(self, values, colormap_norm):
         

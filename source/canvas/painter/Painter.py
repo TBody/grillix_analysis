@@ -26,6 +26,7 @@ class Painter():
         self.num_cbar_ticks = 7
         
         self._colormap_calculated = False
+        self._drawn = False
     
     def draw(self, **kwargs):
         # Keyword arguments must match the arguments for self.measurement.projector.determine_slices
@@ -36,11 +37,21 @@ class Painter():
         if self.colormap is None or self.colormap_norm is None:
             self.find_colormap_normalisation(values=self.values)
         
-        self.image = self.draw_plot()
+        self.draw_plot()
+        self._drawn = True
 
     def draw_plot(self):
         raise NotImplementedError(f"{self} has not implemented draw_plot")
     
+    def update(self, **kwargs):
+        # Update an already-drawn figure with new values
+        assert(self.measurement.initialised and self._drawn)
+        self.values, self.units = self.measurement(**kwargs)
+        self.update_plot()
+    
+    def update_plot(self):
+        raise NotImplementedError(f"{self} has not implemented update_plot")
+
     @property
     def ax(self):
         return self.axes.ax

@@ -26,13 +26,22 @@ class Axes:
         self.painter = []
     
     def draw(self, **kwargs):
-        
         if self.painter:
             self.painter.draw(**kwargs)
         else:
             self.clear()
+    
+    def update(self, **kwargs):
+        if self.painter:
+            self.painter.update(**kwargs)
 
     def clear(self):
         self.ax.clear()
         self.ax.set_axis_off()
         self.ax.set_frame_on(False)
+    
+    def return_artist(self):
+        if self.painter:
+            return self.painter.image
+        else:
+            return []

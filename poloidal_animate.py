@@ -38,6 +38,7 @@ from source.measurements.Projector import Poloidal
 from source.measurements import Measurement, measurement_array_from_variable_array
 from ipdb import launch_ipdb_on_exception
 from source.canvas import Canvas, PoloidalPlot
+from source.shared import check_ffmpeg
 
 if __name__=="__main__":
     # Wrapping everything with "with launch_ipdb_on_exception():" has the helpful effect that, upon a crash, the ipdb debugger is launched
@@ -58,6 +59,9 @@ if __name__=="__main__":
 
         time_slice       = CLI['time_slice']
         toroidal_slice   = CLI['toroidal_slice']
+
+        if save_path:
+            check_ffmpeg()
 
         # Check the run directory and initialise the following
         # directory     = resolved paths to required files
@@ -105,17 +109,30 @@ if __name__=="__main__":
 
         # Up until this point, everything has been identical to making a static plot. Now, we need to
         # do a few animation-specific things.
+        
+        # First, we iterate over all of the snaps to find the limits of the colormap
         sparse_time_slice = slice(time_slice.start, time_slice.stop, usrenv.sparse_time_slice)
         canvas.find_static_colormap_normalisations(time_slice=sparse_time_slice, toroidal_slice=toroidal_slice)
         
+        # Then, determine which planes actually correspond to the given time_slice
+        snap_indices = run.snap_indices[time_slice]
+
+        # Draw the first frame
+        canvas.draw(time_slice=snap_indices[0], toroidal_slice=toroidal_slice)
+
+        # Make a function which animates the next frames
+        def animate(t):
+            print(f"\tMaking frame {t} of [{snap_indices[0]}-{snap_indices[-1]}]")
+            canvas.update(time_slice=[t], toroidal_slice=toroidal_slice)
+
+            return canvas.return_animation_artists()
         
+        from matplotlib import animation
+        # Build the 'animator' which plots each frame
+        canvas.make_animator(frames=snap_indices, animation_function=animate)
 
-
-        # # Fill the subplots with values
-        # canvas.draw(time_slice=time_slice, toroidal_slice=toroidal_slice)
-
-        # # Save or display the canvas
-        # if save_path:
-        #     canvas.save(save_path)
-        # else:
-        #     canvas.show()
+        # Save or display the canvas
+        if save_path:
+            canvas.save_animation(save_path)
+        else:
+            canvas.show()

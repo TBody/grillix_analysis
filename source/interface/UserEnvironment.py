@@ -12,6 +12,7 @@ class UserEnvironment:
         self.author_name = None
 
         # Set the plotting backend
+        # Recommend using Qt5Agg for interactive plots, or Agg for non-interactive plots
         self.plot_backend = "Qt5Agg"
         self.matplotlib_style = "default"
 
@@ -21,6 +22,7 @@ class UserEnvironment:
         self.animation_writer = "FFMpegFileWriter"
         self.animation_framerate = 15
         self.animation_bitrate = 7500
+        self.animation_dpi = 200
         self.animation_format = "mp4"
         self.animation_codec = "h264"
 
