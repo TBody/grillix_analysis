@@ -37,6 +37,7 @@ from source.measurements.Projector import Poloidal
 from source.measurements import Measurement, measurement_array_from_variable_array
 from ipdb import launch_ipdb_on_exception
 from source.canvas import Canvas
+from source.canvas.Painter import PoloidalPlot
 
 if __name__=="__main__":
     # Wrapping everything with "with launch_ipdb_on_exception():" has the helpful effect that, upon a crash, the ipdb debugger is launched
@@ -90,6 +91,14 @@ if __name__=="__main__":
         # Make a clean figure
         canvas = Canvas()
 
+        canvas.subplots_from_measurement_array(
+            painter=PoloidalPlot,
+            measurement_array=measurement_array,
+            run=run,
+            SI_units=SI_units,
+            log_scale=log_scale,
+            exclude_outliers=exclude_outliers)
+
         # # Populate the figure with subplots, and add a title
         # canvas.add_subplots_from_naxs(naxs=len(variables))
         # canvas.add_title(title=title, title_SI=SI_units)
@@ -102,10 +111,10 @@ if __name__=="__main__":
         #                                             exclude_outliers=exclude_outliers)
 
         # # Fill the subplots with values
-        # canvas.draw(time_slice=time_slice, toroidal_slice=toroidal_slice)
+        canvas.draw(time_slice=time_slice, toroidal_slice=toroidal_slice)
 
         # # Save or display the canvas
         # if save_path:
         #     canvas.save_figure(save_path)
         # else:
-        #     canvas.show()
+        canvas.show()

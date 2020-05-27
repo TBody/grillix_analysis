@@ -1,5 +1,6 @@
 from source import np, plt, Dimensionless, usrenv
 from .Painter import Painter, PoloidalPlot
+from .Colorbar import Colorbar
 # from .. import Component
 # from .Figure import Figure
 # from .Axes import Axes
@@ -45,17 +46,37 @@ class Canvas:
         except AttributeError:
             raise AttributeError(f"{self.__class__.__name__} has no attribute {key}")
 
-    def add_subplots_from_naxs(self, naxs, sharex=True, sharey=True, squeeze=False, subplot_kw=None, gridspec_kw=None):
+    def subplots_from_naxs(self, naxs, sharex=True, sharey=True, squeeze=False, subplot_kw=None, gridspec_kw=None):
         [nrows, ncols] = self.determine_layout(naxs)
-        self.add_subplots(nrows=nrows, ncols=ncols, sharex=sharex, sharey=sharey, squeeze=False, subplot_kw=subplot_kw, gridspec_kw=gridspec_kw)
+        return self.subplots(nrows=nrows, ncols=ncols, sharex=sharex, sharey=sharey, squeeze=False, subplot_kw=subplot_kw, gridspec_kw=gridspec_kw)
 
-    def add_subplots(self, nrows=1, ncols=1, sharex=True, sharey=True, squeeze=False, subplot_kw=None, gridspec_kw=None):
-        axes = self.fig.subplots(nrows=nrows, ncols=ncols, sharex=sharex, sharey=sharey, squeeze=False, subplot_kw=subplot_kw, gridspec_kw=gridspec_kw)
+    def subplots(self, nrows=1, ncols=1, sharex=True, sharey=True, squeeze=False, subplot_kw=None, gridspec_kw=None):
+        return self.fig.subplots(nrows=nrows, ncols=ncols, sharex=sharex, sharey=sharey, squeeze=False, subplot_kw=subplot_kw, gridspec_kw=gridspec_kw)
+    
+    def subplots_from_measurement_array(self, painter, measurement_array, run=None, SI_units=False, log_scale=False, exclude_outliers=False, **subplot_kw):
+        assert(type(painter) is type)
 
+        subplots = self.subplots_from_naxs(naxs=len(measurement_array), **subplot_kw)
+        self.axes = []
 
-    @property
-    def axes1d(self):
-        return self.axes.flatten()
+        for measurement, subplot in zip(measurement_array, subplots.flatten()):
+
+            painter_object = painter(axes=subplot, measurement=measurement, run=run, SI_units=SI_units)
+            cbar_object, _ = Colorbar.make_colorbar_axis(painter=painter_object, run=run, log_scale=log_scale, exclude_outliers=exclude_outliers)
+
+            self.axes.append(painter_object)
+            self.axes.append(cbar_object)
+    
+    def draw(self, with_tight_layout=True, **kwargs):
+        
+        for axes in self.axes:
+            axes.draw(**kwargs)
+        
+        # self.add_time_to_title(**kwargs)
+
+        if with_tight_layout:
+            # Leave space for the suptitle
+            plt.tight_layout(rect=[0, 0, 1, 1-usrenv.suptitle_spacing])
 
 
 # class Canvas(Component):

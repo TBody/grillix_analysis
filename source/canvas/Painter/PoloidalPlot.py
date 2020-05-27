@@ -18,6 +18,8 @@ class PoloidalPlot(Painter):
     @colorbar.setter
     def colorbar(self, value):
         self._colorbar = value
+        if self._colorbar is not None:
+            self._colorbar._painter = self
 
     def draw_plot(self):
 

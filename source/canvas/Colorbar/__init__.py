@@ -6,10 +6,10 @@ from copy import deepcopy
 class Colorbar(Axes):
 
     @classmethod
-    def make_colorbar_axis(cls, painter=None, **kwargs):
+    def make_colorbar_axis(cls, painter, **kwargs):
         # create an axes on the right side of ax. The width of cax will be 5%
         # of ax and the padding between cax and ax will be fixed at 0.05 inch.
-        divider = make_axes_locatable(painter.axes)
+        divider = make_axes_locatable(painter.ax)
 
         axes = divider.append_axes("right", size="5%", pad=0.05)
 
@@ -47,6 +47,8 @@ class Colorbar(Axes):
     @painter.setter
     def painter(self, value):
         self._painter = value
+        if self._painter is not None:
+            self._painter._colorbar = self
 
     @property
     def SI_units(self):
@@ -54,6 +56,10 @@ class Colorbar(Axes):
     
     @property
     def colormap_norm(self):
+
+        if self._colormap_norm is None:
+            self.find_colormap_normalisation(values=self.painter._values)
+
         if self.SI_units:
             colormap_norm = deepcopy(self._colormap_norm)
             units_magnitude = self.painter.units.magnitude
@@ -71,9 +77,9 @@ class Colorbar(Axes):
     def colormap_norm(self, value):
         self._colormap_norm = value
     
-    def draw(self):
+    def draw(self, **kwargs):
         colormap_norm = self.colormap_norm
-
+    
         ticks = np.linspace(start=colormap_norm.vmin, stop=colormap_norm.vmax, num=self.num_cbar_ticks)
         self.colorbar = plt.colorbar(self.painter.artist, cax=self.ax, ticks=ticks, extend='both' if self.exclude_outliers else 'neither')
 

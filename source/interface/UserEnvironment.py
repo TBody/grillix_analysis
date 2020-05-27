@@ -16,6 +16,9 @@ class UserEnvironment:
         self.plot_backend = "Qt5Agg"
         self.matplotlib_style = "default"
 
+        # How much space (in fractions of figure height) to leave for making the suptitle
+        self.suptitle_spacing = 0.05
+
         # What stride to use when calculating constant colormaps?
         self.sparse_time_slice = 10
         # Animation variables

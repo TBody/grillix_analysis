@@ -64,7 +64,6 @@ class Painter(AnimatedAxis):
             if self.SI_units:
                 x *= self.x_normalisation.units
                 y *= self.y_normalisation.units
-                z *= self.units
 
             # See if the field defines a custom formatter for z values. If not, just print the value
             format_value = getattr(self.variable, "__format_value__", None)

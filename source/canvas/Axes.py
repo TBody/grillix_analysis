@@ -1,5 +1,5 @@
 from source import plt, Component
-from .painter._artists import Artist
+from .Painter._artists import Artist
 
 class Axes(Component):
     # Axes are components, but it's OK if they're used uninitialised (i.e. with no run object given)
