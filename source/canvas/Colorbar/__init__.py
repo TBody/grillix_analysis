@@ -29,7 +29,7 @@ class Colorbar(Axes):
         self.outliers_quantitles = usrenv.exclude_outliers_quantiles
 
         # Colormap
-        self.colormap = perceptually_uniform_cmap
+        self.colormap = None
         # Range for color mapping
         self.colormap_norm = None
         # What proportion of a symlog plot should be linear?
@@ -56,6 +56,17 @@ class Colorbar(Axes):
     @property
     def SI_units(self):
         return self.painter.SI_units
+    
+    @property
+    def colormap(self):
+        if self._colormap is None:
+            self.find_colormap(values=self.painter._values)
+        
+        return self._colormap
+    
+    @colormap.setter
+    def colormap(self, value):
+        self._colormap = value
     
     @property
     def colormap_norm(self):

@@ -1,4 +1,4 @@
-from source import plt, usrenv, np
+from source import plt, usrenv, np, Dimensionless
 from .Axes import AnimatedAxes
 
 
