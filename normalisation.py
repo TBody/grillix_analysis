@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # Import CLI user interface
-from interface.CLI import (
+from source.interface import (
     BaseCLI,
     FilepathArg,
     LaunchIPDBArg
 )
 
 # Set up command-line interface
-from source.Variable import variable_groups
+from source.measurements.Variable.variable_groups import variable_groups
 class NormalisationCLI(BaseCLI):
 
     def __init__(self, parse=False, display=False):
@@ -22,7 +22,7 @@ class NormalisationCLI(BaseCLI):
 # import the necessary components from source, as well as numpy in case you want to
 # do dimensional calculations
 from source import np
-from source.Run import Run
+from source.run import Run
 from ipdb import launch_ipdb_on_exception
 
 if __name__=="__main__":
@@ -50,7 +50,7 @@ if __name__=="__main__":
         N = run.normalisation
 
         print(N)
-
+        
         if ctrl["launch_ipdb"]:
             import ipdb
             ipdb.set_trace()

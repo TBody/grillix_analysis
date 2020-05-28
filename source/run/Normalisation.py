@@ -72,6 +72,7 @@ class Normalisation():
         self.electron_to_proton_mass_ratio = Quantity(1836.15267343, '')
         self.electron_charge = Quantity(1.0, unit_registry.elementary_charge)
         self.proton_mass = Quantity(1.0, unit_registry.amu)
+        self.electron_mass = Quantity(1.0, unit_registry.amu)/self.electron_to_proton_mass_ratio
         self.speed_of_light = Quantity(1.0, unit_registry.speed_of_light)
         self.vacuum_permeability = Quantity(1.25663706212e-6, unit_registry.henry/unit_registry.meter)
     
@@ -106,14 +107,14 @@ class Normalisation():
         self.beta_0 = self.c_s0 ** 2 / (self.v_A0 **2)
         self.mu = (self.Mi.to(unit_registry.amu).magnitude * self.electron_to_proton_mass_ratio)**-1
         self.zeta = self.Ti0/self.Te0
-        self.Te0_norm = self.tau_e * self.c_s0 / self.R0
-        self.Ti0_norm = self.tau_i * self.c_s0 / self.R0
-        self.nu_e0 = self.Te0_norm ** -1
-        self.nu_i0 = self.Ti0_norm ** -1
-        self.chipar_e = 3.16 * self.Te0_norm * self.mu**-1
-        self.chipar_i = 3.90 * self.zeta * self.Ti0_norm
+        self.tau_e_norm = self.tau_e * self.c_s0 / self.R0
+        self.tau_i_norm = self.tau_i * self.c_s0 / self.R0
+        self.nu_e0 = self.tau_e_norm ** -1
+        self.nu_i0 = self.tau_i_norm ** -1
+        self.chipar_e = 3.16 * self.tau_e_norm * self.mu**-1
+        self.chipar_i = 3.90 * self.zeta * self.tau_i_norm
         self.etapar_e = 0.51 * self.nu_e0 * self.mu
-        self.etapar_i = 0.96 * self.Ti0_norm
+        self.etapar_i = 0.96 * self.tau_i_norm
     
     def calculate_neutral_parameters(self):
         # Add neutral-specific parameters
