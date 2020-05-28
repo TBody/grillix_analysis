@@ -11,7 +11,7 @@ from .BaseVariable import (Density, ElectronTemperature, IonTemperature, Paralle
 from .StaticVariable import (Grid, District, FluxSurface, Buffer, InVessel, ProjectionX, ProjectionY)
 from .StaticVariable import (CharacteristicFunction, DirectionFunction, PhiForward, PhiBackward, PhiBetweenTargets)
 from .EquilibriumVariable import (Psi, Rho, MagneticFieldX, MagneticFieldY, MagneticFieldTor, MagneticField, MagneticFieldAbs, MagneticFieldPol, PoloidalUnitVector, RadialUnitVector, MagneticFieldPitch, ParallelUnitVector)
-from .DerivedVariable import (SoundSpeed, AlfvenSpeed, DynamicalPlasmaBeta, ElectricField, FloatingPotential, SaturationCurrent, ExBVelocity, ParallelElectronVelocity, TotalPressure, ElectronPressure, IonPressure)
+from .DerivedVariable import (SoundSpeed, AlfvenSpeed, DynamicalPlasmaBeta, ElectricField, FloatingPotential, SaturationCurrent, ExBVelocity, ParallelElectronVelocity, TotalPressure, ElectronPressure, IonPressure, TotalVelocity)
 
 from source.measurements.Operator import (VectorAbsolute, VectorPoloidalProjection, VectorRadialProjection, VectorParallel)
 
@@ -28,6 +28,6 @@ variable_groups["Electric"] = [ScalarPotential, ([VectorAbsolute], ElectricField
 variable_groups["Velocity"] = [ParallelIonVelocity, ParallelElectronVelocity, AlfvenSpeed, ([VectorRadialProjection], ExBVelocity), ([VectorPoloidalProjection], ExBVelocity), SoundSpeed]
 variable_groups["Langmuir"] = [Density, ElectronTemperature, FloatingPotential, SaturationCurrent]
 variable_groups["Pressure"] = [ElectronPressure, IonPressure, TotalPressure]
-variable_groups["PoloidalVelocity"] = [([VectorPoloidalProjection, VectorParallel], ParallelIonVelocity), ([VectorRadialProjection], ExBVelocity), ([VectorPoloidalProjection], ExBVelocity)]
+variable_groups["PoloidalVelocity"] = [([VectorPoloidalProjection, VectorParallel], ParallelIonVelocity), ([VectorRadialProjection], ExBVelocity), ([VectorPoloidalProjection], ExBVelocity), ([VectorPoloidalProjection], TotalVelocity)]
 
 variable_groups["TestParallelUnitVector"] = [([VectorRadialProjection], ParallelUnitVector), ([VectorPoloidalProjection], ParallelUnitVector), ([VectorAbsolute], ParallelUnitVector)]

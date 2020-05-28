@@ -87,5 +87,5 @@ class Title(AnimatedAxes):
         if units == "":
             return f"{time.magnitude:4.3f} tau"
         else:
-            return f"{time.to_compact():4.3f} tau"
+            return f"{time.to_compact():4.3f}"
 

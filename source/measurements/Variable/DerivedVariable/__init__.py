@@ -24,3 +24,4 @@ from .ParallelElectronVelocity import ParallelElectronVelocity
 from .ElectronPressure import ElectronPressure
 from .IonPressure import IonPressure
 from .TotalPressure import TotalPressure
+from .TotalVelocity import TotalVelocity

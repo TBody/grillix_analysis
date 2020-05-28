@@ -20,8 +20,6 @@ class ExBVelocity(DerivedVariable):
         return self.normalisation.c_s0.to('kilometers/second')
 
     def fetch_values(self, **kwargs):
-
-        
         electric_field = self.dimensional_array(self.electric_field(**kwargs))
         Btor = self.dimensional_array(self.toroidal_magentic_field(**kwargs))
 

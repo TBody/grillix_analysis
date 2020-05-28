@@ -10,7 +10,6 @@ class ParallelElectronVelocity(DerivedVariable):
         self.density = Density()
         self.ion_velocity = ParallelIonVelocity()
         self.current = ParallelCurrent()
-        self.parallel_scalar = True
 
         self.base_variables = [self.density, self.ion_velocity, self.current]
         
