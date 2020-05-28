@@ -55,7 +55,6 @@ class Run:
         if calculate_metainfo:
             
             for function in [
-                self.calculate_tau_values,
                 self.calculate_penalisation_contours,
                 self.calculate_parallel_limits,
                 self.calculate_divertor_profile,
@@ -68,14 +67,18 @@ class Run:
                 except (IndexError, FileNotFoundError, AttributeError):
                     print(f"Unable to calculate run metadata in {function}: missing information")
 
-    def calculate_tau_values(self):
+    @property
+    def tau_values(self):
         if self.directory.use_error_snaps:
             snap_netcdf = self.directory.error_snaps
         else:
             snap_netcdf = self.directory.snaps
         
-        self.tau_values = np.array(np.atleast_1d(snap_netcdf[0]['tau']))
-        self.snap_indices = np.arange(np.size(self.tau_values))
+        return np.array(np.atleast_1d(snap_netcdf[0]['tau']))
+    
+    @property
+    def snap_indices(self):
+        return np.arange(np.size(self.tau_values))
 
     def calculate_penalisation_contours(self):
         

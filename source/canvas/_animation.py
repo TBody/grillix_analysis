@@ -17,6 +17,7 @@ def clean_frame(self):
 def find_static_colormap(self, **kwargs):
     for axes in self.axes:
         if isinstance(axes, Colorbar):
+            print(f"Calculating colormap for {axes.painter.variable}")
             axes.find_static_colormap(**kwargs)
 
 def return_animation_artists(self):
