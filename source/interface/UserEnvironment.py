@@ -13,7 +13,8 @@ class UserEnvironment:
 
         # Set the plotting backend
         # Recommend using Qt5Agg for interactive plots, or Agg for non-interactive plots
-        self.plot_backend = "Qt5Agg"
+        self.noninteractive_backend = "Agg"
+        self.interactive_backend = "Qt5Agg"
         self.matplotlib_style = "default"
 
         # How much space (in fractions of figure height) to leave for making the suptitle

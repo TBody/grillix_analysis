@@ -21,7 +21,12 @@ import pandas as pd
 
 # Plotting
 import matplotlib
-matplotlib.use(usrenv.plot_backend)
+flag_file = Path(__file__).absolute().parents[1] / "no.interactive"
+print(f"Flag file {flag_file} does{'' if flag_file.exists() else ' not'} exist. Setting backend {usrenv.noninteractive_backend if flag_file.exists() else usrenv.interactive_backend}")
+if flag_file.exists():
+    matplotlib.use(usrenv.noninteractive_backend)
+else:
+    matplotlib.use(usrenv.interactive_backend)
 # Interactive figures
 import matplotlib.pyplot as plt
 mplstyle = (Path(__file__).absolute().parent / "canvas" / usrenv.matplotlib_style).with_suffix(".mplstyle")
