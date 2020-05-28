@@ -6,6 +6,7 @@ class PerpendicularGradient(Operator):
     
     def __init__(self, run=None):
         super().__init__(run=run)
+        self.title = "Perp. Grad."
     
     def __call__(self, values, units):
         

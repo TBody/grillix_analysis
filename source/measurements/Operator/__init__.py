@@ -31,7 +31,7 @@ class Operator(Component):
             return np.roll(values, shift=+1, axis=1)
 
 from .PadToGrid         import PadToGrid
-# from .ParallelGradient  import ParallelGradient
+from .ParallelGradient  import ParallelGradient
 from .PerpendicularGradient  import PerpendicularGradient
 from .VectorAbsolute import VectorAbsolute
 from .VectorRadialProjection import VectorRadialProjection
