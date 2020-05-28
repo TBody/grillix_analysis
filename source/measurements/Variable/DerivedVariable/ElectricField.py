@@ -21,9 +21,7 @@ class ElectricField(DerivedVariable):
 
     def fetch_values(self, **kwargs):
         
-        scalar_potential, scalar_potential_units = self.scalar_potential(**kwargs)
+        potential_gradient = self.dimensional_array(self.perpendicular_gradient(*self.scalar_potential(**kwargs)))
         
-        potential_gradient, potential_gradient_units = self.perpendicular_gradient(scalar_potential, scalar_potential_units)
-        
-        return self.normalised_VectorArray(potential_gradient*potential_gradient_units)
+        return self.normalised_VectorArray(potential_gradient)
         

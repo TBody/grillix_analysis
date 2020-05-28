@@ -25,3 +25,7 @@ from .ElectronPressure import ElectronPressure
 from .IonPressure import IonPressure
 from .TotalPressure import TotalPressure
 from .TotalVelocity import TotalVelocity
+from .IonConvectiveHeatFlux import IonConvectiveHeatFlux
+from .ElectronConvectiveHeatFlux import ElectronConvectiveHeatFlux
+from .IonConductiveHeatFlux import IonConductiveHeatFlux
+from .ElectronConductiveHeatFlux import ElectronConductiveHeatFlux

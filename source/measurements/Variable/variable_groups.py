@@ -36,3 +36,7 @@ variable_groups["PoloidalVelocity"] = [([VectorPoloidalProjection, VectorParalle
 variable_groups["TestParallelUnitVector"] = [([VectorRadialProjection], ParallelUnitVector), ([VectorPoloidalProjection], ParallelUnitVector), ([VectorAbsolute], ParallelUnitVector)]
 
 variable_groups["ParallelGradient"] = [([ParallelGradient], Density), ([ParallelGradient], ElectronTemperature), ([ParallelGradient], IonTemperature), ([ParallelGradient], ParallelIonVelocity), ([ParallelGradient], ParallelCurrent), ([ParallelGradient], ScalarPotential), ([ParallelGradient], Vorticity), ([ParallelGradient], ParallelVectorPotential)]
+
+from .DerivedVariable import (IonConvectiveHeatFlux, ElectronConvectiveHeatFlux, IonConductiveHeatFlux, ElectronConductiveHeatFlux)
+variable_groups["HeatFlux"] = [([VectorAbsolute], IonConvectiveHeatFlux), ([VectorAbsolute], ElectronConvectiveHeatFlux), ([VectorAbsolute], IonConductiveHeatFlux), ([VectorAbsolute], ElectronConductiveHeatFlux)]
+variable_groups["HeatFluxProjections"] = [([VectorPoloidalProjection], IonConvectiveHeatFlux), ([VectorPoloidalProjection], ElectronConvectiveHeatFlux), ([VectorPoloidalProjection], IonConductiveHeatFlux), ([VectorPoloidalProjection], ElectronConductiveHeatFlux), ([VectorRadialProjection], IonConvectiveHeatFlux), ([VectorRadialProjection], ElectronConvectiveHeatFlux), ([VectorRadialProjection], IonConductiveHeatFlux), ([VectorRadialProjection], ElectronConductiveHeatFlux)]
