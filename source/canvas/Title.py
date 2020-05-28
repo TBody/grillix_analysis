@@ -74,9 +74,18 @@ class Title(AnimatedAxes):
         if self.suptitle_time is None:
             suptitle_string = f"{self.suptitle_base}"
         elif len(self.suptitle_time) > 1:
-            suptitle_string = f"{self.suptitle_base} [t={self.suptitle_time[0].to_compact():4.3f} to {self.suptitle_time[-1].to_compact():4.3f}]"
+            suptitle_string = f"{self.suptitle_base} [{self.time_units(self.suptitle_time[0])} to {self.time_units(self.suptitle_time[-1])}]"
         else:
-            suptitle_string = f"{self.suptitle_base} [t={self.suptitle_time[0].to_compact():4.3f}]"
+            suptitle_string = f"{self.suptitle_base} [{self.time_units(self.suptitle_time[0])}]"
         
         self.artist.set_text(suptitle_string)
+    
+    def time_units(self, time):
+
+        units = time.units
+
+        if units == "":
+            return f"{time.magnitude:4.3f} tau"
+        else:
+            return f"{time.to_compact():4.3f} tau"
 

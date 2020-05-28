@@ -13,4 +13,7 @@ class Title(CLIArgument):
         if self.value:
             return self.value
         else:
-            return self.args.filepath
+            from pathlib import Path
+            folder = Path(self.args.filepath).absolute().name
+            parent_folder = Path(self.args.filepath).absolute().parent.name
+            return f"{parent_folder}/{folder}"
