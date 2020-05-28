@@ -1,4 +1,4 @@
-from source import np, plt, Dimensionless, usrenv
+from source import np, plt, Dimensionless, usrenv, warnings
 from .Painter import Painter, PoloidalPlot
 from .Colorbar import Colorbar
 from .Title import Title
@@ -74,7 +74,9 @@ class Canvas:
         
     def tight_layout(self):
         # Leave space for the suptitle
-        plt.tight_layout(rect=[0, 0, 1, 1-usrenv.suptitle_vspace])
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            plt.tight_layout(rect=[0, 0, 1, 1-usrenv.suptitle_vspace])
     
     def save_figure(self, filename):
         plt.savefig(f"{filename}")
