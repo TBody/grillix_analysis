@@ -36,5 +36,6 @@ from .PerpendicularGradient  import PerpendicularGradient
 from .VectorAbsolute import VectorAbsolute
 from .VectorRadialProjection import VectorRadialProjection
 from .VectorPoloidalProjection import VectorPoloidalProjection
+from .VectorParallel import VectorParallel
 
 from .Reduction import *

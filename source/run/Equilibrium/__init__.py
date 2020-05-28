@@ -11,7 +11,8 @@ from source.measurements.Variable.EquilibriumVariable import (
     MagneticFieldAbs,
     MagneticFieldPol,
     PoloidalUnitVector,
-    RadialUnitVector
+    RadialUnitVector,
+    ParallelUnitVector
 )
 
 class Equilibrium(RunComponent):
@@ -47,6 +48,7 @@ class Equilibrium(RunComponent):
         self.Babs                 = MagneticFieldAbs()
         self.poloidal_unit_vector = PoloidalUnitVector()
         self.radial_unit_vector   = RadialUnitVector()
+        self.parallel_unit_vector = ParallelUnitVector()
 
         self.run = run
 
@@ -55,7 +57,7 @@ class Equilibrium(RunComponent):
 
         for variable in {self.psi, self.rho, self.Bx, self.By, self.Btor,
                          self.Bpol, self.Babs,
-                         self.poloidal_unit_vector, self.radial_unit_vector}:
+                         self.poloidal_unit_vector, self.radial_unit_vector, self.parallel_unit_vector}:
             variable.run = self.run
 
 from .Numerical import NumericalEquilibrium

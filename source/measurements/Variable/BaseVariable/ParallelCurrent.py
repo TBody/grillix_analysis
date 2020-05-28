@@ -3,6 +3,7 @@ from . import BaseVariable
 class ParallelCurrent(BaseVariable):
     
     def __init__(self, run=None):
+        self.parallel_scalar = True
         super().__init__('jparx', 'Current', run=run)
     
     @property

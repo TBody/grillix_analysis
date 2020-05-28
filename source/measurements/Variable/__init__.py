@@ -22,8 +22,8 @@ class Variable(Component):
         # allow_diverging_cmap will make the colormap centre on zero if both positive and negative values are in the range of values
         self.allow_diverging_cmap = getattr(self, "allow_diverging_cmap", True)
         
-        # # derived_variable means that the normalisation is already applied in the __call__, and so should be skipped
-        # self.derived_variable = getattr(self, "derived_variable", False)
+        # parallel_scalar means that the variable is a scalar which represents a parallel-aligned quantity
+        self.parallel_scalar = getattr(self, "parallel_scalar", False)
 
         # Initialise the run property callbacks
         super().__init__(run=run)

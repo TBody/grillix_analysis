@@ -3,6 +3,7 @@ from . import BaseVariable
 class ParallelIonVelocity(BaseVariable):
     
     def __init__(self, run=None):
+        self.parallel_scalar = True
         super().__init__('uparx', 'Ion Velocity', run=run)
     
     @property
