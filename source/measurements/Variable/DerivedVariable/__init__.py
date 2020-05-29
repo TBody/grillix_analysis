@@ -16,16 +16,22 @@ class DerivedVariable(Variable):
 from .SoundSpeed import SoundSpeed
 from .AlfvenSpeed import AlfvenSpeed
 from .DynamicalPlasmaBeta import DynamicalPlasmaBeta
-from .ElectricField import ElectricField
+
 from .FloatingPotential import FloatingPotential
 from .SaturationCurrent import SaturationCurrent
+
+from .ElectricField import ElectricField
 from .ExBVelocity import ExBVelocity
 from .ParallelElectronVelocity import ParallelElectronVelocity
+
 from .ElectronPressure import ElectronPressure
 from .IonPressure import IonPressure
 from .TotalPressure import TotalPressure
 from .TotalVelocity import TotalVelocity
+
 from .IonConvectiveHeatFlux import IonConvectiveHeatFlux
-from .ElectronConvectiveHeatFlux import ElectronConvectiveHeatFlux
 from .IonConductiveHeatFlux import IonConductiveHeatFlux
+from .IonTotalHeatFlux import IonTotalHeatFlux
+from .ElectronConvectiveHeatFlux import ElectronConvectiveHeatFlux
 from .ElectronConductiveHeatFlux import ElectronConductiveHeatFlux
+from .ElectronTotalHeatFlux import ElectronTotalHeatFlux

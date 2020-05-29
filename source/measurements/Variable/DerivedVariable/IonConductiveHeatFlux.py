@@ -23,7 +23,7 @@ class IonConductiveHeatFlux(DerivedVariable):
     
     @property
     def chipar_i(self):
-        return self.normalisation.chipar_i
+        return (self.normalisation.chipar_i).to('').magnitude
 
     def fetch_values(self, **kwargs):
         # The unit conversion is unclear. However, the normalised conductive heat flux and the normalised 

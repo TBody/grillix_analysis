@@ -23,7 +23,7 @@ class ElectronConductiveHeatFlux(DerivedVariable):
     
     @property
     def chipar_e(self):
-        return self.normalisation.chipar_e
+        return (self.normalisation.chipar_e).to('').magnitude
 
     def fetch_values(self, **kwargs):
         # The unit converselectron is unclear. However, the normalised conductive heat flux and the normalised 
