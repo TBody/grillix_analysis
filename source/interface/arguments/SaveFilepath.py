@@ -1,4 +1,7 @@
+from pathlib import Path
 from . import CLIArgument
+
+flag_file = Path(__file__).absolute().parents[3] / "no.interactive"
 
 class SaveFilepath(CLIArgument):
     def __init__(self, CLI):
@@ -11,6 +14,7 @@ class SaveFilepath(CLIArgument):
     def __call__(self):
         if not(self.value):
             print(f"Will not save")
+            assert(not(flag_file.exists())), f"Requested non-interactive backend but did not request to save. Remove {flag_file} to allow interactive plotting"
             return False
         else:
             save_filepath = self.CLI.output_path/self.value
