@@ -7,7 +7,7 @@ from source.interface import (
 )
 
 # Set up command-line interface
-from source.measurements.Variable.variable_groups import variable_groups
+from source.measurements.measurement_groups import measurement_groups
 class NormalisationCLI(BaseCLI):
 
     def __init__(self, parse=False, display=False):

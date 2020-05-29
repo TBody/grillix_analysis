@@ -10,7 +10,7 @@ from source.interface import (
 )
 
 # Set up command-line interface
-from source.measurements.Variable.variable_groups import variable_groups
+from source.measurements.measurement_groups import measurement_groups
 class PoloidalPlotCLI(BaseCLI):
 
     def __init__(self, parse=False, display=False):
@@ -18,7 +18,7 @@ class PoloidalPlotCLI(BaseCLI):
         
         self.filepath           = FilepathArg(self)
         self.save               = SaveFilepathArg(self)
-        self.group              = GroupArg(self, variable_groups.keys(), default="BaseVariable")
+        self.group              = GroupArg(self, measurement_groups.keys(), default="BaseVariable")
         self.title              = TitleArg(self)
         self.time_slice         = TimeSliceArg(self)
         self.toroidal_slice     = ToroidalSliceArg(self)
@@ -71,7 +71,7 @@ if __name__=="__main__":
         run.directory.use_error_snaps = use_error_snaps
 
         # Select a list of Variable types to plot
-        variables = variable_groups[group]
+        variables = measurement_groups[group]
 
         # Construct the list of operators
         operators = []
