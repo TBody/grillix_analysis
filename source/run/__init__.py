@@ -74,7 +74,12 @@ class Run:
         else:
             snap_netcdf = self.directory.snaps
         
-        return np.array(np.atleast_1d(snap_netcdf[0]['tau']))
+        # Allow plotting without any snaps
+        try:
+            return np.array(np.atleast_1d(snap_netcdf[0]['tau']))
+        except IndexError:
+            print("tau values not available")
+            return np.atleast_1d([0.0])
     
     @property
     def snap_indices(self):

@@ -18,7 +18,7 @@ class Grid(Variable):
         self.grid_values = np.concatenate((zeros_main_grid, ones_perp_grid))
 
     def fetch_values(self, time_slice=None, toroidal_slice=None, poloidal_slice=slice(None)):
-        return ScalarArray(self.grid_values[poloidal_slice]), Dimensionless
+        return ScalarArray(self.grid_values[poloidal_slice])
     
     def __format_value__(self, value, run=None):
         return self.grid_dict[value]
