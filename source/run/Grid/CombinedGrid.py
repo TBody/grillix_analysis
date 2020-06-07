@@ -18,7 +18,7 @@ class CombinedGrid(Grid):
         self.perp_grid.invert_z()
         
         # Invert the combined grid
-        self._y = -self._y
-        self._y_unique = np.unique(self._y)
-        self._ymin = self._y_unique[0]
-        self._ymax = self._y_unique[-1]
+        self.y = -self.y
+        self.y_unique = np.unique(self.y)
+        self.ymin = self.y_unique[0]
+        self.ymax = self.y_unique[-1]
