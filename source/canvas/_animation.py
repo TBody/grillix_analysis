@@ -1,4 +1,4 @@
-from source import usrenv
+from source import usrenv, os
 from .Axes import AnimatedAxes
 from .Colorbar import Colorbar
 from .Painter import Painter
@@ -86,5 +86,27 @@ def save_animation(self, filename):
     animation_filename = filename.with_suffix('.'+usrenv.animation_format)
 
     print(f"Saving video as {animation_filename}")
-    self.animator.save(animation_filename, writer=writer, dpi=usrenv.animation_dpi)
+    import subprocess
+    try:
+        self.animator.save(animation_filename, writer=writer, dpi=usrenv.animation_dpi)
+    except subprocess.CalledProcessError as e:
+        # There appears to be an error in the call to subprocess 'ffmpeg'
+        # Should use '-b:v' instead of '-b' to set bitrate
+
+        print("ffmpeg error. Attempting to re-run with -b:v instead of -b")
+        # Replace the incorrect flag
+        cmd = e.cmd
+        cmd[cmd.index('-b')] = '-b:v'
+
+        # Return the correct ffmpeg command in case another error occurs
+        print('In case of secondary failure, try ffmpeg command:')
+        cmd_string = [str(element) for element in cmd]
+        print(' '.join(cmd_string))
+
+        subprocess.run(cmd)
+
+        # Will need to manually clean up the extra temporary files, but for safety leave these in the repository
+        # and leave it to the user
+        print("You can now remove the temporary files with 'rm _tmp*.png'")
+
     print("Done")
