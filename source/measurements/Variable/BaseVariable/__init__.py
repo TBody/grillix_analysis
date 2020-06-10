@@ -59,11 +59,11 @@ class BaseVariable(Variable):
         
         values = np.zeros((snaps.size, planes.size, points.size))
         
-        for index in planes:
+        for index in range(planes.size):
             # Concatenate the perpghost values onto the vgrid
             values[:, index, :] = np.concatenate((
-                self.snap_netcdf[index][self.name_in_netcdf][snaps, interior_mask],
-                self.snap_netcdf[index][self.name_in_netcdf+"_perpghost"][snaps, exterior_mask]
+                self.snap_netcdf[planes[index]][self.name_in_netcdf][snaps, interior_mask],
+                self.snap_netcdf[planes[index]][self.name_in_netcdf+"_perpghost"][snaps, exterior_mask]
             ), axis=-1)
         if self.log_in_netcdf:
             values = np.exp(values)
