@@ -13,4 +13,5 @@ from .arguments import (FilepathArg,
                        LogScaleArg, 
                        LaunchIPDBArg, 
                        ErrorSnapsArg, 
-                       ReductionArg)
+                       ReductionArg,
+                       CbarInVesselArg)

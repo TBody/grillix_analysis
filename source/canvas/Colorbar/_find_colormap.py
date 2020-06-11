@@ -1,4 +1,4 @@
-from source import np, perceptually_uniform_cmap, diverging_cmap, mplcolors
+from source import np, perceptually_uniform_cmap, diverging_cmap, mplcolors, ma
 
 def find_static_colormap(self, **kwargs):
     # Find colormap normalisation over a range, without plotting.
@@ -8,6 +8,9 @@ def find_static_colormap(self, **kwargs):
     self.find_colormap(values=values)
 
 def find_colormap(self, values):
+
+    if self.cbar_in_vessel:
+        values = ma.masked_array(values, mask=np.logical_not(self.run.in_vessel_mask_structured))
 
     [cbar_min, cbar_max] = self.data_limits(values)
 
@@ -33,7 +36,7 @@ def find_colormap(self, values):
         abs_sort = np.sort(np.abs(values.ravel()))
 
         # Increase the linear_proportion with the zero values
-        linthres = np.nanquantile(np.abs(values.ravel()), self.linear_proportion)
+        linthres = np.nanquantile(abs_sort[~np.isnan(abs_sort)], self.linear_proportion)
         zero_proportion = 1 - np.count_nonzero(abs_sort)/len(abs_sort)
         self.linear_proportion += zero_proportion
 

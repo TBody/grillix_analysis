@@ -117,3 +117,4 @@ from .LogScale         import LogScale         as LogScaleArg
 from .LaunchIPDB       import LaunchIPDB       as LaunchIPDBArg
 from .ErrorSnaps       import ErrorSnaps       as ErrorSnapsArg
 from .Reduction        import Reduction        as ReductionArg
+from .CbarInVessel     import CbarInVessel     as CbarInVesselArg

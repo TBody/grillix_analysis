@@ -48,7 +48,7 @@ class Canvas:
     def subplots(self, nrows=1, ncols=1, sharex=True, sharey=True, squeeze=False, subplot_kw=None, gridspec_kw=None):
         return self.fig.subplots(nrows=nrows, ncols=ncols, sharex=sharex, sharey=sharey, squeeze=False, subplot_kw=subplot_kw, gridspec_kw=gridspec_kw)
     
-    def subplots_from_measurement_array(self, painter, measurement_array, run=None, SI_units=False, log_scale=False, exclude_outliers=False, **subplot_kw):
+    def subplots_from_measurement_array(self, painter, measurement_array, run=None, SI_units=False, log_scale=False, exclude_outliers=False, cbar_in_vessel=True, **subplot_kw):
         assert(type(painter) is type)
 
         subplots = self.subplots_from_naxs(naxs=len(measurement_array), **subplot_kw)
@@ -57,7 +57,7 @@ class Canvas:
         for measurement, subplot in zip(measurement_array, subplots.flatten()):
 
             painter_object = painter(axes=subplot, measurement=measurement, run=run, SI_units=SI_units)
-            cbar_object, _ = Colorbar.make_colorbar_axis(painter=painter_object, run=run, log_scale=log_scale, exclude_outliers=exclude_outliers)
+            cbar_object, _ = Colorbar.make_colorbar_axis(painter=painter_object, run=run, log_scale=log_scale, exclude_outliers=exclude_outliers, cbar_in_vessel=cbar_in_vessel)
 
             self.axes.append(painter_object)
             self.axes.append(cbar_object)

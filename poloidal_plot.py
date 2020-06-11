@@ -6,7 +6,8 @@ from source.interface import (
     GroupArg, TitleArg,
     TimeSliceArg, ToroidalSliceArg,
     ReductionArg,
-    SI_unitsArg, LogScaleArg, ErrorSnapsArg, ExcludeOutliersArg
+    SI_unitsArg, LogScaleArg, ErrorSnapsArg, ExcludeOutliersArg,
+    CbarInVesselArg
 )
 
 # Set up command-line interface
@@ -25,6 +26,7 @@ class PoloidalPlotCLI(BaseCLI):
         self.reduction          = ReductionArg(self)
         self.SI_units           = SI_unitsArg(self)
         self.exclude_outliers   = ExcludeOutliersArg(self)
+        self.cbar_in_vessel     = CbarInVesselArg(self)
         self.log_scale          = LogScaleArg(self)
         self.error_snaps        = ErrorSnapsArg(self)
 
@@ -53,6 +55,7 @@ if __name__=="__main__":
         title            = CLI['title']
         SI_units         = CLI['SI_units']
         exclude_outliers = CLI['exclude_outliers']
+        cbar_in_vessel   = CLI['cbar_in_vessel']
         log_scale        = CLI['log_scale']
         save_path        = CLI['save']
 
@@ -100,6 +103,7 @@ if __name__=="__main__":
             run=run,
             SI_units=SI_units,
             log_scale=log_scale,
+            cbar_in_vessel=cbar_in_vessel,
             exclude_outliers=exclude_outliers)
         
         # Add a title

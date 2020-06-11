@@ -15,7 +15,7 @@ class Colorbar(Axes):
 
         return cls(axes, painter=painter, **kwargs), axes
 
-    def __init__(self, axes, painter=None, log_scale=False, exclude_outliers=False, run=None):
+    def __init__(self, axes, painter=None, log_scale=False, exclude_outliers=False, cbar_in_vessel=True, run=None):
 
         super().__init__(axes)
 
@@ -27,6 +27,8 @@ class Colorbar(Axes):
         self.exclude_outliers = exclude_outliers
         # Exclude values outside this quartile range
         self.outliers_quantitles = usrenv.exclude_outliers_quantiles
+        # Take only values inside the divertor polygon for the colorbar limits
+        self.cbar_in_vessel = cbar_in_vessel
 
         # Colormap
         self.colormap = None
@@ -96,9 +98,9 @@ class Colorbar(Axes):
     
         if not self.log_scale:
             ticks = np.linspace(start=colormap_norm.vmin, stop=colormap_norm.vmax, num=self.num_cbar_ticks)
-            self.colorbar = plt.colorbar(self.painter.artist, cax=self.ax, ticks=ticks, extend='both' if self.exclude_outliers else 'neither')
+            self.colorbar = plt.colorbar(self.painter.artist.artist, cax=self.ax, ticks=ticks, extend='both' if self.exclude_outliers else 'neither')
         else:
-            self.colorbar = plt.colorbar(self.painter.artist, cax=self.ax, extend='both' if self.exclude_outliers else 'neither')
+            self.colorbar = plt.colorbar(self.painter.artist.artist, cax=self.ax, extend='both' if self.exclude_outliers else 'neither')
 
     @property
     def allow_diverging_cmap(self):

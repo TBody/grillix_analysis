@@ -150,4 +150,5 @@ class Run:
         # in_vessel_mask is stored as point indices -- normalisation doesn't matter (should calculate with convert=False: this is the default behaviour)
         
         [x_mesh, y_mesh] = np.meshgrid(self.grid.x_unique, self.grid.y_unique)
-        self.in_vessel_mask = self.grid.matrix_to_vector(self.divertor_polygon.points_inside(x_mesh, y_mesh).astype(bool))
+        self.in_vessel_mask_structured = self.divertor_polygon.points_inside(x_mesh, y_mesh).astype(bool)
+        self.in_vessel_mask = self.grid.matrix_to_vector(self.in_vessel_mask_structured)
