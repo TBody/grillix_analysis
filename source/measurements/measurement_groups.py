@@ -38,7 +38,7 @@ measurement_groups["Alfven"] = [SoundSpeed, AlfvenSpeed, DynamicalPlasmaBeta]
 
 # Magnetic field values
 from .Variable.EquilibriumVariable import Psi, Rho, MagneticFieldPol, MagneticFieldTor, MagneticFieldAbs, PoloidalUnitVector, RadialUnitVector, MagneticFieldPitch
-measurement_groups["Magnetic"] = [Psi, Rho, MagneticFieldPol, MagneticFieldTor, MagneticFieldAbs, PoloidalUnitVector, RadialUnitVector, MagneticFieldPitch]
+measurement_groups["Magnetic"] = [Psi, Rho, MagneticFieldPol, ([VectorAbsolute], MagneticFieldPol), MagneticFieldTor, PoloidalUnitVector, RadialUnitVector, MagneticFieldPitch]
 # Test that the parallel unit vector and projections are working as expected
 from .Variable.EquilibriumVariable import ParallelUnitVector
 measurement_groups["TestParallelUnitVector"] = [([VectorRadialProjection], ParallelUnitVector), ([VectorPoloidalProjection], ParallelUnitVector), ([VectorAbsolute], ParallelUnitVector)]

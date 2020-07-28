@@ -10,7 +10,12 @@ def find_static_colormap(self, **kwargs):
 def find_colormap(self, values):
 
     if self.cbar_in_vessel:
-        values = ma.masked_array(values, mask=np.logical_not(np.broadcast_to(self.run.in_vessel_mask_structured, values.shape)))
+        expanded_mask = self.run.in_vessel_mask_structured
+
+        while expanded_mask.ndim < values.ndim:
+            expanded_mask = np.expand_dims(expanded_mask, axis=-1)
+        
+        values = ma.masked_array(values, mask=np.logical_not(np.broadcast_to(expanded_mask, values.shape)))
 
     [cbar_min, cbar_max] = self.data_limits(values)
 
