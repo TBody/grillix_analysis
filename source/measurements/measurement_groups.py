@@ -68,3 +68,6 @@ from .Variable.DerivedVariable import (IonConvectiveHeatFlux, ElectronConvective
 measurement_groups["HeatFlux"] = [([VectorAbsolute], IonConvectiveHeatFlux), ([VectorAbsolute], ElectronConvectiveHeatFlux), ([VectorAbsolute], IonConductiveHeatFlux), ([VectorAbsolute], ElectronConductiveHeatFlux)]
 measurement_groups["PoloidalHeatFlux"] = [([VectorPoloidalProjection], IonConvectiveHeatFlux), ([VectorPoloidalProjection], ElectronConvectiveHeatFlux), ([VectorPoloidalProjection], IonConductiveHeatFlux), ([VectorPoloidalProjection], ElectronConductiveHeatFlux), ([VectorRadialProjection], IonConvectiveHeatFlux), ([VectorRadialProjection], ElectronConvectiveHeatFlux), ([VectorRadialProjection], IonConductiveHeatFlux), ([VectorRadialProjection], ElectronConductiveHeatFlux)]
 measurement_groups["TotalHeatFlux"] = [([VectorAbsolute], IonTotalHeatFlux), ([VectorPoloidalProjection], IonTotalHeatFlux), ([VectorRadialProjection], IonTotalHeatFlux), ([VectorAbsolute], ElectronTotalHeatFlux), ([VectorPoloidalProjection], ElectronTotalHeatFlux), ([VectorRadialProjection], ElectronTotalHeatFlux)]
+
+from .Variable.StaticVariable import IntersectionX, IntersectionY
+measurement_groups["Polygon"] = [IntersectionX, IntersectionY, ProjectionX, ProjectionY]

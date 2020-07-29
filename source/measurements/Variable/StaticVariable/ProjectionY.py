@@ -1,11 +1,11 @@
 from source import np
-from . import StaticVariable
+from . import PenalisationVariable
 from .CharacteristicFunction import CharacteristicFunction
 
-class ProjectionY(StaticVariable):
+class ProjectionY(PenalisationVariable):
     
     def __init__(self, run=None):
-        netcdf_filename = "equi_storage_file"
+        netcdf_filename = "penalisation_file"
         title = "Polygon projection (y)"
         super().__init__('projection_y', netcdf_filename, title, run=run)
     
@@ -18,4 +18,3 @@ class ProjectionY(StaticVariable):
         values[np.isnan(chi)] = 0
 
         return values, units
-        

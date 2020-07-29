@@ -2,12 +2,12 @@ from source import np
 from . import PenalisationVariable
 from .CharacteristicFunction import CharacteristicFunction
 
-class ProjectionX(PenalisationVariable):
+class IntersectionY(PenalisationVariable):
     
     def __init__(self, run=None):
         netcdf_filename = "penalisation_file"
-        title = "Polygon projection (x)"
-        super().__init__('projection_x', netcdf_filename, title, run=run)
+        title = "Polygon intersection (y)"
+        super().__init__('intersection_y', netcdf_filename, title, run=run)
     
     def values_finalize(self, values, units):
         [values, units] = super().values_finalize(values, units)
@@ -18,4 +18,3 @@ class ProjectionX(PenalisationVariable):
         values[np.isnan(chi)] = 0
 
         return values, units
-        

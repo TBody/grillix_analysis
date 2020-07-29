@@ -40,8 +40,6 @@ from .District               import District
 from .FluxSurface            import FluxSurface
 from .Buffer                 import Buffer
 from .InVessel               import InVessel
-from .ProjectionX            import ProjectionX
-from .ProjectionY            import ProjectionY
 
 # From penalisation metadata
 from .CharacteristicFunction import CharacteristicFunction
@@ -49,3 +47,7 @@ from .DirectionFunction      import DirectionFunction
 from .PhiForward             import PhiForward
 from .PhiBackward            import PhiBackward
 from .PhiBetweenTargets      import PhiBetweenTargets
+from .ProjectionX            import ProjectionX
+from .ProjectionY            import ProjectionY
+from .IntersectionX          import IntersectionX
+from .IntersectionY          import IntersectionY
