@@ -36,11 +36,30 @@ class NumericalEquilibrium(Equilibrium):
     def Btor_func(self, x, y):
         return 1/x
 
+    def point_axis(self, x, R_centre, Z_centre, normal=False):
+        # Defines a line between the magnetic axis and the X-point
+        # Assumes only 1 X-point
+
+        dx = (self.RX - self.R0)/self.R0
+        dy = (self.ZX - self.Z0)/self.R0
+
+        if not normal:
+            gradient = dy/dx
+        else:
+            gradient = -dx/dy
+
+        return gradient * (x - R_centre) + Z_centre
+
     # Precompute grid values (same implementation, but uses grid=True to speed up computation)
     def read_magnetic_geometry(self, grid):
 
         # Keep dimensionless -- useful for returning normalised base values
         self.R0 = self.netcdf['Magnetic_geometry'].magnetic_axis_R
+        self.Z0 = self.netcdf['Magnetic_geometry'].magnetic_axis_Z
+
+        self.RX = self.netcdf['Magnetic_geometry'].x_point_R
+        self.ZX = self.netcdf['Magnetic_geometry'].x_point_Z
+
         self.axis_Btor = np.abs(self.netcdf['Magnetic_geometry'].axis_Btor)
 
         # Convert to Weber
