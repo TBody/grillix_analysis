@@ -17,14 +17,14 @@ class LineoutCLI(BaseCLI):
         super().__init__("plot values over a poloidal plane")
 
         self.filepath           = FilepathArg(self)
-        self.save               = SaveFilepathArg(self)
+        # self.save               = SaveFilepathArg(self)
         self.group              = GroupArg(self, measurement_groups.keys(), default="BaseVariable")
         self.title              = TitleArg(self)
         self.time_slice         = TimeSliceArg(self)
         self.toroidal_slice     = ToroidalSliceArg(self)
         self.reduction          = ReductionArg(self)
-        self.SI_units           = SI_unitsArg(self)
-        self.log_scale          = LogScaleArg(self)
+        # self.SI_units           = SI_unitsArg(self)
+        # self.log_scale          = LogScaleArg(self)
 
         if parse: self.parse()
         if display: print(self)
@@ -34,34 +34,123 @@ from source import plt, np, Dataset, Path
 from netCDF4 import Variable as NCVariable
 from source.run import Run
 from source.measurements import Measurement, measurement_array_from_variable_array
-from source.measurements.Projector import Lineout
-from source.measurements.Variable.StaticVariable import FluxSurface
-from pathos.multiprocessing import ProcessingPool as Pool
+from source.measurements.Projector import Poloidal
+from source.measurements.Variable.StaticVariable import FluxSurface, District
+from source.measurements.Projector._lineout import LineInterpolator, FluxSurfaceInterpolator, PointInterpolator
 
 from ipdb import launch_ipdb_on_exception
 
 lineout_resolution = 100
 
-def plot_projector(projector):
+def setup_lineouts(run):
+    equi = run.equilibrium
+    grid = run.grid
+
+    district = District(run=run)
+    district_array, _ = district()
+    district_dict = district.inv_district_dict
+
+    OMP = LineInterpolator(run, "OMP",
+            np.linspace(1.0, grid.xmax),
+            np.linspace(1.0, 1.0)*(equi.Z0 / equi.R0))
+        
+    IMP = LineInterpolator(run, "IMP",
+            np.linspace(grid.xmin, 1.0),
+            np.linspace(1.0, 1.0)*(equi.Z0 / equi.R0)        )
+        
+    MP = LineInterpolator(run, "MP",
+            np.linspace(grid.xmin, grid.xmax),
+            np.linspace(1.0, 1.0)*(equi.Z0 / equi.R0))
+
+    VMP = LineInterpolator(run, "VMP",
+            np.linspace(1.0, 1.0),
+            np.linspace(equi.Z0/equi.R0, grid.ymax))
+        
+    LFS_C0 = LineInterpolator(run, "LFS_C0",
+            run.penalisation_contours[0].x_arrays[1],
+            run.penalisation_contours[0].y_arrays[1])
+
+    LFS_TARGET = LineInterpolator(run, "LFS_TARGET",
+            run.penalisation_contours[1].x_arrays[1],
+            run.penalisation_contours[1].y_arrays[1])
+
+    HFS_C0 = LineInterpolator(run, "HFS_C0",
+            run.penalisation_contours[0].x_arrays[0],
+            run.penalisation_contours[0].y_arrays[0])
+
+    HFS_TARGET = LineInterpolator(run, "HFS_TARGET",
+            run.penalisation_contours[1].x_arrays[0],
+            run.penalisation_contours[1].y_arrays[0])
+        
+    AX = LineInterpolator(run, "AX",
+            np.linspace(grid.xmin, grid.xmax),
+            equi.point_axis(np.linspace(grid.xmin, grid.xmax), R_centre=equi.RX/equi.R0, Z_centre=equi.ZX/equi.R0))
+        
+    AXPX = LineInterpolator(run, "AXPX",
+            np.linspace(grid.xmin, grid.xmax),
+            equi.point_axis(np.linspace(grid.xmin, grid.xmax), R_centre=equi.RX/equi.R0, Z_centre=equi.ZX/equi.R0, normal=True))
+        
+    AXP0 = LineInterpolator(run, "AXP0",
+            np.linspace(grid.xmin, grid.xmax),
+            equi.point_axis(np.linspace(grid.xmin, grid.xmax), R_centre=equi.R0/equi.R0, Z_centre=equi.Z0/equi.R0, normal=True))
+    
+    SOL = FluxSurfaceInterpolator(run, "SOL",
+            rho_level=1.01)
+    
+    SEP = FluxSurfaceInterpolator(run, "SEP",
+            rho_level=1.00,
+            in_domain=np.logical_or(
+                (grid.vector_to_matrix(district_array.flatten())==district_dict["DISTRICT_CLOSED"]),
+                (grid.vector_to_matrix(district_array.flatten())==district_dict["DISTRICT_SOL"]),
+            ),
+            closed=True
+            )
+
+    CLOSED = FluxSurfaceInterpolator(run, "CLOSED",
+            rho_level=0.99,
+            in_domain=(grid.vector_to_matrix(district_array.flatten())==district_dict["DISTRICT_CLOSED"]),
+            closed=True
+            )
+    
+    lineouts = {
+        "OMP": OMP,
+        "IMP": IMP,
+        "MP": MP,
+        "VMP": VMP,
+        "LFS_C0": LFS_C0,
+        "LFS_TARGET": LFS_TARGET,
+        "HFS_C0": HFS_C0,
+        "HFS_TARGET": HFS_TARGET,
+        "AX": AX,
+        "AXPX": AXPX,
+        "AXP0": AXP0,
+        "SOL": SOL,
+        "SEP": SEP,
+        "CLOSED": CLOSED
+    }
+
+    return lineouts
+
+def plot_lineouts(lineouts, title):
     flux_surface, _ = FluxSurface(run=run)()
     plt.contour(run.grid.x_unique, run.grid.y_unique, run.grid.vector_to_matrix(flux_surface.flatten()), 100)
 
-    projector.plot_interps()
+    for lineout in lineouts.values():
+        lineout.plot_lineout()
 
     plt.title(title)
     plt.gca().set_aspect('equal')
     plt.legend()
     plt.show()
 
-def setup_results_file(results_file, run, projector, measurement_array, snap_indices, time_slice, toroidal_slice, prevent_overwrite=True):
+def setup_results_file(results_file, run, measurement_array, lineouts, snap_indices, time_slice, toroidal_slice, prevent_overwrite=True):
     if prevent_overwrite: assert not(results_file.exists()), f"Error: file {results_file} already exists. Manually remove before continuing"
     
     flux_surface, _ = FluxSurface(run=run)()
-    flux_surface = run.grid.vector_to_matrix(flux_surface.flatten())
     rootgrp = Dataset(results_file, 'w')
         
     rootgrp.createDimension("time", None)
-    sample_times = rootgrp.createVariable("sample_times", "f8", ("time",))
+    sample_times = rootgrp.createVariable("times", "f8", ("time",))
 
     sample_times[:] = np.atleast_1d(run.tau_values[time_slice])
     rootgrp.tau_normalisation = run.normalisation.tau_0.to('s').magnitude
@@ -82,21 +171,29 @@ def setup_results_file(results_file, run, projector, measurement_array, snap_ind
         lineout_vars = {}
 
         # Write in header for each lineout
-        for key, interp in projector.interps.items():
+        for key, interp in lineouts.items():
 
             lineout_grp = var_grp.createGroup(key)
-            lineout_grp.createDimension("points", interp.x_interp.size)
-            sample_x = lineout_grp.createVariable("sample_x", "f8", ("points",))
-            sample_y = lineout_grp.createVariable("sample_y", "f8", ("points",))
-            sample_rho = lineout_grp.createVariable("sample_rho", "f8", ("points",))
-            sample_arc = lineout_grp.createVariable("sample_arc", "f8", ("points",))
+            lineout_grp.createDimension("points", interp.x_array.size)
+            sample_x = lineout_grp.createVariable("x", "f8", ("points",))
+            sample_y = lineout_grp.createVariable("y", "f8", ("points",))
+            sample_arc = lineout_grp.createVariable("arc", "f8", ("points",))
+
+            if (isinstance(interp, LineInterpolator)):
+                sample_rho = lineout_grp.createVariable("rho", "f8", ("points",))
+                sample_rho[:] = interp(flux_surface)
+
+
+            # if (isinstance(interp, FluxSurfaceInterpolator)):
+            #     sample_theta = lineout_grp.createVariable("theta", "f8", ("points",))
+            #     sample_theta[:] = interp.theta_values()
+
 
             val_var = lineout_grp.createVariable("values", "f8", ("time", "points"))
 
-            sample_x[:] = interp.x_interp
-            sample_y[:] = interp.y_interp
-            sample_rho[:] = interp.rho_values(flux_surface)
-            sample_arc[:] = interp.arc_l
+            sample_x[:] = interp.x_array
+            sample_y[:] = interp.y_array
+            sample_arc[:] = interp.arc_length
             lineout_grp.spatial_factor = run.normalisation.R0.magnitude
             lineout_grp.spatial_factor_units = str(run.normalisation.R0.units)
 
@@ -106,24 +203,23 @@ def setup_results_file(results_file, run, projector, measurement_array, snap_ind
 
     return measurement_vars
 
-def fill_values(projector, measurement_array, measurement_vars, snap_indices, toroidal_slice):
+def fill_values(measurement_array, lineouts, measurement_vars, snap_indices, toroidal_slice):
 
     results = {}
     for measurement, measurement_id in zip(measurement_array, range(len(measurement_array))):
-        for key, lineout in projector.interps.items():
-            results[key] = np.zeros((len(snap_indices), lineout.x_interp.size))
-
+        for key, lineout in lineouts.items():
+            results[key] = np.zeros((len(snap_indices), lineout.x_array.size))
 
         for t, time in zip(range(len(snap_indices)), snap_indices):
 
             print(f"\tExtracting data at {time} of [{snap_indices[0]}-{snap_indices[-1]}], {measurement.variable.title}")
 
-            results_at_time, _ = measurement(time_slice=[time], toroidal_slice=toroidal_slice)
+            results_at_time, _ = measurement.variable(time_slice=[time], toroidal_slice=toroidal_slice)
             
-            for key in projector.interps.keys():
-                results[key][t, :] = results_at_time[key]
+            for key, lineout in lineouts.items():
+                results[key][t, :] = lineout(results_at_time)
 
-        for key in projector.interps.keys():
+        for key in lineouts.keys():
             var_grp = measurement_vars[measurement_id][key]
             var_grp[:, :] = results[key]
 
@@ -138,9 +234,9 @@ if __name__=="__main__":
         group            = CLI['group']
         reduction        = CLI['reduction']
         title            = CLI['title']
-        SI_units         = CLI['SI_units']
-        log_scale        = CLI['log_scale']
-        save_path        = CLI['save']
+        # SI_units         = CLI['SI_units']
+        # log_scale        = CLI['log_scale']
+        # save_path        = CLI['save']
 
         time_slice       = CLI['time_slice']
         toroidal_slice   = CLI['toroidal_slice']
@@ -154,7 +250,7 @@ if __name__=="__main__":
         operators = []
 
         # Request the different projectors
-        projector = Lineout(resolution = lineout_resolution)
+        projector = Poloidal()
 
         measurement_array = measurement_array_from_variable_array(
                                 projector=projector,
@@ -163,7 +259,9 @@ if __name__=="__main__":
                                 operators=operators,
                                 run=run)
         
-        # plot_projector(projector)
+        lineouts = setup_lineouts(run)
+
+        # plot_lineouts(lineouts, title)
         # quit()
         
         snap_indices = run.snap_indices[time_slice]
@@ -175,19 +273,20 @@ if __name__=="__main__":
 
             print("Setting up results file")
             measurement_vars = setup_results_file(
-                results_file, run, projector, measurement_array, snap_indices, time_slice, toroidal_slice, prevent_overwrite=False)
+                results_file, run, measurement_array, lineouts, snap_indices, time_slice, toroidal_slice, prevent_overwrite=False)
 
             print("Filling results file")
-            fill_values(projector, measurement_array, measurement_vars, snap_indices, toroidal_slice)
+            fill_values(measurement_array, lineouts, measurement_vars, snap_indices, toroidal_slice)
 
         else:
             print(f"File {results_file} exists. Reading from file.")
             rootgrp = Dataset(results_file, 'r')
 
-            # plt.pcolormesh(rootgrp["Density"]["OMP"]["sample_rho"],
-            #             rootgrp["sample_times"],
-            #             rootgrp["Density"]["OMP"]["values"]
-            #             )
+            density_sol = rootgrp["Density"]["HFS_C0"]
+
+            plt.pcolormesh(density_sol["rho"], rootgrp["times"],
+                           density_sol["values"]
+                        )
 
             plt.show()
 

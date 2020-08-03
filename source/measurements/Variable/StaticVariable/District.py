@@ -19,6 +19,8 @@ class District(StaticVariable):
         819: "DISTRICT_OUT",
         # point located outside additional masks, i.e. shadow region (outside computational domain)
     })
+
+    inv_district_dict = {value : key for (key, value) in district_dict.items()}
     
     def __init__(self, run=None):
         netcdf_filename = "equi_storage_file"
