@@ -204,7 +204,7 @@ class LineInterpolator(Interpolator):
     
 class FluxSurfaceInterpolator(Interpolator):
 
-    def __init__(self, run, key, rho_level=1.0, in_domain=True, closed=False, smoothing=0.0, resolution=100):
+    def __init__(self, run, key, rho_level=1.0, in_domain=True, closed=False, smoothing=0.0, resolution=1000):
         # Mask "False" elements of the mask, since it is easier to apply a district mask
         
         flux_surface, _ = FluxSurface(run=run)()

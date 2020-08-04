@@ -282,11 +282,6 @@ if __name__=="__main__":
             print(f"File {results_file} exists. Reading from file.")
             rootgrp = Dataset(results_file, 'r')
 
-            density_sol = rootgrp["Density"]["HFS_C0"]
-
-            plt.pcolormesh(density_sol["rho"], rootgrp["times"],
-                           density_sol["values"]
-                        )
 
             plt.show()
 
