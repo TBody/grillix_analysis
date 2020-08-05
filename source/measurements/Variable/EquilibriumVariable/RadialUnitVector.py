@@ -10,8 +10,10 @@ class RadialUnitVector(EquilibriumVariable):
 
     def fetch_values(self, poloidal_slice=slice(None), **kwargs):
 
-        Bx = self.equi.Bx_grid_vector[poloidal_slice]
-        By = self.equi.By_grid_vector[poloidal_slice]
+        helicity = getattr(self.equi, "helicity", 1.0)
+
+        Bx = helicity * self.equi.Bx_grid_vector[poloidal_slice]
+        By = helicity * self.equi.By_grid_vector[poloidal_slice]
         Bpol = np.sqrt(Bx**2 + By**2)
 
         return VectorArray.poloidal(R_array = -By/Bpol, Z_array = Bx/Bpol)

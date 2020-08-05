@@ -71,3 +71,5 @@ measurement_groups["TotalHeatFlux"] = [([VectorAbsolute], IonTotalHeatFlux), ([V
 
 from .Variable.StaticVariable import IntersectionX, IntersectionY
 measurement_groups["Polygon"] = [IntersectionX, IntersectionY, ProjectionX, ProjectionY]
+
+measurement_groups["PoloidalUnitVectors"] = [PoloidalUnitVector, RadialUnitVector]

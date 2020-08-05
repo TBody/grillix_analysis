@@ -30,27 +30,24 @@ class Run:
         self.grid.setup_vector_to_matrix(with_check=True)
         self.grid.run = self
 
-        try:
-            if self.equi_type == "NUMERICAL":
-                from .Equilibrium.Numerical import NumericalEquilibrium
-                self.equilibrium = NumericalEquilibrium(self.directory.equilibrium_netcdf, run=self)
+        if self.equi_type == "NUMERICAL":
+            from .Equilibrium.Numerical import NumericalEquilibrium
+            self.equilibrium = NumericalEquilibrium(self.directory.equilibrium_netcdf, run=self)
 
-            elif self.equi_type == "CARTHY":
-                from .Equilibrium.Carthy import CarthyEquilibrium
-                self.equilibrium = CarthyEquilibrium(run=self)
+        elif self.equi_type == "CARTHY":
+            from .Equilibrium.Carthy import CarthyEquilibrium
+            self.equilibrium = CarthyEquilibrium(run=self)
 
-            elif self.equi_type == "CERFONS":
-                from .Equilibrium.Cerfons import CerfonsEquilibrium
-                self.equilibrium = CerfonsEquilibrium(run=self)
+        elif self.equi_type == "CERFONS":
+            from .Equilibrium.Cerfons import CerfonsEquilibrium
+            self.equilibrium = CerfonsEquilibrium(run=self)
 
-            elif self.equi_type == "CIRCULAR":
-                from .Equilibrium.Circular import CircularEquilibrium
-                self.equilibrium = CircularEquilibrium(run=self)
+        elif self.equi_type == "CIRCULAR":
+            from .Equilibrium.Circular import CircularEquilibrium
+            self.equilibrium = CircularEquilibrium(run=self)
 
-            else:
-                raise NotImplementedError(f"No implementation available for {self.equi_type}")
-        except Exception as error:
-            print(f"Equilibrium read failed with error: {error}. Equilibrium will be unusable.")
+        else:
+            raise NotImplementedError(f"No implementation available for {self.equi_type}")
         
         if calculate_metainfo:
             

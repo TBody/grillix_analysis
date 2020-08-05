@@ -7,6 +7,12 @@ class NumericalEquilibrium(Equilibrium):
     def __init__(self, equilibrium_netcdf, run):
 
         self.netcdf = equilibrium_netcdf
+
+        if not run.parameters['equi_params']['helicity']:
+            self.helicity = 1.0
+        else:
+            self.helicity = run.parameters['equi_params']['helicity']
+
         self.read_magnetic_geometry(run.grid)
 
         print(f"Using {self.netcdf.description}, {self.netcdf.history}")
@@ -23,7 +29,7 @@ class NumericalEquilibrium(Equilibrium):
             
             # N.b. One factor of self%R0 comes from evaluating the derivative on the (x', y') normalised coordinate
             # and the second comes from using normalised x', y' for the axis
-            return -psi_dZ / (2 * np.pi * x * self.R0 * self.R0 * self.axis_Btor)
+            return -self.helicity * psi_dZ / (2 * np.pi * x * self.R0 * self.R0 * self.axis_Btor)
     
     def By_func(self, x, y):
         #Evaluate the poloidal flux, taking the 0th x derivative and the 1st y derivative
@@ -31,7 +37,7 @@ class NumericalEquilibrium(Equilibrium):
         
         # N.b. One factor of self%R0 comes from evaluating the derivative on the (x', y') normalised coordinate
         # and the second comes from using normalised x', y' for the axis
-        return psi_dR / (2 * np.pi * x * self.R0 * self.R0 * self.axis_Btor)
+        return self.helicity * psi_dR / (2 * np.pi * x * self.R0 * self.R0 * self.axis_Btor)
     
     def Btor_func(self, x, y):
         return 1/x
@@ -89,7 +95,7 @@ class NumericalEquilibrium(Equilibrium):
         
         # N.b. One factor of self%R0 comes from evaluating the derivative on the (x', y') normalised coordinate
         # and the second comes from using normalised x', y' for the axis
-        self.Bx_grid_vector = -psi_dZ / (2 * np.pi * grid.x * self.R0 * self.R0 * self.axis_Btor)
+        self.Bx_grid_vector = -self.helicity * psi_dZ / (2 * np.pi * grid.x * self.R0 * self.R0 * self.axis_Btor)
     
     def compute_By_grid_vector(self, grid):
         #Evaluate the poloidal flux, taking the 0th x derivative and the 1st y derivative
@@ -97,7 +103,7 @@ class NumericalEquilibrium(Equilibrium):
         
         # N.b. One factor of self%R0 comes from evaluating the derivative on the (x', y') normalised coordinate
         # and the second comes from using normalised x', y' for the axis
-        self.By_grid_vector = psi_dR / (2 * np.pi * grid.x * self.R0 * self.R0 * self.axis_Btor)
+        self.By_grid_vector = self.helicity * psi_dR / (2 * np.pi * grid.x * self.R0 * self.R0 * self.axis_Btor)
     
     def compute_Btor_grid_vector(self, grid):
         # Assume the magnetic field is given as 1/x
